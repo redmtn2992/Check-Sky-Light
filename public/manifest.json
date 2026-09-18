@@ -1,0 +1,45 @@
+{
+  "name": "Check Sky Light - UAP Anomaly Scanner",
+  "short_name": "CheckSkyLight",
+  "description": "Augmented reality sky tracking, UAP anomaly analysis, and real-time airspace deconfliction.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/favicon.png?v=4",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon.svg?v=4",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-192.png?v=4",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png?v=4",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png?v=4",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png?v=4",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

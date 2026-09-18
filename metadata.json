@@ -1,0 +1,6 @@
+{
+  "name": "Check Sky Light",
+  "description": "An open-access civilian tool for augmented reality sky tracking, UAP anomaly analysis, and real-time airspace deconfliction. Point your camera at any unexplained aerial light or target to instantly cross-reference against live ADS-B flight transponders, NORAD satellite passes, weather balloons, and celestial bodies. Features Gemini AI optical analysis for photos and video, non-inertial kinematics evaluation, domestic luminaire filtering, and field-grade incident logging.",
+  "requestFramePermissions": ["geolocation", "camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

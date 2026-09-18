@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" class="bg-slate-950 text-slate-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CheckSkyLight" />
+    <meta name="application-name" content="CheckSkyLight" />
+    <meta name="theme-color" content="#020617" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="description" content="An open-access civilian tool for augmented reality sky tracking, UAP anomaly analysis, and real-time airspace deconfliction. Point your camera at any unexplained aerial light or target to instantly cross-reference against live ADS-B flight transponders, NORAD satellite passes, weather balloons, and celestial bodies. Features Gemini AI optical analysis for photos and video, non-inertial kinematics evaluation, domestic luminaire filtering, and field-grade incident logging." />
+    <meta property="og:title" content="Check Sky Light" />
+    <meta property="og:description" content="An open-access civilian tool for augmented reality sky tracking, UAP anomaly analysis, and real-time airspace deconfliction. Point your camera at any unexplained aerial light or target to instantly cross-reference against live ADS-B flight transponders, NORAD satellite passes, weather balloons, and celestial bodies. Features Gemini AI optical analysis for photos and video, non-inertial kinematics evaluation, domestic luminaire filtering, and field-grade incident logging." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/icon-512.png?v=4" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Check Sky Light" />
+    <meta name="twitter:image" content="/icon-512.png?v=4" />
+    <title>Check Sky Light</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.webmanifest?v=4" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg?v=4" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon-precomposed.png?v=4" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=4" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500 selection:text-slate-950">
+    <div id="root"></div>
+    <script>
+      // Automatically refresh Service Worker and purge stale build caches on iPhone / Safari
+      const APP_BUILD_KEY = 'csl_build_v4.0_cand1';
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (let r of regs) {
+            r.update();
+          }
+        });
+      }
+      if ('caches' in window) {
+        const stored = localStorage.getItem('csl_build_version');
+        if (stored !== APP_BUILD_KEY) {
+          caches.keys().then(function(keys) {
+            for (let k of keys) {
+              if (k !== 'leaflet-assets-cache') {
+                caches.delete(k);
+              }
+            }
+          });
+          localStorage.setItem('csl_build_version', APP_BUILD_KEY);
+        }
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
