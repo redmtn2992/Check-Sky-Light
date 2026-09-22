@@ -282,7 +282,19 @@ export interface GeminiForensicAnalysis {
     kinematicGForce?: string;
   };
   detectedFeatures: string[];
+  dtcCode?: string;
+  dtcTitle?: string;
+  incidentPlatform?: string;
+  corroborationSources?: string[];
   audioAcousticNotes?: string;
+  mundaneObjectDetected?: boolean;
+  mundaneCategory?: 'pet' | 'furniture' | 'vehicle' | 'selfie_friend' | 'household' | 'other';
+  humorousQuirk?: string;
+  educationalAeroAstronomyLesson?: {
+    topic: string;
+    concept: string;
+    skyWatcherTip: string;
+  };
   databaseCorrelations?: DatabaseCorrelationsGroup;
   deconflictionDetails?: {
     corroboratedAviationPlume?: boolean;

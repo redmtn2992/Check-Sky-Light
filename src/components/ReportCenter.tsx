@@ -276,20 +276,20 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   };
 
   return (
-    <div className="space-y-5 font-sans">
-      {/* Visual Flow Lifecycle Breadcrumb Banner */}
-      <div className="glass-panel border border-cyan-500/30 rounded-2xl p-3 sm:p-4 bg-gradient-to-r from-slate-950 via-cyan-950/30 to-slate-950">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-cyan-900/40">
+    <div className="space-y-4 font-sans">
+      {/* Sleek Tactical Header & Pipeline Banner */}
+      <div className="glass-panel border border-cyan-500/30 rounded-2xl p-3 bg-gradient-to-r from-slate-950 via-cyan-950/20 to-slate-950">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-cyan-900/40">
           <div className="flex items-center space-x-2">
             <div className="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
               <FileText className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-xs sm:text-sm font-black text-slate-100 uppercase tracking-wide">
-                APP INVESTIGATION LIFECYCLE FLOW
+                Incident Report Dossiers
               </h2>
               <p className="text-[10px] sm:text-[11px] font-mono text-slate-400">
-                Step 4 of 4: Collect, sort, and compile certified incident reports in PDF format for MUFON or scientific submission.
+                Compile certified incident reports and export PDF or MUFON CMS packages.
               </p>
             </div>
           </div>
@@ -300,60 +300,46 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
               title="Monitor real-time live UAP feed reports from other skywatchers"
             >
               <Radio className="w-3.5 h-3.5 animate-pulse text-teal-400" />
-              <span>Live UAP Feed ({sightings.length})</span>
+              <span>Live Feed ({sightings.length})</span>
             </button>
           )}
         </div>
 
-        {/* 4-Step Interactive Breadcrumb Nav */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-2.5 text-[11px] font-mono">
+        {/* Compact Pipeline Stepper */}
+        <div className="flex items-center justify-between pt-2 text-[10px] font-mono text-slate-400">
           <button
             onClick={onNavigateToTarget}
-            className="p-2 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 text-left transition cursor-pointer flex items-center space-x-2"
+            className="flex items-center space-x-1 px-2 py-0.5 rounded-lg hover:bg-slate-800 text-slate-300 transition cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
-              <Crosshair className="w-3.5 h-3.5" />
-            </div>
-            <div className="truncate">
-              <span className="text-[9px] text-slate-500 block">STEP 1</span>
-              <span className="font-bold text-slate-300 truncate block">TARGET: Camera</span>
-            </div>
+            <Crosshair className="w-3 h-3 text-slate-400" />
+            <span>1. Target</span>
           </button>
+
+          <span className="text-slate-700">›</span>
 
           <button
             onClick={onNavigateToRadar}
-            className="p-2 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 text-left transition cursor-pointer flex items-center space-x-2"
+            className="flex items-center space-x-1 px-2 py-0.5 rounded-lg hover:bg-slate-800 text-slate-300 transition cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
-              <Radar className="w-3.5 h-3.5" />
-            </div>
-            <div className="truncate">
-              <span className="text-[9px] text-slate-500 block">STEP 2</span>
-              <span className="font-bold text-slate-300 truncate block">RADAR: Deconflict</span>
-            </div>
+            <Radar className="w-3 h-3 text-slate-400" />
+            <span>2. Radar</span>
           </button>
+
+          <span className="text-slate-700">›</span>
 
           <button
             onClick={onNavigateToAnalyze}
-            className="p-2 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 text-left transition cursor-pointer flex items-center space-x-2"
+            className="flex items-center space-x-1 px-2 py-0.5 rounded-lg hover:bg-slate-800 text-slate-300 transition cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 shrink-0">
-              <ScanSearch className="w-3.5 h-3.5" />
-            </div>
-            <div className="truncate">
-              <span className="text-[9px] text-slate-500 block">STEP 3</span>
-              <span className="font-bold text-slate-300 truncate block">ANALYZE: Gemini</span>
-            </div>
+            <ScanSearch className="w-3 h-3 text-slate-400" />
+            <span>3. Analyze</span>
           </button>
 
-          <div className="p-2 rounded-xl border border-cyan-500/60 bg-cyan-500/15 text-left flex items-center space-x-2 shadow-[0_0_12px_rgba(6,182,212,0.25)]">
-            <div className="w-6 h-6 rounded-lg bg-cyan-500 text-slate-950 font-bold flex items-center justify-center shrink-0">
-              <FileText className="w-3.5 h-3.5" />
-            </div>
-            <div className="truncate">
-              <span className="text-[9px] text-cyan-300 font-bold block">STEP 4 (ACTIVE)</span>
-              <span className="font-extrabold text-cyan-200 truncate block">REPORT: PDF Export</span>
-            </div>
+          <span className="text-slate-700">›</span>
+
+          <div className="flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold">
+            <FileText className="w-3 h-3 text-cyan-400" />
+            <span>4. Report</span>
           </div>
         </div>
       </div>

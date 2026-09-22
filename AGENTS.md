@@ -31,3 +31,37 @@ Ground truth is established only through cross-correlation across independent mo
 2. **Kinematic & Trajectory**: Angular velocity, estimated altitude, rate of climb, and non-inertial vector changes.
 3. **Radar & Telemetry**: FAA Class B airspace TRACON feeds, primary radar reflection, ADS-B transponder squawks, and military alert status.
 4. **Environmental & Celestial**: Ephemeris data (planets, star trackers, satellite orbits), weather radar, and barometric conditions.
+
+## 5. Vetted Empirical Knowledge Base & Authoritative Repositories
+To maintain epistemological rigor and prevent contamination from unverified internet folklore, all investigations and diagnostic heuristics cross-reference vetted primary sources across five scientific tiers:
+
+### Tier I: Official Government, Defense & Aerospace Declassification
+- **AARO (All-domain Anomaly Resolution Office)**: `https://www.aaro.mil/` — DoD baseline reporting standards, official unclassified footage, Case Resolution Sheets, and standardized reporting parameters.
+- **NASA UAP Independent Study Team**: `https://science.nasa.gov/uap/` — Rigorous unclassified data collection frameworks, calibration standards, atmospheric science deconfliction, and open-source scientific roadmap.
+- **CNES / GEIPAN (Groupe d'Études et d'Informations sur les PAN)**: The French Space Agency's official scientific UAP investigative bureau with 40+ years of rigorously categorized field investigations (Categories A through D).
+- **ODNI (Office of the Director of National Intelligence)**: Preliminary and annual UAP threat assessments establishing the Five Observables baseline.
+- **DoD / National Defense Archives**: Unclassified declassified test range footage and sensor data (e.g. War.gov/ufo, FLIR1, GIMBAL, GOFAST).
+
+### Tier II: Academic, Peer-Reviewed & Institutional Scientific Bodies
+- **Society for UAP Studies (SUAPS) & Limina Journal**: `https://www.societyforuapstudies.org/` — Interdisciplinary peer-reviewed academic research integrating physical, social, and information sciences.
+- **SCU (Scientific Coalition for UAP Studies)**: `https://www.explorescu.org/` — Forensic physics evaluations of acceleration, kinematic radar reconstruction (e.g. 2004 Nimitz, 2013 Aguadilla), and peer-reviewed acceleration analyses.
+- **The Galileo Project (Harvard University / Harvard-Smithsonian Center for Astrophysics)**: Multi-spectral sky observatories utilizing computer vision, infrared, optical, and radio sensors to identify anomalous interstellar or atmospheric objects without human bias.
+- **AIAA (American Institute of Aeronautics and Astronautics)**: UAP Integration & Outreach Committee (UAPIOC) examining flight safety, aviation encounters, and technical measurement parameters.
+- **The Sol Foundation**: Academic and policy research institute addressing scientific, governance, and philosophical dimensions of UAP research.
+
+### Tier III: Multi-Sensor Autonomous Sky Observation Networks
+- **Skywatcher.ai**: `https://skywatcher.ai/research` — AI-driven computer vision, multi-spectral real-time tracking, and automated atmospheric anomaly discrimination.
+- **Sky360 Network**: `https://www.sky360.org/` — Global citizen-science automated sky observatory network deploying fisheye optical, pan-tilt-zoom, and RF sensors.
+- **UFODAP (UFO Data Acquisition Project)**: Standardized optical and multispectral hardware stations designed for autonomous triangulation and target acquisition.
+- **Project Hessdalen (Østfold University College, Norway)**: The world's longest-running scientific field laboratory recording optical, electromagnetic, and radar signatures of persistent aerial anomalies since 1983.
+
+### Tier IV: Sensor Telemetry, Spaceflight & Ephemeris Deconfliction
+- **Celestrak / Space-Track (18th Space Defense Squadron)**: Authoritative NORAD Two-Line Element (TLE) orbital vectors for deconflicting LEO satellite constellations (Starlink, OneWeb, ISS, space debris).
+- **ADS-B Exchange**: Unfiltered, non-censored global flight tracking feed for deconflicting military, civilian, and experimental transponders without commercial aggregation filtering.
+- **NOAA / National Weather Service NEXRAD**: Multi-tilt dual-polarization weather radar archives for deconflicting anomalous propagation (AP), ground clutter, chaff, and meteorological plumes.
+- **NASA / JPL Horizons System**: High-precision solar system ephemeris for identifying celestial bodies (Venus, Jupiter, Sirius) that cause nocturnal optical illusions or atmospheric mirages.
+
+### Tier V: Theoretical Spacetime Metric & Decoupled Physics
+- **Metric Distortion Mechanics**: Peer-reviewed General Relativity literature on localized spacetime manipulation (Alcubierre 1994, Lentz 2021 positive-energy solitons, Bobrick & Martire 2021 physical warp drive geometries).
+- **Physical Decoupling Diagnostics**: Boundary-layer vacuum shearing models explaining the absence of barometric shockwaves, sonic booms, and cavitation in authentic transmedium encounters.
+
