@@ -36,13 +36,19 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Positive Control & Curated Test Cases
-  const handleLoadCuratedCase = (type: 'wargov' | 'nimitz' | 'cgi' | 'starlink' | 'triangle' | 'pet' | 'couch' | 'car' | 'selfie') => {
+  const handleLoadCuratedCase = (type: 'wargov' | 'pursue' | 'razr' | 'nimitz' | 'cgi' | 'starlink' | 'triangle' | 'pet' | 'couch' | 'car' | 'selfie') => {
     setIntakeTab('url');
     setAnalysisResult(null);
     setIsPublished(false);
     setErrorMsg(null);
 
-    if (type === 'wargov') {
+    if (type === 'razr') {
+      setTargetUrl('https://www.reddit.com/r/Damnthatsinteresting/comments/w251su/sideways_flying_ufo_filmed_with_a_motorola_razr/');
+      setIncidentNotes('Sideways flying UFO filmed with a Motorola RAZR V3 by identified witness Marvin Badilla in Tarbaca, Costa Rica (2007). Disc tilts onto its edge and transits without aerodynamic surfaces. Witness went publicly on record with national news.');
+    } else if (type === 'pursue') {
+      setTargetUrl('https://www.youtube.com/watch?v=s87jc8W-oGE');
+      setIncidentNotes('US Dept. of War PURSUE Declassification Release (Presidential Unsealing and Reporting System for UAP Encounters). Official multi-sensor declassified recording of unresolved anomalous target, verified through DOW / AARO transparency framework.');
+    } else if (type === 'wargov') {
       setTargetUrl('https://www.war.gov/ufo/?releaseDate=Release+03&release=03#FBI-UAP-PR003-Orbs-Over-the-Pond-2024');
       setIncidentNotes('Positive control report from US Dept of War - confirmed UAP incident: FBI-UAP-PR003 Orbs Over the Pond 2024. Multi-sensor FLIR and optical capture of multiple spherical orbs hovering stationary over water with zero downwash, positive lift without aerodynamic surfaces, and rapid coordinated vector departure.');
     } else if (type === 'nimitz') {
@@ -64,8 +70,8 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
       setTargetUrl('https://www.youtube.com/watch?v=car_headlights_night_highway');
       setIncidentNotes('Nighttime highway dashcam footage of approaching automobile headlights. Testing light bloom against runway PAPI lights and atmospheric inversion mirages.');
     } else if (type === 'selfie') {
-      setTargetUrl('https://www.instagram.com/p/night_skywatcher_selfie/');
-      setIncidentNotes('Skywatcher taking a selfie in the dark with red headlamp. Checking carbon-based primate optical characteristics and dark adaptation principles.');
+      setTargetUrl('https://www.instagram.com/p/night_field_observer_selfie/');
+      setIncidentNotes('Field observer taking a selfie in the dark with red headlamp. Checking carbon-based primate optical characteristics and dark adaptation principles.');
     } else {
       setTargetUrl('https://www.youtube.com/watch?v=zbdeehdduyc');
       setIncidentNotes('Equilateral Black Triangle UFO - stabilized - part 1. Three corner luminous apertures and central emitter exhibiting steady axial planar rotation without sound.');
@@ -178,7 +184,7 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Bio-Acoustics & Infrasound Sky Perception',
             concept: 'Canines have an auditory range of 67 Hz to 45,000 Hz. In historical aerospace investigations, animals frequently react to high-frequency electromagnetic radar pulses and infrasound before human observers look up.',
-            skyWatcherTip: 'When skywatching at night, notice if local dogs or birds suddenly alert before looking up—animal acoustic cues frequently pre-date visual acquisition!'
+            observerTip: 'When observing nocturnal skies, notice if local dogs or birds suddenly alert before looking up—animal acoustic cues frequently pre-date visual acquisition!'
           },
           dualLens: {
             classicalDeconfliction: 'Canis familiaris operating under standard planetary gravity.',
@@ -214,7 +220,7 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Inertial Mass vs Gravitational Mass in General Relativity',
             concept: 'Einstein’s Equivalence Principle states that inertial mass (resistance to acceleration) and gravitational mass (attraction to Earth) are fundamentally identical. A UAP metric engine theoretically bypasses this by curving local spacetime.',
-            skyWatcherTip: 'True aerial anomalies change velocity instantly without aerodynamic tilt because they follow altered spacetime geodesics, whereas conventional craft must pitch to turn.'
+            observerTip: 'True aerial anomalies change velocity instantly without aerodynamic tilt because they follow altered spacetime geodesics, whereas conventional craft must pitch to turn.'
           },
           dualLens: {
             classicalDeconfliction: 'Zero flight dynamics. Stationary domestic furniture.',
@@ -250,7 +256,7 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Runway Approach Lighting & PAPI vs Terrestrial Halogens',
             concept: 'Automobile headlights viewed from distant ridges or coastal bluffs frequently mimic runway Precision Approach Path Indicators (PAPI) or aircraft taxi lights due to atmospheric temperature inversion mirages.',
-            skyWatcherTip: 'Use a simple hand compass or smartphone azimuth tool: if a bright double-orb stays within 2° of a known highway heading, it is atmospheric refraction of vehicular traffic.'
+            observerTip: 'Use a simple hand compass or smartphone azimuth tool: if a bright double-orb stays within 2° of a known highway heading, it is atmospheric refraction of vehicular traffic.'
           },
           dualLens: {
             classicalDeconfliction: 'Automotive vehicle operating on paved roadway.',
@@ -286,7 +292,7 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Human Eye Angular Resolution & Night Sky Dark Adaptation',
             concept: 'The human fovea has an angular resolution limit of ~1 arcminute (0.016°), and the eye takes 20-30 minutes in total darkness for rhodopsin in rod cells to fully regenerate. Looking at bright smartphone screens immediately destroys night adaptation!',
-            skyWatcherTip: 'Switch your skywatching screens to red/monochrome mode (or dim down) to preserve your scotopic night vision for detecting faint anomalous satellites.'
+            observerTip: 'Switch your mobile display screens to red/monochrome mode (or dim down) to preserve your scotopic night vision for detecting faint anomalous satellites.'
           },
           dualLens: {
             classicalDeconfliction: 'Terrestrial homo sapiens observer.',
@@ -373,176 +379,132 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
 
   return (
     <div className="space-y-4 animate-fade-in font-sans">
-      {/* Tier 3 Header */}
-      <div className="glass-panel border border-amber-500/30 rounded-2xl p-3.5 sm:p-4 bg-gradient-to-r from-amber-950/30 via-slate-900 to-slate-950">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
+      {/* Tier 3 Header (Less-Ink Streamlined) */}
+      <div className="glass-panel border border-amber-500/20 rounded-2xl p-3 sm:p-4 bg-slate-950/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
             <div className="flex items-center space-x-2">
-              <span className="px-2 py-0.2 rounded-full text-[9px] font-mono font-black bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                TIER 3 // OSINT FORENSICS
+              <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-black bg-amber-500/20 text-amber-300">
+                URL & MEDIA SLEUTH
               </span>
               <span className="text-[11px] font-mono text-slate-400">
-                WEB URLS & SYNTHETIC MEDIA
+                AI FAKE & SATELLITE DISCRIMINATION
               </span>
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-white tracking-wide">
-              Internet Sleuth Lab & Forensics
-            </h3>
-            <p className="text-xs text-slate-300">
-              Cross-reference viral URLs, discriminate generative AI/CGI fakes, and generate formal diagnostic reports.
+            <p className="text-xs text-slate-300 mt-1">
+              Paste any video or image link for instant multi-sensor deconfliction and forensic screening.
             </p>
-          </div>
-
-          <div className="flex items-center space-x-1.5 text-[10px] font-mono bg-slate-950/80 px-2.5 py-1 rounded-xl border border-amber-500/40 text-amber-300 self-start sm:self-auto shrink-0">
-            <Cpu className="w-3.5 h-3.5 text-amber-400" />
-            <span>AI FAKE DISCRIMINATION</span>
           </div>
         </div>
       </div>
 
-      {/* Curated Positive Controls & Casefile Presets */}
-      <div className="glass-panel border border-white/10 rounded-2xl p-3 bg-slate-900/60 space-y-2">
-        <div className="flex items-center justify-between text-[11px] font-mono">
-          <span className="text-slate-300 font-bold flex items-center space-x-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Curated Controls & Test Cases:</span>
-          </span>
-          <span className="text-[10px] text-slate-500 hidden sm:inline">Tap to load & analyze</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
-          <button
-            onClick={() => handleLoadCuratedCase('wargov')}
-            className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-bold transition cursor-pointer flex items-center space-x-1"
-          >
-            <ShieldCheck className="w-3 h-3 text-amber-400" />
-            <span>War.gov Orbs (Positive Control)</span>
-          </button>
-
-          <button
-            onClick={() => handleLoadCuratedCase('nimitz')}
-            className="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 transition cursor-pointer flex items-center space-x-1"
-          >
-            <Globe className="w-3 h-3 text-cyan-400" />
-            <span>Nimitz Tic-Tac</span>
-          </button>
-
-          <button
-            onClick={() => handleLoadCuratedCase('cgi')}
-            className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 transition cursor-pointer flex items-center space-x-1"
-          >
-            <ShieldAlert className="w-3 h-3 text-rose-400" />
-            <span>CGI VFX Hoax</span>
-          </button>
-
-          <button
-            onClick={() => handleLoadCuratedCase('starlink')}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition cursor-pointer"
-          >
-            Starlink LEO
-          </button>
-
-          <button
-            onClick={() => handleLoadCuratedCase('triangle')}
-            className="px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300 transition cursor-pointer"
-          >
-            TR-3B Triangle
-          </button>
-
-          <span className="text-slate-600 px-0.5">|</span>
-          <span className="text-purple-400 font-bold uppercase tracking-wider shrink-0">Tests:</span>
-
-          <button
-            onClick={() => handleLoadCuratedCase('pet')}
-            className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-            title="Test viral pet dog video with PG-13 humor and bio-acoustics lesson"
-          >
-            🐶 Dog
-          </button>
-          <button
-            onClick={() => handleLoadCuratedCase('couch')}
-            className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-            title="Test living room couch with PG-13 humor and gravitational mass lesson"
-          >
-            🛋️ Couch
-          </button>
-          <button
-            onClick={() => handleLoadCuratedCase('car')}
-            className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-            title="Test automotive headlights vs runway approach lighting"
-          >
-            🚗 Car
-          </button>
-          <button
-            onClick={() => handleLoadCuratedCase('selfie')}
-            className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-            title="Test homo sapiens selfie with dark adaptation lesson"
-          >
-            🤳 Selfie
-          </button>
-        </div>
+      {/* Quick-Pick Test Cases (Clean Less-Ink Pills) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto py-1 font-mono text-[10px]">
+        <span className="text-slate-400 font-bold shrink-0 flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-amber-400" />
+          <span>Presets:</span>
+        </span>
+        <button
+          onClick={() => handleLoadCuratedCase('pursue')}
+          className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold transition cursor-pointer whitespace-nowrap shadow-sm"
+          title="Positive Control: Presidential Unsealing and Reporting System for UAP Encounters (PURSUE) / Dept of War"
+        >
+          🏛️ DOW PURSUE
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('razr')}
+          className="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/50 text-teal-300 font-bold transition cursor-pointer whitespace-nowrap shadow-sm"
+          title="Witness Credibility & Optical Sensor Case: 2007 Costa Rica (Motorola RAZR V3 / Marvin Badilla)"
+        >
+          📱 RAZR 2007 (Witness)
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('wargov')}
+          className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🛸 War.gov Orbs
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('nimitz')}
+          className="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🎯 Nimitz Tic-Tac
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('starlink')}
+          className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🛰️ Starlink LEO
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('cgi')}
+          className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🎭 CGI VFX Hoax
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('triangle')}
+          className="px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🔺 Triangle
+        </button>
+        <button
+          onClick={() => handleLoadCuratedCase('pet')}
+          className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition cursor-pointer whitespace-nowrap"
+        >
+          🐶 Dog Zoomies
+        </button>
       </div>
 
       {/* Intake Switcher: URL vs Media File */}
-      <div className="glass-panel border border-white/10 rounded-2xl p-3.5 sm:p-5 space-y-3.5 bg-slate-900/80">
-        <div className="flex items-center space-x-2 border-b border-white/10 pb-2.5">
+      <div className="glass-panel border border-white/10 rounded-2xl p-3.5 sm:p-4 space-y-3 bg-slate-900/80">
+        <div className="flex items-center space-x-2 border-b border-white/10 pb-2">
           <button
             onClick={() => setIntakeTab('url')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
               intakeTab === 'url'
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <LinkIcon className="w-3.5 h-3.5" />
-            <span>Paste URL</span>
+            <span>Web URL</span>
           </button>
 
           <button
             onClick={() => setIntakeTab('media')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
               intakeTab === 'media'
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Upload File / Audio</span>
+            <span>Upload File</span>
           </button>
         </div>
 
         {/* Tab A: URL Intake */}
         {intakeTab === 'url' ? (
-          <div className="space-y-4 font-mono text-xs">
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-300 block uppercase">
-                TARGET WEB OR SOCIAL MEDIA URL:
-              </label>
-              <div className="relative">
-                <input
-                  type="url"
-                  value={targetUrl}
-                  onChange={(e) => setTargetUrl(e.target.value)}
-                  placeholder="https://www.war.gov/ufo/... or https://www.youtube.com/watch?v=... or X/Reddit link"
-                  className="w-full bg-slate-950 border border-white/15 rounded-2xl py-3 pl-10 pr-4 text-cyan-300 text-xs focus:outline-none focus:border-amber-400 transition"
-                />
-                <Globe className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-              </div>
-              <p className="text-[10px] text-slate-500">
-                Supports YouTube, X (Twitter), TikTok, Reddit, War.gov / AARO archives, and direct MP4/stream links.
-              </p>
+          <div className="space-y-3 font-mono text-xs">
+            <div className="relative">
+              <input
+                type="url"
+                value={targetUrl}
+                onChange={(e) => setTargetUrl(e.target.value)}
+                placeholder="Paste video or image URL (YouTube, X/Twitter, Reddit, AARO, direct link)..."
+                className="w-full bg-slate-950 border border-white/15 rounded-xl py-2.5 pl-9 pr-4 text-cyan-300 text-xs focus:outline-none focus:border-amber-400 transition"
+              />
+              <Globe className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-300 block uppercase">
-                SLEUTH INVESTIGATION & CONTEXT NOTES:
-              </label>
+            <div>
               <textarea
                 value={incidentNotes}
                 onChange={(e) => setIncidentNotes(e.target.value)}
-                placeholder="Add details: date/time of incident, location, witness statements, suspected CGI anomalies, or positive control indicators..."
-                rows={3}
-                className="w-full bg-slate-950 border border-white/15 rounded-2xl p-3 text-slate-200 text-xs focus:outline-none focus:border-amber-400 transition font-sans placeholder:text-slate-600"
+                placeholder="Optional notes: location, date/time, witness context..."
+                rows={2}
+                className="w-full bg-slate-950 border border-white/15 rounded-xl p-2.5 text-slate-200 text-xs focus:outline-none focus:border-amber-400 transition font-sans placeholder:text-slate-600"
               />
             </div>
           </div>

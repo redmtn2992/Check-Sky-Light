@@ -128,31 +128,31 @@ export const SightingFeed: React.FC<SightingFeedProps> = ({
                         loading="lazy"
                       />
                       <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-mono font-bold text-cyan-300 border border-cyan-500/30">
-                        {dist} mi from you
+                        {dist} mi
                       </div>
                       <div className="absolute top-3 right-3 bg-rose-950/80 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-mono font-bold text-rose-300 border border-rose-500/30">
                         {sighting.probabilityScore}% ANOMALY
                       </div>
                     </div>
                   )}
-                  <div className="p-5 space-y-3">
+                  <div className="p-4 sm:p-5 space-y-2.5">
                     <div className="flex items-center space-x-2 text-xs text-slate-400">
                       <span className="text-slate-300 font-medium">{sighting.observerName}</span>
                       <span>•</span>
-                      <span className="flex items-center text-cyan-300">
-                        <MapPin className="w-3.5 h-3.5 mr-1 text-cyan-400" />
-                        {sighting.locationName}
+                      <span className="flex items-center text-cyan-300 truncate">
+                        <MapPin className="w-3.5 h-3.5 mr-1 text-cyan-400 shrink-0" />
+                        <span className="truncate">{sighting.locationName}</span>
                       </span>
                     </div>
-                    <h3 className="font-bold text-slate-100 text-base group-hover:text-cyan-300 transition line-clamp-2">
+                    <h3 className="font-bold text-slate-100 text-sm sm:text-base group-hover:text-cyan-300 transition line-clamp-1">
                       {sighting.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
                       {sighting.description}
                     </p>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {sighting.tags.map((tag) => (
-                        <span key={tag} className="text-xs font-mono bg-white/[0.04] text-slate-300 px-2 py-0.5 rounded-md border border-white/5">
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {sighting.tags.slice(0, 2).map((tag) => (
+                        <span key={tag} className="text-[11px] font-mono bg-white/[0.04] text-slate-300 px-2 py-0.5 rounded-md border border-white/5 truncate max-w-[140px]">
                           #{tag}
                         </span>
                       ))}

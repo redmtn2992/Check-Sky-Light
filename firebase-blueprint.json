@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "SightingReport": {
+      "title": "SightingReport",
+      "description": "Civilian atmospheric and UAP observation report with multi-sensor telemetry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "timestamp": { "type": "string" },
+        "location": { "type": "string", "maxLength": 200 },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "classification": { "type": "string", "maxLength": 100 },
+        "confidenceScore": { "type": "number" },
+        "deconflictionStatus": { "type": "string", "maxLength": 50 },
+        "mediaUrl": { "type": "string", "maxLength": 2000 },
+        "reporterId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "title", "timestamp", "deconflictionStatus"]
+    },
+    "AppDiagnostics": {
+      "title": "AppDiagnostics",
+      "description": "App health and telemetry status.",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["status"]
+    }
+  },
+  "firestore": {
+    "/sightings/{sightingId}": {
+      "schema": "SightingReport",
+      "description": "Community verified and logged UAP observations"
+    },
+    "/diagnostics/{diagId}": {
+      "schema": "AppDiagnostics",
+      "description": "System diagnostics ping"
+    }
+  }
+}

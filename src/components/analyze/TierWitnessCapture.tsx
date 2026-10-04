@@ -49,8 +49,8 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
     }
   };
 
-  const handleUseSampleWitnessCapture = (type: 'orb' | 'triangle' | 'dog' | 'car' | 'sofa' | 'selfie' | 'fan') => {
-    setMediaType(type === 'orb' || type === 'dog' || type === 'car' || type === 'fan' ? 'video' : 'photo');
+  const handleUseSampleWitnessCapture = (type: 'orb' | 'triangle' | 'drone' | 'jet' | 'dog' | 'car' | 'sofa' | 'selfie' | 'fan') => {
+    setMediaType(type === 'orb' || type === 'drone' || type === 'jet' || type === 'dog' || type === 'car' || type === 'fan' ? 'video' : 'photo');
     
     if (type === 'orb') {
       setPreviewUrl('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80');
@@ -62,6 +62,16 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
       setWitnessNotes('Equilateral triangular array with three corner luminous apertures maintaining fixed orientation during 45° planar tilt.');
       setDeviceAzimuth(185);
       setDeviceElevation(55);
+    } else if (type === 'drone') {
+      setPreviewUrl('https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1000&q=80');
+      setWitnessNotes('Consumer quadcopter drone hovering at 120 ft AGL with 4 distinct rotor blade wash patterns and standard red/green navigation LED strobes.');
+      setDeviceAzimuth(175);
+      setDeviceElevation(22);
+    } else if (type === 'jet') {
+      setPreviewUrl('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1000&q=80');
+      setWitnessNotes('Commercial twin-engine passenger airliner cruising at FL340 leaving distinct condensation trail (contrail) with FAA 1.2 Hz anti-collision strobes.');
+      setDeviceAzimuth(310);
+      setDeviceElevation(48);
     } else if (type === 'dog') {
       setPreviewUrl('https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1000&q=80');
       setWitnessNotes('Golden retriever puppy executing rapid living room zoomies. Checking for gravitational field distortion or bio-warp engine.');
@@ -143,15 +153,97 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
       console.warn('Witness analysis error, generating fallback evaluation:', err);
       
       const lower = (witnessNotes + ' ' + (previewUrl || '')).toLowerCase();
+      const isDrone = lower.includes('drone') || lower.includes('quadcopter') || lower.includes('part 107') || lower.includes('rotor');
+      const isJet = lower.includes('airliner') || lower.includes('jet') || lower.includes('boeing') || lower.includes('airbus') || lower.includes('contrail') || lower.includes('fl340');
       const isPet = lower.includes('dog') || lower.includes('cat') || lower.includes('puppy') || lower.includes('pet');
       const isFurniture = lower.includes('couch') || lower.includes('sofa') || lower.includes('chair') || lower.includes('table');
       const isCar = lower.includes('car') || lower.includes('vehicle') || lower.includes('auto') || lower.includes('sedan') || lower.includes('headlamp');
       const isSelfie = lower.includes('selfie') || lower.includes('portrait') || lower.includes('friend') || lower.includes('person') || lower.includes('human');
-      const isFan = lower.includes('fan') || lower.includes('rotor') || lower.includes('ceiling');
+      const isFan = lower.includes('fan') || lower.includes('ceiling');
 
       let fallbackReport: GeminiForensicAnalysis;
 
-      if (isPet) {
+      if (isDrone) {
+        fallbackReport = {
+          id: `witness-${Date.now()}`,
+          sourceType: mediaType,
+          sourceTitle: `Civilian Quadcopter Drone (FAA Part 107 Deconfliction)`,
+          sourcePreviewUrl: previewUrl || undefined,
+          timestamp: new Date().toISOString(),
+          authenticityScore: 3,
+          fakeProbability: 1,
+          verdict: 'CONVENTIONAL_AIRCRAFT',
+          verdictTitle: 'Airspace Deconflicted: Consumer Multi-Rotor Drone',
+          verdictSummary: 'EMPIRICAL DECONFLICTION TRIUMPH: Target resolved as a civilian quadcopter drone operating at 120 ft AGL. Optical inspection confirms 4 micro-rotors creating localized downward atmospheric blade wash, accompanied by standard FAA red/green navigation LEDs. Zero metric decoupling or anomalous physics.',
+          confidenceScore: 99,
+          dtcCode: 'P0505',
+          dtcTitle: 'P0505: Deconflicted Civilian Rotary Airframe / Part 107 UAS',
+          mundaneObjectDetected: false,
+          educationalAeroAstronomyLesson: {
+            topic: 'Quadcopter Blade Wash vs Spacetime Metric Curvature',
+            concept: 'Drones sustain lift strictly via Newtonian momentum exchange (forcing air downward). True metric propulsion craft curve spacetime itself and exhibit zero downwash on grass or water. Detecting aerodynamic blade wash immediately eliminates anomalous propulsion.',
+            observerTip: 'Look for rhythmic high-frequency motor whine and small red/green blinking navigation lights. At night, consumer drones tilt forward by 15-25° to move laterally, unlike metric UAPs which accelerate without pitching.'
+          },
+          dualLens: {
+            classicalDeconfliction: 'Lens A Baseline Match: Airframe exhibits 4-rotor rotary lift, standard Part 107 operational envelope, and typical drone hovering telemetry.',
+            metricSignature: 'Zero metric distortion. Ambient atmospheric fluid downwash clearly observed beneath rotor blades.',
+            vfxForensics: 'Authentic consumer drone optical telemetry and consistent rolling shutter blade artifacts.'
+          },
+          fiveObservables: {
+            instantaneousAcceleration: false,
+            hypersonicVelocity: false,
+            lowObservability: false,
+            transmediumTravel: false,
+            positiveLift: true
+          },
+          kinematics: {
+            estimatedSpeed: '14 kts hovering drift',
+            estimatedAltitude: '120 ft AGL',
+            kinematicGForce: '1.1 G (Classical aerodynamic lift)'
+          },
+          detectedFeatures: ['4-Rotor Aerodynamic Wash', 'Red/Green FAA Anti-Collision LEDs', 'Fixed 15° Pitch Tilt during Vector Shifts']
+        };
+      } else if (isJet) {
+        fallbackReport = {
+          id: `witness-${Date.now()}`,
+          sourceType: mediaType,
+          sourceTitle: `Commercial Passenger Airliner (ADS-B Airspace Deconfliction)`,
+          sourcePreviewUrl: previewUrl || undefined,
+          timestamp: new Date().toISOString(),
+          authenticityScore: 2,
+          fakeProbability: 0,
+          verdict: 'CONVENTIONAL_AIRCRAFT',
+          verdictTitle: 'Airspace Deconflicted: High-Altitude Commercial Airliner',
+          verdictSummary: 'EMPIRICAL DECONFLICTION TRIUMPH: Target definitively matched to commercial transponder traffic cruising at FL340. Swept-wing aerodynamic profile produces predictable engine exhaust contrail and regular 1.2 Hz anti-collision strobe flashes.',
+          confidenceScore: 99,
+          dtcCode: 'P0505',
+          dtcTitle: 'P0505: Deconflicted Commercial Airframe / ADS-B Squawk Match',
+          mundaneObjectDetected: false,
+          educationalAeroAstronomyLesson: {
+            topic: 'Persistent Contrails vs Atmospheric Ionization Plasma',
+            concept: 'Jet engine exhaust contains water vapor that condenses on soot particles at -40°C in the upper troposphere, creating persistent ice-crystal clouds (contrails). Authentic UAPs leave zero water-ice condensation trails because they do not combust hydrocarbon fuel.',
+            observerTip: 'If an aerial object leaves a long white vapor trail that lasts for minutes, it is standard jet fuel combustion. Anomalous craft produce no contrail even at 35,000 ft.'
+          },
+          dualLens: {
+            classicalDeconfliction: 'Lens A Baseline Match: High-altitude commercial jet transport matching Class A airspace airways and FAA 1.2 Hz anti-collision strobe flashing sequence.',
+            metricSignature: 'Zero metric decoupling. Exhaust thermal plume and aerodynamic lift surfaces verified.',
+            vfxForensics: 'Authentic high-altitude atmospheric refraction and true optical contrail dispersion.'
+          },
+          fiveObservables: {
+            instantaneousAcceleration: false,
+            hypersonicVelocity: false,
+            lowObservability: false,
+            transmediumTravel: false,
+            positiveLift: true
+          },
+          kinematics: {
+            estimatedSpeed: '460 kts (Mach 0.78 cruising)',
+            estimatedAltitude: '34,000 ft MSL (FL340)',
+            kinematicGForce: '1.0 G (Aerodynamic level flight)'
+          },
+          detectedFeatures: ['Swept-Wing Airframe Geometry', 'Persistent Ice Contrail Plume', 'FAA 1.2 Hz White Anti-Collision Strobe']
+        };
+      } else if (isPet) {
         fallbackReport = {
           id: `witness-${Date.now()}`,
           sourceType: mediaType,
@@ -172,7 +264,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Bio-Acoustics & Infrasound Sky Perception',
             concept: 'Canines have an auditory range of 67 Hz to 45,000 Hz (far beyond humans). In historical aerospace investigations, domestic animals often react to high-frequency electromagnetic radar spikes and supersonic acoustic pressure pulses seconds before human observers notice incoming high-altitude craft.',
-            skyWatcherTip: 'When skywatching at night, notice if local dogs or nocturnal birds suddenly fall silent or alert before you look up—animal acoustic cues frequently pre-date visual acquisition!'
+            observerTip: 'When observing the night sky, notice if local dogs or nocturnal birds suddenly fall silent or alert before you look up—animal acoustic cues frequently pre-date visual acquisition!'
           },
           dualLens: {
             classicalDeconfliction: 'Subject deconflicted as Canis familiaris. Maximum kinetic sprint velocity ~22 kts, completely bound to planetary gravity.',
@@ -214,7 +306,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Inertial Mass vs Gravitational Mass in General Relativity',
             concept: 'Einstein’s Equivalence Principle states that inertial mass (resistance to acceleration) and gravitational mass (attraction to Earth) are fundamentally identical. A UAP metric engine theoretically bypasses this by curving local spacetime, rendering a massive vehicle essentially massless in freefall!',
-            skyWatcherTip: 'When observing aerial phenomena, true anomalies change velocity instantly without aerodynamic tilt because they follow altered spacetime geodesics, whereas conventional craft must pitch to turn.'
+            observerTip: 'When observing aerial phenomena, true anomalies change velocity instantly without aerodynamic tilt because they follow altered spacetime geodesics, whereas conventional craft must pitch to turn.'
           },
           dualLens: {
             classicalDeconfliction: 'Zero flight dynamics. Stationary furniture.',
@@ -251,7 +343,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Runway Approach Lighting & PAPI vs Terrestrial Halogens',
             concept: 'Automobile headlights viewed from distant ridges or coastal bluffs frequently mimic runway Precision Approach Path Indicators (PAPI) or aircraft taxi lights. Atmospheric temperature inversions can cause headlights to refract and appear suspended in mid-air.',
-            skyWatcherTip: 'Use a simple hand compass or smartphone azimuth tool: if a bright double-orb stays within 2° of a known highway heading, it is atmospheric refraction of vehicular traffic.'
+            observerTip: 'Use a simple hand compass or smartphone azimuth tool: if a bright double-orb stays within 2° of a known highway heading, it is atmospheric refraction of vehicular traffic.'
           },
           dualLens: {
             classicalDeconfliction: 'Automotive vehicle operating on paved roadway.',
@@ -288,7 +380,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           educationalAeroAstronomyLesson: {
             topic: 'Human Eye Angular Resolution & Night Sky Dark Adaptation',
             concept: 'The human fovea has an angular resolution limit of ~1 arcminute (0.016°), and the eye takes 20-30 minutes in total darkness for rhodopsin in rod cells to fully regenerate. Looking at bright smartphone screens immediately destroys night adaptation!',
-            skyWatcherTip: 'Switch your skywatching screens to red/monochrome mode (or dim down) to preserve your scotopic night vision for detecting faint anomalous satellites.'
+            observerTip: 'Switch your mobile screens to red/monochrome mode (or dim down) to preserve your scotopic night vision for detecting faint anomalous satellites.'
           },
           dualLens: {
             classicalDeconfliction: 'Terrestrial homo sapiens observer.',
@@ -496,6 +588,23 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
                   className="px-2 py-0.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 transition cursor-pointer"
                 >
                   Delta Array
+                </button>
+
+                <span className="text-slate-600 px-0.5">|</span>
+                <span className="text-emerald-400 font-bold uppercase tracking-wider shrink-0">Lens A Deconflict:</span>
+                <button
+                  onClick={() => handleUseSampleWitnessCapture('drone')}
+                  className="px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 transition cursor-pointer"
+                  title="Test Lens A deconfliction against consumer quadcopter drone"
+                >
+                  🚁 Drone
+                </button>
+                <button
+                  onClick={() => handleUseSampleWitnessCapture('jet')}
+                  className="px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 transition cursor-pointer"
+                  title="Test Lens A deconfliction against commercial airliner"
+                >
+                  ✈️ Airliner
                 </button>
 
                 <span className="text-slate-600 px-0.5">|</span>

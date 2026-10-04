@@ -48,14 +48,32 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
 
   // Convert analysis result into a community verified sighting report
   const handlePublishAnalysis = (analysis: GeminiForensicAnalysis) => {
+    // If this analysis came from a web URL or third-party media, use the extracted incident location (or "Online OSINT Review")
+    // rather than stamping the local observer's physical GPS onto an external event.
+    const isExternalMedia = analysis.sourceType === 'url';
+    const resolvedLocationName = isExternalMedia
+      ? (analysis.incidentLocation || 'Online / Remote OSINT Analysis')
+      : userLocation.city
+      ? `${userLocation.city}, ${userLocation.region || ''}`
+      : 'Local Airspace Sector';
+
+    const resolvedLocation: LocationCoords = isExternalMedia
+      ? {
+          lat: 0,
+          lng: 0,
+          city: analysis.incidentLocation || 'Remote OSINT Incident',
+          region: 'Global / Web'
+        }
+      : userLocation;
+
     const newReport: SightingReport = {
       id: `sighting-${Date.now()}`,
       title: analysis.verdictTitle || 'Gemini Forensic Analysis Report',
       observerName: 'Check Sky Light Forensic Observer',
       observerBadge: analysis.authenticityScore >= 70 ? 'AI Verified Anomaly' : 'Media Forensic Analyst',
       timestamp: new Date().toISOString(),
-      location: userLocation,
-      locationName: userLocation.city ? `${userLocation.city}, ${userLocation.region || ''}` : 'Local Airspace Sector',
+      location: resolvedLocation,
+      locationName: resolvedLocationName,
       description: `${analysis.verdictSummary}\n\n[DTC Code]: ${analysis.dtcCode || 'P1947'} - ${analysis.dtcTitle || ''}\n\n[Lens A Classical Baseline]: ${analysis.dualLens?.classicalDeconfliction || 'Screened against FAA airspace'}\n\n[Lens B Metric Signature]: ${analysis.dualLens?.metricSignature || 'Boundary-layer decoupling evaluated'}`,
       probabilityScore: analysis.authenticityScore,
       status: analysis.authenticityScore >= 70 ? 'AI_ANOMALY_CONFIRMED' : 'COMMUNITY_VERIFIED',
@@ -158,132 +176,72 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
         </div>
       </div>
 
-      {/* Primary 3-Tier Navigation Switcher */}
-      <div className="glass-panel border border-cyan-500/30 rounded-2xl p-1.5 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 shadow-md">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-1 text-xs font-mono">
-          {/* Tier 1: Eyewitness AI */}
-          <button
-            onClick={() => setActiveTier('witness')}
-            className={`p-2 rounded-xl text-left transition cursor-pointer flex flex-col justify-between ${
-              activeTier === 'witness'
-                ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                activeTier === 'witness' ? 'bg-slate-950 text-cyan-300' : 'bg-cyan-950 text-cyan-400'
-              }`}>
-                TIER 1
-              </span>
-              <Sparkles className={`w-3.5 h-3.5 ${activeTier === 'witness' ? 'text-slate-950' : 'text-cyan-400'}`} />
-            </div>
-            <div className="mt-1">
-              <span className="font-extrabold text-xs block truncate">1. Eyewitness</span>
-              <span className={`text-[10px] block truncate ${activeTier === 'witness' ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
-                AI Optical Score
-              </span>
-            </div>
-          </button>
-
-          {/* Tier 2: 2-Phone Triangulation */}
-          <button
-            onClick={() => setActiveTier('triangulate')}
-            className={`p-2 rounded-xl text-left transition cursor-pointer flex flex-col justify-between ${
-              activeTier === 'triangulate'
-                ? 'bg-teal-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                activeTier === 'triangulate' ? 'bg-slate-950 text-teal-300' : 'bg-teal-950 text-teal-400'
-              }`}>
-                TIER 2
-              </span>
-              <Users className={`w-3.5 h-3.5 ${activeTier === 'triangulate' ? 'text-slate-950' : 'text-teal-400'}`} />
-            </div>
-            <div className="mt-1">
-              <span className="font-extrabold text-xs block truncate">2. Triangulate</span>
-              <span className={`text-[10px] block truncate ${activeTier === 'triangulate' ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
-                Dual Sightlines
-              </span>
-            </div>
-          </button>
-
-          {/* Tier 3: OSINT Sleuth Lab */}
+      {/* Primary Navigation Switcher (Less-Ink Streamlined) */}
+      <div className="glass-panel border border-white/10 rounded-2xl p-1 bg-slate-950/80 shadow-md">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 text-xs font-mono">
+          {/* Option 1: URL / Media Link */}
           <button
             onClick={() => setActiveTier('osint')}
-            className={`p-2 rounded-xl text-left transition cursor-pointer flex flex-col justify-between ${
+            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
               activeTier === 'osint'
                 ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
                 : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                activeTier === 'osint' ? 'bg-slate-950 text-amber-300' : 'bg-amber-950 text-amber-400'
-              }`}>
-                TIER 3
-              </span>
-              <Globe className={`w-3.5 h-3.5 ${activeTier === 'osint' ? 'text-slate-950' : 'text-amber-400'}`} />
-            </div>
-            <div className="mt-1">
-              <span className="font-extrabold text-xs block truncate">3. OSINT Sleuth</span>
-              <span className={`text-[10px] block truncate ${activeTier === 'osint' ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
-                URL & CGI Screen
-              </span>
-            </div>
+            <Globe className={`w-4 h-4 ${activeTier === 'osint' ? 'text-slate-950' : 'text-amber-400'}`} />
+            <span className="font-extrabold text-[11px] block truncate">URL / Media</span>
           </button>
 
-          {/* Utility 1: Sonic FFT */}
+          {/* Option 2: Witness Capture */}
+          <button
+            onClick={() => setActiveTier('witness')}
+            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
+              activeTier === 'witness'
+                ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
+                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
+            }`}
+          >
+            <Sparkles className={`w-4 h-4 ${activeTier === 'witness' ? 'text-slate-950' : 'text-cyan-400'}`} />
+            <span className="font-extrabold text-[11px] block truncate">Capture / Photo</span>
+          </button>
+
+          {/* Option 3: Triangulate */}
+          <button
+            onClick={() => setActiveTier('triangulate')}
+            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
+              activeTier === 'triangulate'
+                ? 'bg-teal-500 text-slate-950 shadow-md font-bold'
+                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
+            }`}
+          >
+            <Users className={`w-4 h-4 ${activeTier === 'triangulate' ? 'text-slate-950' : 'text-teal-400'}`} />
+            <span className="font-extrabold text-[11px] block truncate">Triangulate</span>
+          </button>
+
+          {/* Option 4: Sonic FFT */}
           <button
             onClick={() => setActiveTier('sonic')}
-            className={`p-2 rounded-xl text-left transition cursor-pointer flex flex-col justify-between ${
+            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
               activeTier === 'sonic'
                 ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
+                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-400 border border-white/5'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                activeTier === 'sonic' ? 'bg-slate-950 text-cyan-300' : 'bg-slate-800 text-slate-400'
-              }`}>
-                AUDIO
-              </span>
-              <Volume2 className={`w-3.5 h-3.5 ${activeTier === 'sonic' ? 'text-slate-950' : 'text-cyan-400'}`} />
-            </div>
-            <div className="mt-1">
-              <span className="font-extrabold text-xs block truncate">Sonic FFT</span>
-              <span className={`text-[10px] block truncate ${activeTier === 'sonic' ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
-                Acoustics
-              </span>
-            </div>
+            <Volume2 className={`w-4 h-4 ${activeTier === 'sonic' ? 'text-slate-950' : 'text-cyan-400'}`} />
+            <span className="font-extrabold text-[11px] block truncate">Sonic FFT</span>
           </button>
 
-          {/* Utility 2: Verified Feed */}
+          {/* Option 5: Feed */}
           <button
             onClick={() => setActiveTier('feed')}
-            className={`p-2 rounded-xl text-left transition cursor-pointer flex flex-col justify-between ${
+            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
               activeTier === 'feed'
-                ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
+                ? 'bg-purple-500 text-slate-950 shadow-md font-bold'
+                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-400 border border-white/5'
             }`}
           >
-            <div className="flex items-center justify-between">
-              <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded ${
-                activeTier === 'feed' ? 'bg-slate-950 text-cyan-300' : 'bg-slate-800 text-slate-400'
-              }`}>
-                FEED
-              </span>
-              <Radio className={`w-3.5 h-3.5 ${activeTier === 'feed' ? 'text-slate-950' : 'text-cyan-400'}`} />
-            </div>
-            <div className="mt-1">
-              <span className="font-extrabold text-xs block truncate">Feed ({sightings.length})</span>
-              <span className={`text-[10px] block truncate ${activeTier === 'feed' ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
-                Ledger
-              </span>
-            </div>
+            <Radio className={`w-4 h-4 ${activeTier === 'feed' ? 'text-slate-950' : 'text-purple-400'}`} />
+            <span className="font-extrabold text-[11px] block truncate">Ledger ({sightings.length})</span>
           </button>
         </div>
       </div>

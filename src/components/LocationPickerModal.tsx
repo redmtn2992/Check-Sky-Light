@@ -25,8 +25,8 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
   const activeLocation = currentLocation || userLocation || {
     lat: 35.0844,
     lng: -106.6504,
-    city: 'Albuquerque',
-    region: 'New Mexico, USA'
+    city: 'GPS',
+    region: 'Sector Telemetry'
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -223,8 +223,8 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                     onSelectLocation({
                       lat: data.lat,
                       lng: data.lng,
-                      city: data.city || 'Albuquerque',
-                      region: data.region || 'New Mexico, USA'
+                      city: data.city || 'GPS',
+                      region: data.region || 'Sector Telemetry'
                     });
                     onClose();
                   }

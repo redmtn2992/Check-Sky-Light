@@ -205,8 +205,8 @@ export function saveSightingsToStorage(list: SightingReport[]): void {
 export const DEFAULT_APP_LOCATION = {
   lat: 35.0844,
   lng: -106.6504,
-  city: 'Albuquerque',
-  region: 'New Mexico, USA'
+  city: 'GPS',
+  region: 'Sector Telemetry'
 };
 
 const LOCATION_PREF_KEY = 'checkskylight_user_location_pref_v2';
@@ -217,8 +217,8 @@ export function loadLocationPreference(): { lat: number; lng: number; city?: str
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed.lat === 'number' && typeof parsed.lng === 'number') {
-        // If it was the legacy default Denver, migrate to Albuquerque
-        if (parsed.city === 'Denver' && Math.abs(parsed.lat - 39.7392) < 0.05) {
+        // If it was the legacy default 'Albuquerque' or 'Denver' before user acquired actual GPS or picked a city, migrate to clean 'GPS'
+        if ((parsed.city === 'Albuquerque' || parsed.city === 'Denver') && Math.abs(parsed.lat - 35.0844) < 0.05) {
           saveLocationPreference(DEFAULT_APP_LOCATION);
           return DEFAULT_APP_LOCATION;
         }

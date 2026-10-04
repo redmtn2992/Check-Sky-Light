@@ -492,21 +492,21 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
   return (
     <div className="relative w-full h-[calc(100dvh-12rem)] min-h-[480px] max-h-[820px] rounded-3xl overflow-hidden border border-cyan-800/60 shadow-2xl bg-slate-950 font-sans flex flex-col">
       {/* Top Tactical Status & Command Banner */}
-      <div className="bg-slate-950/95 backdrop-blur-md border-b border-cyan-950 px-4 py-3 z-20 flex flex-wrap items-center justify-between gap-2.5">
+      <div className="bg-slate-950/95 backdrop-blur-md border-b border-cyan-950 px-3.5 py-2.5 z-20 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-            <Radio className="w-4 h-4 animate-pulse" />
+          <div className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <Radio className="w-3.5 h-3.5 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-mono font-bold text-slate-100 tracking-wider">RADAR DECONFLICTION</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center space-x-1">
+              <span className="text-xs font-bold text-slate-100 tracking-wide">Live Airspace</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center space-x-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>ADS-B & FR24 LIVE</span>
+                <span>Active</span>
               </span>
             </div>
-            <p className="text-[10px] font-mono text-slate-400">
-              {userLocation.city || 'Current Fix'} • {flights.length} Flights • {balloons.length} Balloons • {satellites.length} Sats
+            <p className="text-[10px] text-slate-400">
+              {userLocation.city || 'Local Sector'} • {flights.length} Planes • {balloons.length} Balloons • {satellites.length} Sats
             </p>
           </div>
         </div>
@@ -516,18 +516,18 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
           {/* Educational Field Guide Button */}
           <button
             onClick={() => setShowEducationalGuide(true)}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 text-[11px] font-mono font-semibold transition cursor-pointer min-h-[36px]"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 text-[11px] font-semibold transition cursor-pointer min-h-[34px]"
             title="Open Airspace Deconfliction Field Guide & Educational Reference"
           >
             <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="hidden xs:inline">Field Guide</span>
+            <span className="hidden xs:inline">Guide</span>
           </button>
 
           {/* Multi-Observer Sightline Triangulation */}
           {onOpenTriangulation && (
             <button
               onClick={onOpenTriangulation}
-              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/40 text-teal-300 text-[11px] font-mono font-semibold transition cursor-pointer min-h-[36px]"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/40 text-teal-300 text-[11px] font-semibold transition cursor-pointer min-h-[34px]"
               title="Multi-Observer Sightline Triangulation Engine"
             >
               <Compass className="w-3.5 h-3.5 text-teal-400" />
@@ -540,7 +540,7 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
             href={fr24SectorMapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[11px] font-mono font-semibold transition cursor-pointer min-h-[36px]"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[11px] font-semibold transition cursor-pointer min-h-[34px]"
             title="Open Flightradar24 map centered at current coordinates"
           >
             <Plane className="w-3.5 h-3.5" />
@@ -551,21 +551,21 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
           {/* Sightline Deconfliction Tool Toggle */}
           <button
             onClick={() => setIsDeconflictToolOpen(!isDeconflictToolOpen)}
-            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[11px] font-mono font-semibold transition cursor-pointer border min-h-[36px] ${
+            className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition cursor-pointer border min-h-[34px] ${
               isDeconflictToolOpen
-                ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]'
+                ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-md font-bold'
                 : 'bg-slate-900 hover:bg-slate-850 text-cyan-400 border-cyan-800/60'
             }`}
           >
             <Crosshair className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">Check What I See</span>
+            <span className="hidden xs:inline">Check Sightline</span>
           </button>
 
           {/* Refresh Button */}
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-1.5 sm:p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-750 text-slate-300 hover:text-cyan-400 transition cursor-pointer relative min-h-[36px] min-w-[36px] flex items-center justify-center"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-750 text-slate-300 hover:text-cyan-400 transition cursor-pointer relative min-h-[34px] min-w-[34px] flex items-center justify-center"
             title="Force refresh transponders"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -646,7 +646,7 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
 
         {/* Filter Pills Header */}
         <div className="absolute top-2.5 left-2.5 right-2.5 sm:top-3 sm:left-3 sm:right-3 z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 pointer-events-none">
-          <div className="flex items-center gap-1.5 bg-slate-950/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800/90 pointer-events-auto shadow-2xl text-[10px] sm:text-[11px] font-mono overflow-x-auto no-scrollbar max-w-full">
+          <div className="flex items-center gap-1.5 bg-slate-950/90 backdrop-blur-md p-1 rounded-2xl border border-slate-800/90 pointer-events-auto shadow-2xl text-[10px] sm:text-[11px] font-mono overflow-x-auto no-scrollbar max-w-full">
             <button
               onClick={() => setActiveFilter('all')}
               className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer whitespace-nowrap shrink-0 ${
@@ -655,76 +655,73 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              ALL ({flights.length + balloons.length + satellites.length + sightings.length})
+              All ({flights.length + balloons.length + satellites.length + sightings.length})
             </button>
             <button
               onClick={() => setActiveFilter('flights')}
-              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1 whitespace-nowrap shrink-0 ${
                 activeFilter === 'flights'
                   ? 'bg-sky-500 text-slate-950 shadow-md'
                   : 'text-sky-400 hover:bg-sky-500/10'
               }`}
             >
-              <Plane className="w-3.5 h-3.5" />
-              <span>AIRCRAFT ({flights.length})</span>
+              <Plane className="w-3 h-3" />
+              <span>Planes ({flights.length})</span>
             </button>
             <button
               onClick={() => setActiveFilter('balloons')}
-              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1 whitespace-nowrap shrink-0 ${
                 activeFilter === 'balloons'
                   ? 'bg-amber-500 text-slate-950 shadow-md'
                   : 'text-amber-400 hover:bg-amber-500/10'
               }`}
             >
-              <svg width="12" height="14" viewBox="0 0 24 28" fill="none" className="shrink-0">
-                <circle cx="12" cy="9" r="7" fill="#f59e0b" />
-                <rect x="9" y="21.5" width="6" height="4.5" fill="#fef3c7" />
-              </svg>
-              <span>BALLOONS ({balloons.length})</span>
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0 inline-block"></span>
+              <span>Balloons ({balloons.length})</span>
             </button>
             <button
               onClick={() => setActiveFilter('satellites')}
-              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1 whitespace-nowrap shrink-0 ${
                 activeFilter === 'satellites'
                   ? 'bg-emerald-500 text-slate-950 shadow-md'
                   : 'text-emerald-400 hover:bg-emerald-500/10'
               }`}
             >
-              <Satellite className="w-3.5 h-3.5" />
-              <span>SATELLITES ({satellites.length})</span>
+              <Satellite className="w-3 h-3" />
+              <span>Sats ({satellites.length})</span>
             </button>
             <button
               onClick={() => setActiveFilter('uap')}
-              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap shrink-0 ${
+              className={`px-2.5 sm:px-3 py-1 rounded-xl font-bold uppercase transition cursor-pointer flex items-center space-x-1 whitespace-nowrap shrink-0 ${
                 activeFilter === 'uap'
                   ? 'bg-rose-500 text-white shadow-md'
                   : 'text-rose-400 hover:bg-rose-500/10'
               }`}
             >
-              <ShieldAlert className="w-3.5 h-3.5" />
-              <span>UAP / NHI ({sightings.length})</span>
+              <ShieldAlert className="w-3 h-3" />
+              <span>Reports ({sightings.length})</span>
             </button>
           </div>
 
           {/* Map Layer Switcher */}
-          <div className="flex items-center space-x-1 bg-slate-950/90 backdrop-blur-md p-1 rounded-2xl border border-slate-800 pointer-events-auto shadow-xl text-[10px] font-mono self-start sm:self-auto shrink-0">
+          <div className="flex items-center space-x-1 bg-slate-950/90 backdrop-blur-md p-1 rounded-xl border border-slate-800 pointer-events-auto shadow-xl text-[10px] font-mono self-start sm:self-auto shrink-0">
             <button
               onClick={() => setMapLayer('dark')}
-              className={`px-2 py-1 rounded-lg transition cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
                 mapLayer === 'dark' ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
               }`}
               title="Tactical Dark Radar Basemap (Esri Dark Canvas - No API Key Needed)"
             >
-              HUD DARK
+              Dark
             </button>
             <button
               onClick={() => setMapLayer('satellite')}
-              className={`px-2 py-1 rounded-lg transition cursor-pointer ${
+              className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
                 mapLayer === 'satellite' ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'
               }`}
               title="Satellite Photo Basemap"
             >
-              SATELLITE
+              Satellite
             </button>
             <button
               onClick={() => setShowRadarSweep(!showRadarSweep)}

@@ -285,6 +285,25 @@ export interface GeminiForensicAnalysis {
   dtcCode?: string;
   dtcTitle?: string;
   incidentPlatform?: string;
+  incidentLocation?: string;
+  sourceMetadata?: {
+    publisher?: string;
+    channelTitle?: string;
+    programInitiative?: string; // e.g. "Presidential Unsealing and Reporting System for UAP Encounters (PURSUE)" / DOW / AARO
+    classificationTier?: 'Tier I: Official Government Declassification' | 'Tier II: Scientific & Institutional Body' | 'Tier III: Autonomous Sky Network' | 'Tier IV: Ephemeris & Telemetry' | 'Tier V: General Media / Unvetted';
+    positiveControlVerified?: boolean;
+    declassificationTranche?: string;
+  };
+  witnessCredibility?: {
+    identifiedWitness: boolean;
+    witnessName?: string;
+    onTheRecord: boolean;
+    reputationalRiskFactor: 'HIGH' | 'MODERATE' | 'LOW';
+    directTestimonyProvided: boolean;
+    credibilityScore: number; // 0 to 100
+    credibilityAssessment: string;
+    corroboratingFactors: string[];
+  };
   corroborationSources?: string[];
   audioAcousticNotes?: string;
   mundaneObjectDetected?: boolean;
@@ -293,7 +312,7 @@ export interface GeminiForensicAnalysis {
   educationalAeroAstronomyLesson?: {
     topic: string;
     concept: string;
-    skyWatcherTip: string;
+    observerTip?: string;
   };
   databaseCorrelations?: DatabaseCorrelationsGroup;
   deconflictionDetails?: {
@@ -327,7 +346,7 @@ export interface DatabaseCorrelationsGroup {
     databaseUrl: string;
     notes: string;
   };
-  skywatcher?: {
+  autonomousObservatory?: {
     caseMatch: string;
     correlationScore: number;
     sensorModality: string;

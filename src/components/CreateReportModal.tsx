@@ -13,8 +13,12 @@ interface CreateReportModalProps {
   initialMediaUrl?: string | null;
   prefilledPhotoUrl?: string | null;
   initialPosterUrl?: string | null;
+  prefilledPosterUrl?: string | null;
   initialDescription?: string | null;
   prefilledDescription?: string | null;
+  initialProbabilityScore?: number;
+  initialClassId?: string;
+  initialTitle?: string;
 }
 
 export const CreateReportModal: React.FC<CreateReportModalProps> = ({
@@ -27,30 +31,38 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
   initialMediaUrl,
   prefilledPhotoUrl,
   initialPosterUrl,
+  prefilledPosterUrl,
   initialDescription,
-  prefilledDescription
+  prefilledDescription,
+  initialProbabilityScore,
+  initialClassId,
+  initialTitle
 }) => {
   const effectiveMediaUrl = initialMediaUrl || prefilledPhotoUrl || null;
   const effectiveDescription = initialDescription || prefilledDescription || null;
+  const effectivePosterUrl = initialPosterUrl || prefilledPosterUrl || null;
+
   const handleCreated = (report: SightingReport) => {
     if (onReportCreated) onReportCreated(report);
     if (onSubmit) onSubmit(report);
   };
 
   const [title, setTitle] = useState(() =>
-    selectedUapClass
+    initialTitle
+      ? initialTitle
+      : selectedUapClass
       ? `${selectedUapClass.shortName} Observation`
       : effectiveMediaUrl
       ? `Optical Telemetry Sighting - ${userLocation.city || 'Local Sector'}`
       : ''
   );
-  const [selectedClassId, setSelectedClassId] = useState<string>(() => selectedUapClass ? selectedUapClass.id : 'class-1-orb-sphere');
+  const [selectedClassId, setSelectedClassId] = useState<string>(() => initialClassId || (selectedUapClass ? selectedUapClass.id : 'class-1-orb-sphere'));
   const [observerName, setObserverName] = useState('Check Sky Light Observer');
   const [reportDate, setReportDate] = useState(() => new Date().toISOString().slice(0, 16));
-  const [description, setDescription] = useState(() => initialDescription || (selectedUapClass ? selectedUapClass.sampleObservationNote : ''));
-  const [mediaUrl, setMediaUrl] = useState(() => initialMediaUrl || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=800&auto=format&fit=crop');
-  const [uploadedBase64, setUploadedBase64] = useState<string | null>(() => initialMediaUrl || null);
-  const [posterThumbnail, setPosterThumbnail] = useState<string | null>(() => initialPosterUrl || null);
+  const [description, setDescription] = useState(() => effectiveDescription || (selectedUapClass ? selectedUapClass.sampleObservationNote : ''));
+  const [mediaUrl, setMediaUrl] = useState(() => effectiveMediaUrl || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=800&auto=format&fit=crop');
+  const [uploadedBase64, setUploadedBase64] = useState<string | null>(() => effectiveMediaUrl || null);
+  const [posterThumbnail, setPosterThumbnail] = useState<string | null>(() => effectivePosterUrl || null);
   const [locationName, setLocationName] = useState(`${userLocation.city || 'Albuquerque'}, ${userLocation.region || 'New Mexico, USA'}`);
   const [tagsStr, setTagsStr] = useState(() => selectedUapClass ? `${selectedUapClass.shortName}, Dual-Lens UAP Taxonomy, Uncorrelated ADS-B` : 'AR Sky Capture, Uncorrelated ADS-B, Deconflicted Airspace');
   const [isAnalyzingPhoto, setIsAnalyzingPhoto] = useState(false);
@@ -73,28 +85,51 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      if (initialMediaUrl) {
-        setMediaUrl(initialMediaUrl);
-        setUploadedBase64(initialMediaUrl);
+      const activeMedia = initialMediaUrl || prefilledPhotoUrl || null;
+      if (activeMedia) {
+        setMediaUrl(activeMedia);
+        setUploadedBase64(activeMedia);
       }
-      if (initialPosterUrl) {
-        setPosterThumbnail(initialPosterUrl);
+      const activePoster = initialPosterUrl || prefilledPosterUrl || null;
+      if (activePoster) {
+        setPosterThumbnail(activePoster);
       }
-      if (initialDescription) {
-        setDescription(initialDescription);
+      const activeDesc = initialDescription || prefilledDescription || null;
+      if (activeDesc) {
+        setDescription(activeDesc);
       }
-      if (selectedUapClass) {
+      if (initialTitle) {
+        setTitle(initialTitle);
+      }
+      if (initialClassId) {
+        setSelectedClassId(initialClassId);
+      } else if (selectedUapClass) {
         setSelectedClassId(selectedUapClass.id);
-        setTitle(`${selectedUapClass.shortName} Observation`);
-        if (!initialDescription) {
+        if (!initialTitle) {
+          setTitle(`${selectedUapClass.shortName} Observation`);
+        }
+        if (!activeDesc) {
           setDescription(selectedUapClass.sampleObservationNote);
         }
-      } else if (initialMediaUrl && !title) {
+      } else if (activeMedia && !title) {
         setTitle(`Optical Telemetry Sighting - ${userLocation.city || 'Local Sector'}`);
       }
       setLocationName(`${userLocation.city || 'Albuquerque'}, ${userLocation.region || 'New Mexico, USA'}`);
     }
-  }, [isOpen, initialMediaUrl, initialPosterUrl, initialDescription, selectedUapClass, userLocation.city, userLocation.region]);
+  }, [
+    isOpen, 
+    initialMediaUrl, 
+    prefilledPhotoUrl, 
+    initialPosterUrl, 
+    prefilledPosterUrl, 
+    initialDescription, 
+    prefilledDescription, 
+    initialTitle, 
+    initialClassId, 
+    selectedUapClass, 
+    userLocation.city, 
+    userLocation.region
+  ]);
 
   if (!isOpen) return null;
 
@@ -219,7 +254,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
     setIsSubmitting(true);
     setErrorMsg(null);
     try {
-      let probScore = aiAnalysisResult ? aiAnalysisResult.anomalyScore : 88;
+      let probScore = initialProbabilityScore ?? (aiAnalysisResult ? aiAnalysisResult.anomalyScore : 88);
       try {
         const verifyRes = await fetch(`/api/verify-sky?lat=${userLocation.lat}&lng=${userLocation.lng}&notes=${encodeURIComponent(description)}`);
         if (verifyRes.ok) {

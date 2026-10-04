@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { 
   ShieldCheck, ShieldAlert, Sparkles, CheckCircle2, 
-  ExternalLink, Share2, HardDrive, FileText, 
-  ArrowUpRight, AlertTriangle, Layers, Activity,
-  Info, Cpu, Copy, Check, GraduationCap, Smile,
-  Telescope, BookOpen, Lightbulb
+  Share2, HardDrive, FileText, Check, GraduationCap, 
+  Telescope, ChevronDown, ChevronUp, Cpu, Activity,
+  MapPin, Landmark, Award, Shield, UserCheck, Info
 } from 'lucide-react';
 import { GeminiForensicAnalysis } from '../../types';
 
@@ -22,16 +21,15 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   isPublished = false
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'dualLens' | 'observables' | 'kinematics'>('overview');
-  const [isAcademyExpanded, setIsAcademyExpanded] = useState(false);
+  // Default to compact summary; deep technical details collapsed to avoid overwhelming users
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
+  const [showAcademyDetails, setShowAcademyDetails] = useState(false);
 
   const isAuthentic = analysis.verdict === 'AUTHENTIC_INCIDENT';
   const isSynthetic = analysis.verdict === 'SYNTHETIC_FAKE';
   const isConventional = analysis.verdict === 'CONVENTIONAL_AIRCRAFT';
-  const isUnresolved = analysis.verdict === 'UNRESOLVED';
 
   const dtcCode = analysis.dtcCode || (isAuthentic ? 'P1947' : isSynthetic ? 'P0420' : isConventional ? 'P0505' : 'P0100');
-  const dtcTitle = analysis.dtcTitle || (isAuthentic ? 'P1947: Anomalous Lift / Spacetime Metric Decoupling' : isSynthetic ? 'P0420: Synthetic CGI / Digital Frame Compositing' : isConventional ? 'P0505: Deconflicted Civilian Airspace Target' : 'P0100: Airspace Metric Anomaly');
 
   const handleShareReport = () => {
     const text = `Check Sky Light Forensic Diagnostic Report\n` +
@@ -54,484 +52,370 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
     }
   };
 
+  // Verdict Accent Colors
+  const verdictTheme = isAuthentic
+    ? {
+        border: 'border-purple-500/40',
+        bg: 'bg-purple-950/20',
+        badge: 'bg-purple-500 text-slate-950',
+        text: 'text-purple-300',
+        icon: <Sparkles className="w-5 h-5 text-purple-400" />
+      }
+    : isConventional
+    ? {
+        border: 'border-emerald-500/40',
+        bg: 'bg-emerald-950/25',
+        badge: 'bg-emerald-500 text-slate-950',
+        text: 'text-emerald-300',
+        icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />
+      }
+    : isSynthetic
+    ? {
+        border: 'border-rose-500/40',
+        bg: 'bg-rose-950/20',
+        badge: 'bg-rose-500 text-white',
+        text: 'text-rose-300',
+        icon: <ShieldAlert className="w-5 h-5 text-rose-400" />
+      }
+    : {
+        border: 'border-cyan-500/40',
+        bg: 'bg-cyan-950/20',
+        badge: 'bg-cyan-500 text-slate-950',
+        text: 'text-cyan-300',
+        icon: <Activity className="w-5 h-5 text-cyan-400" />
+      };
+
   return (
-    <div className="glass-panel border border-cyan-500/30 rounded-3xl p-4 sm:p-6 space-y-6 bg-gradient-to-b from-slate-900/95 via-slate-950/95 to-slate-950 text-slate-100 shadow-[0_10px_35px_rgba(0,0,0,0.5)]">
-      {/* Top Header Badge & DTC Diagnostic Fault Code */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-        <div className="flex items-center space-x-3">
-          <div className={`p-2.5 rounded-2xl border ${
-            isAuthentic 
-              ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-              : isSynthetic
-              ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.3)]'
-              : isConventional
-              ? 'bg-amber-500/20 border-amber-500/40 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
-              : 'bg-cyan-500/20 border-cyan-500/40 text-cyan-400'
-          }`}>
-            {isAuthentic ? <ShieldCheck className="w-6 h-6" /> : isSynthetic ? <ShieldAlert className="w-6 h-6" /> : <Activity className="w-6 h-6" />}
+    <div className={`glass-panel border ${verdictTheme.border} rounded-2xl p-4 sm:p-5 space-y-4 bg-slate-950/90 text-slate-100 shadow-xl`}>
+      {/* 1. HERO VERDICT: Bottom Line Up Front (BLUF) - Clean, Zero Overwhelm */}
+      <div className={`p-4 rounded-xl ${verdictTheme.bg} border ${verdictTheme.border} space-y-3`}>
+        {/* Top Badges & Anomaly Score Callout */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            {verdictTheme.icon}
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-black uppercase tracking-tight ${verdictTheme.badge}`}>
+              {isConventional ? 'DECONFLICTED: CONVENTIONAL OBJECT' : isAuthentic ? 'POTENTIAL ANOMALY CANDIDATE' : isSynthetic ? 'SYNTHETIC / CGI MEDIA' : 'UNRESOLVED TARGET'}
+            </span>
+            {analysis.sourceMetadata?.positiveControlVerified && (
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
+                <Landmark className="w-3 h-3 text-amber-400" />
+                <span>PURSUE / DOW POSITIVE CONTROL</span>
+              </span>
+            )}
           </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-widest font-black text-cyan-400">
-                CHECK SKY LIGHT DIAGNOSTIC REPORT
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                MIL DTC {dtcCode}
-              </span>
-              {analysis.mundaneObjectDetected && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center space-x-1">
-                  <Smile className="w-3 h-3 text-purple-400" />
-                  <span>TERRESTRIAL MUNDANE TEST</span>
-                </span>
-              )}
-            </div>
-            <h3 className="text-base sm:text-lg font-black tracking-tight text-white mt-0.5">
-              {analysis.verdictTitle}
-            </h3>
+          
+          <div className="flex items-center space-x-2 text-[11px] font-mono">
+            <span className="text-slate-400">DTC {dtcCode}</span>
           </div>
         </div>
 
+        {/* Hero Title & Intuitive Score Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 border-t border-white/5">
+          <div className="space-y-1">
+            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+              {analysis.verdictTitle}
+            </h3>
+
+            {/* Source Provenance & Incident Location */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono">
+              {analysis.incidentLocation && (
+                <div className="flex items-center space-x-1 text-cyan-300">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span className="text-slate-400">Sector:</span>
+                  <span className="font-bold text-slate-200">{analysis.incidentLocation}</span>
+                </div>
+              )}
+              {analysis.sourceMetadata?.classificationTier && (
+                <div className="flex items-center space-x-1 text-amber-300">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="text-slate-400">Vetting:</span>
+                  <span className="font-bold text-amber-200">{analysis.sourceMetadata.classificationTier}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Prominent Intuitive Anomaly Score Dial */}
+          <div className="px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-white/10 flex items-baseline space-x-1.5 self-start sm:self-auto shrink-0 shadow-inner">
+            <span className={`text-2xl sm:text-3xl font-black font-mono tracking-tighter ${
+              analysis.authenticityScore >= 70 ? 'text-purple-400' : analysis.authenticityScore >= 40 ? 'text-cyan-400' : 'text-slate-400'
+            }`}>
+              {analysis.authenticityScore}%
+            </span>
+            <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">
+              Anomaly Index
+            </span>
+          </div>
+        </div>
+
+        {/* 1-2 sentence plain-language digest */}
+        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+          {analysis.verdictSummary}
+        </p>
+
         {/* Action Controls */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <button
-            onClick={handleShareReport}
-            className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-mono font-bold text-slate-300 hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
-            title="Share or copy forensic diagnostic summary"
-          >
-            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-cyan-400" />}
-            <span>{copiedLink ? 'Copied' : 'Share'}</span>
-          </button>
-          {onSaveToVault && (
+        <div className="flex items-center justify-between pt-1 text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-[11px]">
             <button
-              onClick={onSaveToVault}
-              className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-mono font-bold text-slate-300 hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
-              title="Save report and telemetry to offline vault"
+              onClick={handleShareReport}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
             >
-              <HardDrive className="w-3.5 h-3.5 text-amber-400" />
-              <span>Save Vault</span>
+              {copiedLink ? <Check className="w-3 h-3 text-emerald-400" /> : <Share2 className="w-3 h-3 text-cyan-400" />}
+              <span>{copiedLink ? 'Copied' : 'Share'}</span>
+            </button>
+            {onSaveToVault && (
+              <button
+                onClick={onSaveToVault}
+                className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <HardDrive className="w-3 h-3 text-amber-400" />
+                <span>Save</span>
+              </button>
+            )}
+          </div>
+
+          {onPublishToFeed && (
+            <button
+              onClick={onPublishToFeed}
+              disabled={isPublished}
+              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+                isPublished
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
+                  : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold shadow-sm'
+              }`}
+            >
+              {isPublished ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Report Saved</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Post to Feed</span>
+                </>
+              )}
             </button>
           )}
         </div>
       </div>
 
-      {/* Main Probability Gauges (Easy to Understand) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Core UAP Probability Gauge */}
-        <div className={`p-4 rounded-2xl border flex flex-col justify-between relative overflow-hidden ${
-          isAuthentic
-            ? 'bg-gradient-to-br from-emerald-950/40 via-slate-900/60 to-slate-950 border-emerald-500/40'
-            : isSynthetic
-            ? 'bg-gradient-to-br from-rose-950/40 via-slate-900/60 to-slate-950 border-rose-500/40'
-            : isConventional
-            ? 'bg-gradient-to-br from-amber-950/40 via-slate-900/60 to-slate-950 border-amber-500/40'
-            : 'bg-slate-900/60 border-cyan-500/40'
-        }`}>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">
-              UAP Anomaly Probability
-            </span>
-            <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
-              isAuthentic ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' :
-              isSynthetic ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' :
-              'bg-slate-800 text-slate-300 border border-slate-700'
-            }`}>
-              {isAuthentic ? 'ANOMALOUS' : isSynthetic ? 'SYNTHETIC' : 'DECONFLICTED'}
-            </span>
-          </div>
-
-          <div className="my-3 flex items-baseline space-x-2">
-            <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tighter ${
-              isAuthentic ? 'text-emerald-400' : isSynthetic ? 'text-rose-400' : isConventional ? 'text-amber-400' : 'text-cyan-400'
-            }`}>
-              {analysis.authenticityScore}%
-            </span>
-            <span className="text-xs font-mono text-slate-400">/ 100% Genuine Anomaly</span>
-          </div>
-
-          {/* Probability Bar */}
-          <div className="space-y-1">
-            <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-700 ${
-                  isAuthentic ? 'bg-gradient-to-r from-emerald-500 to-teal-400' :
-                  isSynthetic ? 'bg-gradient-to-r from-rose-500 to-amber-500' :
-                  'bg-gradient-to-r from-cyan-500 to-blue-500'
-                }`}
-                style={{ width: `${Math.max(5, analysis.authenticityScore)}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-[10px] font-mono text-slate-500">
-              <span>Conventional / Fake</span>
-              <span>Authentic Physical UAP</span>
-            </div>
-          </div>
+      {/* 2. THREE-METRIC SCORECARD AT A GLANCE (Less-Ink) */}
+      <div className="grid grid-cols-3 gap-2 text-center font-mono">
+        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+          <span className="text-[10px] text-slate-400 block uppercase">Confidence</span>
+          <span className="text-base sm:text-lg font-black text-cyan-400 block mt-0.5">
+            {analysis.confidenceScore || 95}%
+          </span>
         </div>
-
-        {/* Synthetic Media / CGI Hoax Probability */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">
-              CGI / Synthetic Media
-            </span>
-            <Cpu className="w-4 h-4 text-slate-500" />
-          </div>
-
-          <div className="my-2.5 flex items-baseline space-x-2">
-            <span className={`text-3xl sm:text-4xl font-black font-mono tracking-tighter ${
-              analysis.fakeProbability > 60 ? 'text-rose-400' : analysis.fakeProbability > 30 ? 'text-amber-400' : 'text-slate-300'
-            }`}>
-              {analysis.fakeProbability}%
-            </span>
-            <span className="text-[11px] font-mono text-slate-400">VFX Index</span>
-          </div>
-
-          <p className="text-[11px] text-slate-400 line-clamp-1 font-mono">
-            {analysis.dualLens?.vfxForensics || 'Neural diffusion & frame composite screen.'}
-          </p>
+        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+          <span className="text-[10px] text-slate-400 block uppercase">CGI / Hoax Risk</span>
+          <span className={`text-base sm:text-lg font-black block mt-0.5 ${
+            analysis.fakeProbability > 50 ? 'text-rose-400' : 'text-slate-300'
+          }`}>
+            {analysis.fakeProbability}%
+          </span>
         </div>
-
-        {/* DTC Classification Diagnostic Card */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-amber-500/30 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold">
-              Diagnostic Code
-            </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
-              OBD-II
-            </span>
-          </div>
-
-          <div className="my-2">
-            <span className="text-2xl font-black font-mono text-amber-400 block tracking-tight">
-              {dtcCode}
-            </span>
-            <span className="text-xs font-bold text-slate-200 block truncate">
-              {dtcTitle}
-            </span>
-          </div>
-
-          <p className="text-[11px] text-slate-400 line-clamp-1 font-mono">
-            {isAuthentic 
-              ? 'Confirmed boundary-layer decoupling.'
-              : isSynthetic 
-              ? 'Artificial pixel interpolation flagged.'
-              : 'Civilian airframe deconfliction matched.'}
-          </p>
+        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+          <span className="text-[10px] text-slate-400 block uppercase">Airframe Check</span>
+          <span className={`text-xs sm:text-sm font-bold block mt-1 truncate ${
+            isConventional ? 'text-emerald-400' : 'text-slate-300'
+          }`}>
+            {isConventional ? 'Class B / UAS' : isAuthentic ? 'Unidentified' : 'Conventional'}
+          </span>
         </div>
       </div>
 
-      {/* Condensed Executive Forensic Summary */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1.5">
-        <div className="flex items-center space-x-2 text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wide">
-          <Info className="w-3.5 h-3.5 shrink-0" />
-          <span>Forensic Summary</span>
-        </div>
-        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-          {analysis.verdictSummary}
-        </p>
-      </div>
-
-      {/* Rated PG-13 Forensic Humor Callout (Compact Banner) */}
-      {(analysis.humorousQuirk || analysis.mundaneObjectDetected) && (
-        <div className="p-3 rounded-2xl bg-purple-950/30 border border-purple-500/30 flex items-start space-x-3 text-xs">
-          <div className="p-1.5 rounded-lg bg-purple-500/20 text-purple-300 shrink-0 mt-0.5">
-            <Smile className="w-4 h-4" />
-          </div>
-          <div className="flex-1 space-y-0.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-purple-300 uppercase tracking-wider">
-                Terrestrial Object Check (PG-13)
-              </span>
-            </div>
-            <p className="text-xs text-purple-200/90 italic font-medium leading-normal">
-              "{analysis.humorousQuirk || 'Target identified as terrestrial matter. Zero anti-gravity field or warp-metric distortion detected. Sensor diagnostic confirms object is 100% earthly.'}"
-            </p>
+      {/* 3. FIVE OBSERVABLES CHECKLIST (Compact visual badges) */}
+      {analysis.fiveObservables && (
+        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-1.5">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block font-bold">
+            Five Observables Screening:
+          </span>
+          <div className="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span className={`px-2 py-0.5 rounded-md border ${
+              analysis.fiveObservables.instantaneousAcceleration 
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 font-bold' 
+                : 'bg-black/30 text-slate-500 border-white/5'
+            }`}>
+              ⚡ Instant Acceleration: {analysis.fiveObservables.instantaneousAcceleration ? 'YES' : 'NO'}
+            </span>
+            <span className={`px-2 py-0.5 rounded-md border ${
+              analysis.fiveObservables.hypersonicVelocity 
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 font-bold' 
+                : 'bg-black/30 text-slate-500 border-white/5'
+            }`}>
+              🚀 Hypersonic: {analysis.fiveObservables.hypersonicVelocity ? 'YES' : 'NO'}
+            </span>
+            <span className={`px-2 py-0.5 rounded-md border ${
+              analysis.fiveObservables.lowObservability 
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 font-bold' 
+                : 'bg-black/30 text-slate-500 border-white/5'
+            }`}>
+              👁️ Low Observable: {analysis.fiveObservables.lowObservability ? 'YES' : 'NO'}
+            </span>
+            <span className={`px-2 py-0.5 rounded-md border ${
+              analysis.fiveObservables.transmediumTravel 
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 font-bold' 
+                : 'bg-black/30 text-slate-500 border-white/5'
+            }`}>
+              🌊 Transmedium: {analysis.fiveObservables.transmediumTravel ? 'YES' : 'NO'}
+            </span>
+            <span className={`px-2 py-0.5 rounded-md border ${
+              analysis.fiveObservables.positiveLift 
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold' 
+                : 'bg-black/30 text-slate-500 border-white/5'
+            }`}>
+              🕊️ Positive Lift: {analysis.fiveObservables.positiveLift ? 'DETECTED' : 'CONVENTIONAL'}
+            </span>
           </div>
         </div>
       )}
 
-      {/* Avionics & Astronomy Academy: Condensed Teachable Moment with Expandable Detail */}
-      {analysis.educationalAeroAstronomyLesson && (
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 space-y-2.5">
-          <div className="flex items-center justify-between gap-2 border-b border-cyan-500/20 pb-2">
-            <div className="flex items-center space-x-2 text-xs font-mono font-bold text-cyan-300 uppercase tracking-wide">
-              <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0" />
-              <span>Avionics & Astronomy Academy</span>
+      {/* 4. WITNESS CREDIBILITY & ON-THE-RECORD ASSESSMENT */}
+      {analysis.witnessCredibility && (
+        <div className="p-3 rounded-xl bg-teal-950/20 border border-teal-500/30 space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-1.5 font-mono text-[11px]">
+            <div className="flex items-center space-x-1.5 text-teal-300 font-bold">
+              <UserCheck className="w-4 h-4 text-teal-400" />
+              <span>WITNESS CREDIBILITY & TESTIMONIAL INTEGRITY</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
-                {analysis.educationalAeroAstronomyLesson.topic}
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/40">
+                {analysis.witnessCredibility.credibilityScore}% Reliability
               </span>
-              <button
-                onClick={() => setIsAcademyExpanded(!isAcademyExpanded)}
-                className="text-[10px] font-mono text-cyan-400 hover:text-cyan-200 underline cursor-pointer transition"
-              >
-                {isAcademyExpanded ? 'Less' : 'Details'}
-              </button>
+              {analysis.witnessCredibility.onTheRecord && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  ON THE RECORD
+                </span>
+              )}
             </div>
           </div>
 
-          <p className={`text-xs text-slate-200 leading-relaxed ${isAcademyExpanded ? '' : 'line-clamp-2'}`}>
-            {analysis.educationalAeroAstronomyLesson.concept}
+          {analysis.witnessCredibility.witnessName && (
+            <div className="text-xs font-mono text-slate-300">
+              <span className="text-slate-400">Identified Witness: </span>
+              <span className="text-white font-bold">{analysis.witnessCredibility.witnessName}</span>
+            </div>
+          )}
+
+          <p className="text-xs text-slate-200 font-sans leading-relaxed">
+            {analysis.witnessCredibility.credibilityAssessment}
           </p>
 
-          {analysis.educationalAeroAstronomyLesson.skyWatcherTip && (
-            <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/20 flex items-center space-x-2 text-xs font-mono text-slate-300">
-              <Telescope className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="truncate">
-                <strong className="text-cyan-300 font-semibold mr-1">Skywatcher Tip:</strong>
-                {analysis.educationalAeroAstronomyLesson.skyWatcherTip}
-              </span>
+          {analysis.witnessCredibility.corroboratingFactors && analysis.witnessCredibility.corroboratingFactors.length > 0 && (
+            <div className="pt-1 border-t border-teal-500/20 flex flex-wrap gap-1 font-mono text-[10px]">
+              {analysis.witnessCredibility.corroboratingFactors.map((factor, idx) => (
+                <span key={idx} className="px-2 py-0.5 rounded bg-teal-950/60 text-teal-200 border border-teal-800/60">
+                  ✓ {factor}
+                </span>
+              ))}
             </div>
           )}
         </div>
       )}
 
-      {/* Tab Navigation for Detailed Scientific Investigation */}
-      <div className="space-y-4">
-        <div className="flex items-center p-1 rounded-2xl bg-slate-900 border border-white/10 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-mono font-bold transition cursor-pointer whitespace-nowrap ${
-              activeTab === 'overview'
-                ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Overview & Features
-          </button>
-          <button
-            onClick={() => setActiveTab('dualLens')}
-            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-mono font-bold transition cursor-pointer whitespace-nowrap ${
-              activeTab === 'dualLens'
-                ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Dual-Lens Framework
-          </button>
-          <button
-            onClick={() => setActiveTab('observables')}
-            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-mono font-bold transition cursor-pointer whitespace-nowrap ${
-              activeTab === 'observables'
-                ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            ODNI/AARO 5 Observables
-          </button>
-          <button
-            onClick={() => setActiveTab('kinematics')}
-            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-mono font-bold transition cursor-pointer whitespace-nowrap ${
-              activeTab === 'kinematics'
-                ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Kinematics & Corroboration
-          </button>
+      {/* 5. Terrestrial Observation Notes (If applicable) */}
+      {(analysis.humorousQuirk || analysis.mundaneObjectDetected) && (
+        <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-700/60 flex items-start space-x-2.5 text-xs text-slate-300">
+          <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <span className="font-sans leading-relaxed">
+            {analysis.humorousQuirk || 'Terrestrial object verified. Standard Newtonian dynamics confirmed.'}
+          </span>
         </div>
+      )}
 
-        {/* Tab 1: Overview & Detected Features */}
-        {activeTab === 'overview' && (
-          <div className="space-y-4 animate-fade-in">
-            {/* Detected Key Physical Features */}
-            {analysis.detectedFeatures && analysis.detectedFeatures.length > 0 && (
-              <div className="space-y-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 block">
-                  Identified Physical & Optical Markers:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.detectedFeatures.map((feat, idx) => (
-                    <span 
-                      key={idx}
-                      className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-200 flex items-center space-x-1.5"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                      <span>{feat}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Platform / Provenance */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-white/10">
-                <span className="text-slate-400 block text-[10px]">EVIDENCE PROVENANCE:</span>
-                <span className="text-slate-200 font-bold">{analysis.sourceTitle}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-white/10">
-                <span className="text-slate-400 block text-[10px]">ANALYSIS TIMESTAMP:</span>
-                <span className="text-slate-200 font-bold">{new Date(analysis.timestamp).toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 2: Dual-Lens Analytical Framework */}
-        {activeTab === 'dualLens' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in font-mono text-xs">
-            {/* Lens A */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-cyan-500/30 space-y-2">
-              <div className="flex items-center space-x-2 text-cyan-300 font-bold border-b border-white/10 pb-2">
-                <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                <span>LENS A: Classical Aerospace Baseline</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                {analysis.dualLens?.classicalDeconfliction || 'Screened against FAA Class B traffic, 1.2 Hz anti-collision strobes, and aerodynamic lift mechanics.'}
-              </p>
-            </div>
-
-            {/* Lens B */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-teal-500/30 space-y-2">
-              <div className="flex items-center space-x-2 text-teal-300 font-bold border-b border-white/10 pb-2">
-                <Sparkles className="w-4 h-4 text-teal-400" />
-                <span>LENS B: Metric Manipulation & Physics</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                {analysis.dualLens?.metricSignature || 'Evaluates boundary-layer fluid decoupling, positive lift without aerodynamic surfaces, and zero acoustic shockwaves.'}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 3: Five Observables Matrix */}
-        {activeTab === 'observables' && (
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-3 animate-fade-in">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 block">
-              ODNI / AARO Five Observables Evaluation:
+      {/* 5. Avionics Lesson (Compact with Expandable Details) */}
+      {analysis.educationalAeroAstronomyLesson && (
+        <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-xs font-sans space-y-1">
+          <div className="flex items-center justify-between font-mono text-[10px]">
+            <span className="text-cyan-400 font-bold flex items-center gap-1">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>{analysis.educationalAeroAstronomyLesson.topic}</span>
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-              <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
-                analysis.fiveObservables?.instantaneousAcceleration 
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' 
-                  : 'bg-slate-950 border-white/10 text-slate-500'
-              }`}>
-                <span>1. Instantaneous Acceleration</span>
-                <span className="font-bold">{analysis.fiveObservables?.instantaneousAcceleration ? 'DETECTED' : 'NEGATIVE'}</span>
-              </div>
+            <button
+              onClick={() => setShowAcademyDetails(!showAcademyDetails)}
+              className="text-cyan-400 hover:underline cursor-pointer flex items-center gap-0.5"
+            >
+              <span>{showAcademyDetails ? 'Hide' : 'Tip'}</span>
+              {showAcademyDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          </div>
+          <p className="text-slate-300 text-xs">
+            {analysis.educationalAeroAstronomyLesson.concept}
+          </p>
+          {showAcademyDetails && analysis.educationalAeroAstronomyLesson.observerTip && (
+            <div className="mt-2 pt-2 border-t border-cyan-500/20 text-cyan-200 font-mono text-[11px] flex items-center gap-1.5">
+              <Telescope className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span>{analysis.educationalAeroAstronomyLesson.observerTip}</span>
+            </div>
+          )}
+        </div>
+      )}
 
-              <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
-                analysis.fiveObservables?.hypersonicVelocity 
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' 
-                  : 'bg-slate-950 border-white/10 text-slate-500'
-              }`}>
-                <span>2. Hypersonic Velocity (No Heat)</span>
-                <span className="font-bold">{analysis.fiveObservables?.hypersonicVelocity ? 'DETECTED' : 'NEGATIVE'}</span>
-              </div>
+      {/* 6. PROGRESSIVE DISCLOSURE: Deep Telemetry Drawer for Engineers & Observers */}
+      <div className="border-t border-white/10 pt-2">
+        <button
+          onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
+          className="w-full py-1.5 text-center text-xs font-mono text-slate-400 hover:text-slate-200 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+        >
+          <span>{showTechnicalDetails ? 'Collapse Deep Telemetry' : 'Expand Deep Forensics & Lens A/B Telemetry'}</span>
+          {showTechnicalDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
 
-              <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
-                analysis.fiveObservables?.lowObservability 
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' 
-                  : 'bg-slate-950 border-white/10 text-slate-500'
-              }`}>
-                <span>3. Low Observability / Cloaking</span>
-                <span className="font-bold">{analysis.fiveObservables?.lowObservability ? 'DETECTED' : 'NEGATIVE'}</span>
+        {showTechnicalDetails && (
+          <div className="mt-3 space-y-3 font-mono text-xs animate-fade-in">
+            {/* Dual-Lens Breakdown */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/10 space-y-1">
+                <span className="text-[10px] text-cyan-400 font-bold block uppercase">
+                  Lens A: Classical Baseline
+                </span>
+                <p className="text-[11px] text-slate-300 font-sans">
+                  {analysis.dualLens?.classicalDeconfliction || 'Screened against FAA traffic & aerodynamics.'}
+                </p>
               </div>
-
-              <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
-                analysis.fiveObservables?.transmediumTravel 
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' 
-                  : 'bg-slate-950 border-white/10 text-slate-500'
-              }`}>
-                <span>4. Transmedium Travel</span>
-                <span className="font-bold">{analysis.fiveObservables?.transmediumTravel ? 'DETECTED' : 'NEGATIVE'}</span>
-              </div>
-
-              <div className={`p-2.5 rounded-xl border flex items-center justify-between sm:col-span-2 ${
-                analysis.fiveObservables?.positiveLift 
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' 
-                  : 'bg-slate-950 border-white/10 text-slate-500'
-              }`}>
-                <span>5. Positive Lift Without Wings / Rotors</span>
-                <span className="font-bold">{analysis.fiveObservables?.positiveLift ? 'DETECTED' : 'NEGATIVE'}</span>
+              <div className="p-3 rounded-xl bg-slate-900 border border-white/10 space-y-1">
+                <span className="text-[10px] text-purple-400 font-bold block uppercase">
+                  Lens B: Metric Signature
+                </span>
+                <p className="text-[11px] text-slate-300 font-sans">
+                  {analysis.dualLens?.metricSignature || 'Fluid boundary-layer decoupling analyzed.'}
+                </p>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Tab 4: Kinematics & Corroborations */}
-        {activeTab === 'kinematics' && (
-          <div className="space-y-4 animate-fade-in font-mono text-xs">
+            {/* Kinematics row if available */}
             {analysis.kinematics && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-slate-900 border border-white/10">
-                  <span className="text-slate-400 block text-[10px]">ESTIMATED SPEED:</span>
-                  <span className="text-cyan-400 font-bold">{analysis.kinematics.estimatedSpeed || 'Hover to Mach 2+'}</span>
+              <div className="grid grid-cols-3 gap-2 text-center text-[11px] p-2.5 rounded-xl bg-slate-900 border border-white/10">
+                <div>
+                  <span className="text-[9px] text-slate-400 block">EST. SPEED</span>
+                  <span className="font-bold text-cyan-400">{analysis.kinematics.estimatedSpeed || 'Hover'}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-white/10">
-                  <span className="text-slate-400 block text-[10px]">ESTIMATED ALTITUDE:</span>
-                  <span className="text-cyan-400 font-bold">{analysis.kinematics.estimatedAltitude || '14,000 ft MSL'}</span>
+                <div>
+                  <span className="text-[9px] text-slate-400 block">ALTITUDE</span>
+                  <span className="font-bold text-cyan-400">{analysis.kinematics.estimatedAltitude || 'N/A'}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-white/10">
-                  <span className="text-slate-400 block text-[10px]">KINEMATIC G-FORCE:</span>
-                  <span className="text-cyan-400 font-bold">{analysis.kinematics.kinematicGForce || 'Non-inertial'}</span>
+                <div>
+                  <span className="text-[9px] text-slate-400 block">G-FORCE</span>
+                  <span className="font-bold text-cyan-400">{analysis.kinematics.kinematicGForce || '1.0 G'}</span>
                 </div>
               </div>
             )}
 
-            {/* Database Corroboration Citations */}
-            {analysis.databaseCorrelations && (
-              <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/10 space-y-2">
-                <span className="text-xs font-bold text-slate-300 block uppercase">
-                  Multi-Database Corroborations:
-                </span>
-                <div className="space-y-2 text-[11px] text-slate-300">
-                  {analysis.databaseCorrelations.warDeptDoD && (
-                    <div className="flex items-start space-x-2">
-                      <span className="text-amber-400 font-bold shrink-0">US Dept of War / AARO:</span>
-                      <span>{analysis.databaseCorrelations.warDeptDoD.caseMatch} ({analysis.databaseCorrelations.warDeptDoD.correlationScore}% match)</span>
-                    </div>
-                  )}
-                  {analysis.databaseCorrelations.mufon && (
-                    <div className="flex items-start space-x-2">
-                      <span className="text-cyan-400 font-bold shrink-0">MUFON CMS:</span>
-                      <span>{analysis.databaseCorrelations.mufon.caseMatch} ({analysis.databaseCorrelations.mufon.correlationScore}% match)</span>
-                    </div>
-                  )}
-                  {analysis.databaseCorrelations.skywatcher && (
-                    <div className="flex items-start space-x-2">
-                      <span className="text-teal-400 font-bold shrink-0">Skywatcher AI:</span>
-                      <span>{analysis.databaseCorrelations.skywatcher.caseMatch}</span>
-                    </div>
-                  )}
-                </div>
+            {/* Detected features */}
+            {analysis.detectedFeatures && analysis.detectedFeatures.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {analysis.detectedFeatures.map((f, i) => (
+                  <span key={i} className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-300">
+                    {f}
+                  </span>
+                ))}
               </div>
             )}
           </div>
         )}
       </div>
-
-      {/* Bottom Publish to Community Sighting Feed CTA */}
-      {onPublishToFeed && (
-        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-white/10">
-          <div className="text-xs text-slate-400 font-mono">
-            <span>Ready to submit this forensic analysis to the civilian airspace incident ledger?</span>
-          </div>
-          <button
-            onClick={onPublishToFeed}
-            disabled={isPublished}
-            className={`px-5 py-2.5 rounded-2xl font-bold font-mono text-xs transition flex items-center justify-center space-x-2 cursor-pointer shadow-lg ${
-              isPublished
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
-                : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-            }`}
-          >
-            {isPublished ? (
-              <>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Submitted to Community Ledger</span>
-              </>
-            ) : (
-              <>
-                <FileText className="w-4 h-4" />
-                <span>Submit to Verified Sightings Feed</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

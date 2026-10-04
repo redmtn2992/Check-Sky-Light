@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Camera, Crosshair, Radar, ListFilter, Activity, MessageSquare, Bell, 
-  HardDrive, Compass, ShieldAlert, Sparkles, Plus, MapPin, 
+  Camera, Crosshair, Radar, ListFilter, Activity, Bell, 
+  Compass, ShieldAlert, Sparkles, Plus, MapPin, 
   Settings, Share2, Info, ChevronRight, ChevronDown, Volume2, VolumeX, Landmark, ScanSearch,
   FileText, Radio
 } from 'lucide-react';
@@ -43,6 +43,7 @@ import { LogoStudioModal } from './components/LogoStudioModal';
 import { GpsPermissionModal } from './components/GpsPermissionModal';
 import { LocationPickerModal } from './components/LocationPickerModal';
 import { SoundOptionsModal } from './components/SoundOptionsModal';
+import { PreReportCheckModal, PreReportCapture } from './components/PreReportCheckModal';
 import { unlockAudioContext } from './components/ar/ArAudioSynthesizer';
 import { loadSoundSettings, subscribeSoundSettings, SoundSettings } from './lib/soundSettings';
 
@@ -58,8 +59,8 @@ export default function App() {
     return loadLocationPreference() || {
       lat: 35.0844,
       lng: -106.6504,
-      city: 'Albuquerque',
-      region: 'New Mexico, USA'
+      city: 'GPS',
+      region: 'Sector Telemetry'
     };
   });
 
@@ -80,7 +81,13 @@ export default function App() {
   const [selectedSighting, setSelectedSighting] = useState<SightingReport | null>(null);
   const [isCreateReportOpen, setIsCreateReportOpen] = useState<boolean>(false);
   const [prefilledPhotoUrl, setPrefilledPhotoUrl] = useState<string | undefined>(undefined);
+  const [prefilledPosterUrl, setPrefilledPosterUrl] = useState<string | undefined>(undefined);
   const [prefilledDescription, setPrefilledDescription] = useState<string | undefined>(undefined);
+  const [prefilledProbabilityScore, setPrefilledProbabilityScore] = useState<number | undefined>(undefined);
+  const [prefilledClassId, setPrefilledClassId] = useState<string | undefined>(undefined);
+  const [prefilledTitle, setPrefilledTitle] = useState<string | undefined>(undefined);
+  const [checkCapture, setCheckCapture] = useState<PreReportCapture | null>(null);
+  const [isPreReportCheckOpen, setIsPreReportCheckOpen] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
   const [isVaultOpen, setIsVaultOpen] = useState<boolean>(false);
@@ -217,8 +224,8 @@ export default function App() {
           const newLoc: LocationCoords = {
             lat: data.lat,
             lng: data.lng,
-            city: data.city || 'Albuquerque',
-            region: data.region || 'New Mexico, USA'
+            city: data.city || 'GPS',
+            region: data.region || 'Sector Telemetry'
           };
           setUserLocation(newLoc);
           saveLocationPreference(newLoc);
@@ -292,16 +299,13 @@ export default function App() {
                     <span className="text-[12px] xs:text-[13px] sm:text-sm font-black tracking-wider text-slate-100 uppercase group-hover:text-amber-400 transition whitespace-nowrap">
                       CHECK SKY LIGHT
                     </span>
-                    <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                      v1.4
+                    <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                      v2.1
                     </span>
-                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-mono font-black bg-amber-500 text-slate-950 uppercase tracking-tight">
-                      CANDIDATE 1
+                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-mono font-black bg-cyan-500 text-slate-950 uppercase tracking-tight">
+                      RELEASE
                     </span>
                   </div>
-                  <p className="text-[9px] text-slate-400 font-mono hidden md:block truncate max-w-[190px]">
-                    OBD-II DIAGNOSTIC // P1947 LIFT
-                  </p>
                 </div>
               </button>
 
@@ -345,25 +349,6 @@ export default function App() {
                       !soundSettings.soundEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
                     }`}
                   />
-                </button>
-
-                {/* Offline Media Vault */}
-                <button
-                  onClick={() => setIsVaultOpen(true)}
-                  className="p-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative"
-                  title="Open Offline Media Vault"
-                >
-                  <HardDrive className="w-4 h-4" />
-                </button>
-
-                {/* Encrypted Sector Chat */}
-                <button
-                  onClick={() => setIsChatOpen(true)}
-                  className="p-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative"
-                  title="Open Encrypted Sector Chat"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                 </button>
 
                 {/* Airspace Alerts */}
@@ -410,6 +395,10 @@ export default function App() {
                 flights={flights}
                 celestialBodies={celestialBodies}
                 onTargetLocked={(target) => setCurrentTargetLock(target)}
+                onCaptureForReview={(cap) => {
+                  setCheckCapture(cap);
+                  setIsPreReportCheckOpen(true);
+                }}
                 onCaptureForReport={(mediaUrl, description) => {
                   setPrefilledPhotoUrl(mediaUrl);
                   setPrefilledDescription(description);
@@ -580,13 +569,53 @@ export default function App() {
         )}
 
         {/* --- ALL INTERACTIVE MODALS --- */}
+        <PreReportCheckModal
+          isOpen={isPreReportCheckOpen}
+          capture={checkCapture}
+          onClose={() => {
+            setIsPreReportCheckOpen(false);
+            setCheckCapture(null);
+          }}
+          onDiscard={() => {
+            setIsPreReportCheckOpen(false);
+            setCheckCapture(null);
+          }}
+          onSaveToVaultOnly={() => {
+            setIsPreReportCheckOpen(false);
+            setCheckCapture(null);
+          }}
+          onProceedToReport={(vetted) => {
+            setIsPreReportCheckOpen(false);
+            setCheckCapture(null);
+            setPrefilledPhotoUrl(vetted.mediaUrl);
+            setPrefilledPosterUrl(vetted.posterUrl);
+            setPrefilledDescription(vetted.description);
+            setPrefilledProbabilityScore(vetted.anomalyScore);
+            setPrefilledClassId(vetted.suggestedClassId);
+            setPrefilledTitle(vetted.title);
+            setIsCreateReportOpen(true);
+          }}
+        />
+
         <CreateReportModal
           isOpen={isCreateReportOpen}
-          onClose={() => setIsCreateReportOpen(false)}
+          onClose={() => {
+            setIsCreateReportOpen(false);
+            setPrefilledPhotoUrl(undefined);
+            setPrefilledPosterUrl(undefined);
+            setPrefilledDescription(undefined);
+            setPrefilledProbabilityScore(undefined);
+            setPrefilledClassId(undefined);
+            setPrefilledTitle(undefined);
+          }}
           onSubmit={handleAddSighting}
           userLocation={userLocation}
           prefilledPhotoUrl={prefilledPhotoUrl}
+          prefilledPosterUrl={prefilledPosterUrl}
           prefilledDescription={prefilledDescription}
+          initialProbabilityScore={prefilledProbabilityScore}
+          initialClassId={prefilledClassId}
+          initialTitle={prefilledTitle}
         />
 
         <SightingDetailModal
@@ -618,11 +647,28 @@ export default function App() {
           isOpen={isVaultOpen}
           onClose={() => setIsVaultOpen(false)}
           onSelectForReport={(media) => {
-            const dataUrl = media.dataUrl || media.burstFrames?.[0];
+            const dataUrl = media.dataUrl || media.burstFrames?.[0] || (media.blob ? URL.createObjectURL(media.blob) : undefined);
             if (dataUrl) {
-              setPrefilledPhotoUrl(dataUrl);
-              setPrefilledDescription(`Incident capture from local vault: AZ ${media.telemetry.azimuth.toFixed(1)}°, EL ${media.telemetry.pitch.toFixed(1)}°.`);
-              setIsCreateReportOpen(true);
+              setCheckCapture({
+                mediaType: media.mediaType === 'video' ? 'video' : 'photo',
+                mediaUrl: dataUrl,
+                mediaBlob: media.blob,
+                durationSeconds: media.durationSeconds,
+                telemetry: {
+                  azimuth: media.telemetry.azimuth,
+                  pitch: media.telemetry.pitch,
+                  roll: media.telemetry.roll,
+                  lat: media.telemetry.lat,
+                  lng: media.telemetry.lng,
+                  city: media.telemetry.city,
+                  region: media.telemetry.region,
+                  dayNightMode: media.telemetry.dayNightMode,
+                  soundMode: media.telemetry.soundMode
+                },
+                targetLock: media.targetLock
+              });
+              setIsVaultOpen(false);
+              setIsPreReportCheckOpen(true);
             }
           }}
         />

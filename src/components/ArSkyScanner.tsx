@@ -32,6 +32,7 @@ import {
   subscribeSoundSettings, 
   SoundSettings 
 } from '../lib/soundSettings';
+import { PreReportCapture } from './PreReportCheckModal';
 
 export interface ArSkyScannerProps {
   userLocation: LocationCoords;
@@ -39,6 +40,7 @@ export interface ArSkyScannerProps {
   celestialBodies: CelestialBody[];
   onTargetLocked?: (target: TargetLockData) => void;
   onCaptureForReport?: (mediaUrl: string, description: string, posterUrl?: string) => void;
+  onCaptureForReview?: (capture: PreReportCapture) => void;
   onOpenVault?: () => void;
   onOpenTriangulation?: () => void;
   onOpenSoundOptions?: () => void;
@@ -52,6 +54,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   celestialBodies,
   onTargetLocked,
   onCaptureForReport,
+  onCaptureForReview,
   onOpenVault,
   onOpenTriangulation,
   onOpenSoundOptions,
@@ -71,6 +74,8 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   const [isRecordingVideo, setIsRecordingVideo] = useState<boolean>(false);
   const [recordingSeconds, setRecordingSeconds] = useState<number>(0);
   const [capturedFlash, setCapturedFlash] = useState<boolean>(false);
+  const [sessionCaptures, setSessionCaptures] = useState<PreReportCapture[]>([]);
+  const [justCapturedNotice, setJustCapturedNotice] = useState<string | null>(null);
   
   // Power & Battery Optimization: Disabled at startup to minimize iPhone battery draw
   const [opticalTrackingActive, setOpticalTrackingActive] = useState<boolean>(false);
@@ -82,7 +87,10 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   // Gemini AI Auto-Lock State: Disabled at app startup to conserve iPhone battery power
   const [geminiAutoLockEnabled, setGeminiAutoLockEnabled] = useState<boolean>(false);
   const [isAiScanning, setIsAiScanning] = useState<boolean>(false);
-  const [aiLockFeedback, setAiLockFeedback] = useState<string>('Battery Saver Standby (AI & Tap Lock Idle)');
+  const [aiLockFeedback, setAiLockFeedback] = useState<string>('Ready');
+
+  // Digital Crop Zoom (1x, 2x, 5x) for long-distance sky targets
+  const [zoomFactor, setZoomFactor] = useState<number>(1);
 
   // Manual Screen Tap Target Lock: Disabled at app launch for minimal battery draw
   const [manualScreenLockEnabled, setManualScreenLockEnabled] = useState<boolean>(false);
@@ -249,7 +257,13 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         canvas.height = 270;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+          const vw = videoRef.current.videoWidth || 1280;
+          const vh = videoRef.current.videoHeight || 720;
+          const cropW = vw / zoomFactor;
+          const cropH = vh / zoomFactor;
+          const cropX = (vw - cropW) / 2;
+          const cropY = (vh - cropH) / 2;
+          ctx.drawImage(videoRef.current, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
           frameBase64 = canvas.toDataURL('image/jpeg', 0.65);
         }
       }
@@ -309,7 +323,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
           setTargetLock(newLock);
           setLockProgress(100);
-          setAiLockFeedback(`AI LOCKED: ${newLock.name} (${newLock.confidencePct}%)`);
+          setAiLockFeedback(`Lock: ${newLock.name.split(' ')[0] || 'Target'}`);
           if (soundEnabled) {
             playFighterJetMissileLockTone();
             triggerHapticFeedback([40, 50, 70]);
@@ -318,12 +332,12 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             onTargetLocked(newLock);
           }
         } else {
-          setAiLockFeedback(tapCoords ? 'Tap Vector Clear' : 'Sector Clear of Unresolved UAP');
+          setAiLockFeedback(tapCoords ? 'Tap Clear' : 'Clear');
         }
       }
     } catch (err) {
       console.warn('Gemini target auto-lock call failed:', err);
-      setAiLockFeedback('Optical Reticle Standby');
+      setAiLockFeedback('Ready');
     } finally {
       setIsAiScanning(false);
     }
@@ -338,8 +352,8 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     }
 
     if (!manualScreenLockEnabled) {
-      setTapHintToast('Screen Tap Lock is OFF (Low Battery Mode). Tap "TAP LOCK" in HUD to enable manual targeting.');
-      setTimeout(() => setTapHintToast(null), 3500);
+      setTapHintToast('Tap "Tap" in HUD first to arm target selection.');
+      setTimeout(() => setTapHintToast(null), 3000);
       return;
     }
 
@@ -374,7 +388,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     // Instant lock on designated screen coordinate
     const immediateLock: TargetLockData = {
       id: `MAN-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: 'Observer Manual Screen Target',
+      name: 'Manual Target',
       type: 'UAP',
       lockState: 'LOCKED',
       screenX: xPct,
@@ -403,7 +417,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
     setTargetLock(immediateLock);
     setLockProgress(100);
-    setAiLockFeedback(`MANUAL TARGET LOCKED: (${xPct}%, ${yPct}%)`);
+    setAiLockFeedback(`Lock (${xPct}%, ${yPct}%)`);
     if (onTargetLocked) {
       onTargetLocked(immediateLock);
     }
@@ -519,11 +533,17 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       canvas.height = videoRef.current.videoHeight || 720;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const vw = canvas.width;
+        const vh = canvas.height;
+        const cropW = vw / zoomFactor;
+        const cropH = vh / zoomFactor;
+        const cropX = (vw - cropW) / 2;
+        const cropY = (vh - cropH) / 2;
+        ctx.drawImage(videoRef.current, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
         // Draw HUD stamp
         ctx.fillStyle = '#06b6d4';
         ctx.font = '24px monospace';
-        ctx.fillText(`CHECK SKY LIGHT - TARGET HUD | AZ ${azimuth.toFixed(1)}° EL ${pitch.toFixed(1)}°`, 40, 60);
+        ctx.fillText(`CHECK SKY LIGHT - TARGET HUD | AZ ${azimuth.toFixed(1)}° EL ${pitch.toFixed(1)}° | ${zoomFactor}x ZOOM`, 40, 60);
         ctx.fillText(`${new Date().toISOString()} | ${userLocation.city || 'Local Sector'}`, 40, 100);
         if (targetLock) {
           ctx.fillStyle = '#f43f5e';
@@ -568,12 +588,26 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         targetLock
       });
 
-      if (onCaptureForReport) {
-        onCaptureForReport(
-          dataUrl,
-          `Target captured via Check Sky Light Target HUD. Azimuth ${azimuth.toFixed(1)}°, Elevation ${pitch.toFixed(1)}° over ${userLocation.city || 'local sector'}. ${targetLock ? `Target: ${targetLock.name} (${targetLock.confidencePct}% lock).` : ''}`
-        );
-      }
+      const newCapture: PreReportCapture = {
+        mediaType: 'photo',
+        mediaUrl: dataUrl,
+        telemetry: {
+          azimuth,
+          pitch,
+          roll,
+          lat: userLocation.lat,
+          lng: userLocation.lng,
+          city: userLocation.city,
+          region: userLocation.region,
+          dayNightMode,
+          soundMode: !soundEnabled ? 'Absolute Silence Active' : 'Audible Tactical HUD'
+        },
+        targetLock
+      };
+
+      setSessionCaptures(prev => [newCapture, ...prev]);
+      setJustCapturedNotice('Photo captured');
+      setTimeout(() => setJustCapturedNotice(null), 2500);
     }
   };
 
@@ -621,19 +655,60 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           }
         }
 
-        const recorder = new MediaRecorder(recordStream, { mimeType: 'video/webm' });
+        // Mobile iOS Safari compatibility: Safari requires video/mp4 or video/webm depending on iOS version
+        let options: MediaRecorderOptions = {};
+        if (typeof MediaRecorder !== 'undefined') {
+          if (MediaRecorder.isTypeSupported('video/mp4')) {
+            options = { mimeType: 'video/mp4' };
+          } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+            options = { mimeType: 'video/webm;codecs=vp9,opus' };
+          } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+            options = { mimeType: 'video/webm;codecs=vp8,opus' };
+          } else if (MediaRecorder.isTypeSupported('video/webm')) {
+            options = { mimeType: 'video/webm' };
+          }
+        }
+
+        let recorder: MediaRecorder;
+        try {
+          recorder = new MediaRecorder(recordStream, options);
+        } catch (optionsErr) {
+          console.warn('MediaRecorder with specified options failed, falling back to default:', optionsErr);
+          recorder = new MediaRecorder(recordStream);
+        }
+
         recorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) {
             recordedChunksRef.current.push(e.data);
           }
         };
         recorder.onstop = async () => {
-          const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
-          await saveMediaToVault({
+          const mimeType = recorder.mimeType || 'video/webm';
+          const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+          const capturedDuration = recordingSeconds || 1;
+          const videoUrl = URL.createObjectURL(blob);
+
+          let posterUrl: string | undefined;
+          if (videoRef.current) {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = videoRef.current.videoWidth || 640;
+              canvas.height = videoRef.current.videoHeight || 360;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                posterUrl = canvas.toDataURL('image/jpeg', 0.85);
+              }
+            } catch (err) {
+              console.warn('Canvas poster extraction warning:', err);
+            }
+          }
+
+          const savedItem = await saveMediaToVault({
             mediaType: 'video',
-            title: `Target Video Track (${recordingSeconds}s)${!soundEnabled ? ' [Clean Ambient Audio]' : ''}`,
+            title: `Target Video Track (${capturedDuration}s)${!soundEnabled ? ' [Clean Ambient Audio]' : ''}`,
             blob,
-            durationSeconds: recordingSeconds,
+            durationSeconds: capturedDuration,
             telemetry: {
               azimuth,
               pitch,
@@ -643,20 +718,46 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               city: userLocation.city,
               region: userLocation.region,
               dayNightMode,
-              soundMode: !soundEnabled 
-                ? 'Absolute Silence (Pristine Ambient Audio Capture - 0 dB Speaker Noise)' 
-                : 'Audible Tactical HUD'
+              soundMode: !soundEnabled ? 'Absolute Silence Active' : 'Audible Tactical HUD'
             },
             targetLock
           });
           setRecordingSeconds(0);
+
+          const newCapture: PreReportCapture = {
+            mediaType: 'video',
+            mediaUrl: videoUrl,
+            mediaBlob: blob,
+            posterUrl,
+            durationSeconds: capturedDuration,
+            telemetry: {
+              azimuth,
+              pitch,
+              roll,
+              lat: userLocation.lat,
+              lng: userLocation.lng,
+              city: userLocation.city,
+              region: userLocation.region,
+              dayNightMode,
+              soundMode: !soundEnabled ? 'Absolute Silence Active' : 'Audible Tactical HUD'
+            },
+            targetLock
+          };
+
+          // Add to current session captures so user stays in camera viewfinder
+          setSessionCaptures(prev => [newCapture, ...prev]);
+          setJustCapturedNotice(`Video saved (${capturedDuration}s)`);
+          setTimeout(() => setJustCapturedNotice(null), 2500);
         };
         recorder.start(500);
         mediaRecorderRef.current = recorder;
         setIsRecordingVideo(true);
         triggerHapticFeedback([20, 20]);
       } catch (err) {
-        console.error('Video recording failed:', err);
+        console.error('Video recording failed on mobile device:', err);
+        setIsRecordingVideo(false);
+        setJustCapturedNotice('Recording error on device');
+        setTimeout(() => setJustCapturedNotice(null), 3000);
       }
     }
   };
@@ -686,13 +787,17 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           : "relative w-full h-[calc(100dvh-13rem)] min-h-[380px] max-h-[720px] rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl font-mono select-none flex flex-col cursor-crosshair"
       }
     >
-      {/* Video / Camera Feed (Full View Object Cover) */}
+      {/* Video / Camera Feed (Full View Object Cover with smooth optical/digital crop zoom) */}
       <video
         ref={videoRef}
         playsInline
         muted
         autoPlay
-        className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${cameraActive ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          transform: zoomFactor > 1 ? `scale(${zoomFactor})` : undefined,
+          transformOrigin: 'center center'
+        }}
+        className={`absolute inset-0 w-full h-full object-cover z-0 transition-all duration-200 ease-out ${cameraActive ? 'opacity-100' : 'opacity-0'}`}
       />
 
       {/* Visual Ripple and Reticle on User Screen Tap */}
@@ -751,38 +856,38 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       {/* Standby / Quick Camera Activation Screen */}
       {!cameraActive && (
         <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-cyan-500/40 flex items-center justify-center mb-3 sm:mb-4 relative shadow-[0_0_30px_rgba(6,182,212,0.25)]">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border border-cyan-400/50 animate-ping absolute"></div>
-            <Target className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-400" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-cyan-500/40 flex items-center justify-center mb-3 relative shadow-[0_0_25px_rgba(6,182,212,0.2)]">
+            <div className="w-12 h-12 rounded-full border border-cyan-400/40 animate-ping absolute"></div>
+            <Target className="w-7 h-7 sm:w-8 sm:h-8 text-cyan-400" />
           </div>
-          <h3 className="text-base sm:text-lg font-black text-slate-100 uppercase tracking-wider">
-            TARGET SKY ACQUISITION
+          <h3 className="text-sm sm:text-base font-bold text-slate-100 uppercase tracking-wider">
+            Point Camera at Sky
           </h3>
-          <p className="text-[11px] sm:text-xs text-slate-400 max-w-sm sm:max-w-md mt-1 sm:mt-2 leading-relaxed">
-            Point camera at the sky to track UAP targets. Low battery profile is engaged on startup to conserve iPhone battery.
+          <p className="text-xs text-slate-400 max-w-xs mt-1 leading-normal">
+            Arm optical tracking and deconflict against live civilian airspace.
           </p>
 
-          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3">
+          <div className="mt-4 flex items-center gap-2.5">
             <button
               id="target-quick-camera-btn"
               onClick={startCamera}
-              className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-extrabold text-xs tracking-wider transition flex items-center space-x-2 shadow-[0_0_25px_rgba(6,182,212,0.4)] cursor-pointer active:scale-95 min-h-[44px]"
+              className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs tracking-wide transition flex items-center space-x-2 shadow-lg cursor-pointer active:scale-95 min-h-[42px]"
             >
               <Camera className="w-4 h-4" />
-              <span>QUICK CAMERA ACCESS</span>
+              <span>Start Camera</span>
             </button>
 
             <button
               onClick={handleToggleFullView}
-              className="px-4 py-2.5 sm:py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition flex items-center space-x-2 cursor-pointer min-h-[44px]"
+              className="px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center space-x-1.5 cursor-pointer min-h-[42px]"
             >
-              {isFullView ? <Minimize2 className="w-4 h-4 text-cyan-400" /> : <Maximize2 className="w-4 h-4 text-cyan-400" />}
-              <span>{isFullView ? 'NORMAL VIEW' : 'FULL VIEW'}</span>
+              {isFullView ? <Minimize2 className="w-3.5 h-3.5 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />}
+              <span>{isFullView ? 'Standard' : 'Full Screen'}</span>
             </button>
           </div>
 
           {cameraError && (
-            <p className="mt-3 text-[10px] sm:text-[11px] text-amber-400/90 font-mono bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-500/30 max-w-md">
+            <p className="mt-3 text-[10px] text-amber-400/90 font-mono bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-500/30 max-w-xs">
               {cameraError}
             </p>
           )}
@@ -798,16 +903,14 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-2.5 sm:p-4">
         {/* Top Control Section: Telemetry + Filter/Tools + Tactical Mode Island */}
         <div className="space-y-2">
-          {/* Top Telemetry & Viewport Bar */}
+          {/* Top Telemetry & Viewport Bar - Transparent Glass Backdrops */}
           <div className="flex items-center justify-between gap-2">
             {/* Left: Compass Telemetry Pill */}
-            <div className="flex items-center space-x-1.5 sm:space-x-2 bg-slate-950/85 backdrop-blur-md px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-800 pointer-events-auto text-[11px] sm:text-xs font-bold shadow-md">
-              <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0 animate-spin-slow" />
-              <span className="text-cyan-400">AZ {azimuth.toFixed(0)}°</span>
-              <span className="text-slate-600">·</span>
-              <span className="text-teal-400">EL {pitch.toFixed(0)}°</span>
-              <span className="text-slate-600 hidden xs:inline">·</span>
-              <span className="text-slate-400 hidden xs:inline text-[10px]">ROLL {roll.toFixed(0)}°</span>
+            <div className="flex items-center space-x-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/10 pointer-events-auto text-[11px] sm:text-xs font-mono font-bold shadow-sm">
+              <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span className="text-cyan-400">{azimuth.toFixed(0)}° AZ</span>
+              <span className="text-white/40">·</span>
+              <span className="text-teal-400">{pitch.toFixed(0)}° EL</span>
             </div>
 
             {/* Right: Display Filters, Audio Synthesizer, & Full View */}
@@ -819,7 +922,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                   const nextIdx = (modes.indexOf(dayNightMode) + 1) % modes.length;
                   setDayNightMode(modes[nextIdx]);
                 }}
-                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-950/85 hover:bg-slate-900 border border-slate-800 text-cyan-300 text-[10px] sm:text-xs font-bold transition flex items-center space-x-1 cursor-pointer shadow-md min-h-[36px]"
+                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-black/30 hover:bg-black/50 border border-white/10 text-cyan-300 text-[10px] sm:text-xs font-bold transition flex items-center space-x-1 cursor-pointer shadow-sm min-h-[36px]"
                 title="Toggle Optical Filter (NVG, FLIR, Tactical, Day)"
               >
                 <Layers className="w-3.5 h-3.5 text-cyan-400" />
@@ -842,10 +945,10 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                     setTimeout(() => setSoundModeToast(null), 3000);
                   }
                 }}
-                className={`p-1.5 sm:p-2 rounded-xl bg-slate-950/85 hover:bg-slate-900 border text-xs transition cursor-pointer shadow-md min-h-[36px] min-w-[36px] flex items-center justify-center ${
+                className={`p-1.5 sm:p-2 rounded-xl bg-black/30 hover:bg-black/50 border text-xs transition cursor-pointer shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center ${
                   soundEnabled 
-                    ? 'border-amber-500/60 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.3)]' 
-                    : 'border-emerald-500/50 text-emerald-400 bg-emerald-950/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+                    ? 'border-amber-400/60 text-amber-300' 
+                    : 'border-white/10 text-emerald-400'
                 }`}
                 title={
                   soundEnabled 
@@ -859,7 +962,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               {/* Full View Toggle */}
               <button
                 onClick={handleToggleFullView}
-                className="p-1.5 sm:p-2 rounded-xl bg-slate-950/85 hover:bg-slate-900 border border-slate-800 text-cyan-300 text-xs transition cursor-pointer shadow-md min-h-[36px] min-w-[36px] flex items-center justify-center"
+                className="p-1.5 sm:p-2 rounded-xl bg-black/30 hover:bg-black/50 border border-white/10 text-cyan-300 text-xs transition cursor-pointer shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title={isFullView ? "Exit Full View" : "Full View"}
               >
                 {isFullView ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -867,9 +970,9 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             </div>
           </div>
 
-          {/* Central Mobile Tactical Tracking Mode Bar (Clear, uncrowded, touch-friendly) */}
+          {/* Central Mobile Tactical Tracking Mode Bar (Unobstructed Transparent Glass) */}
           <div className="flex items-center justify-center pointer-events-auto">
-            <div className="inline-flex items-center p-1 rounded-2xl bg-slate-950/90 backdrop-blur-md border border-slate-800/90 shadow-xl space-x-1 text-[10px] sm:text-[11px] font-mono">
+            <div className="inline-flex items-center p-0.5 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg space-x-0.5 text-[11px] font-mono">
               {/* AI Auto-Lock Toggle */}
               <button
                 id="target-ai-autolock-toggle"
@@ -877,22 +980,22 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                   const next = !geminiAutoLockEnabled;
                   setGeminiAutoLockEnabled(next);
                   if (next) {
-                    setAiLockFeedback('Gemini AI Auto-Lock Enabled (4.5s loop)');
+                    setAiLockFeedback('Scanning');
                     setOpticalTrackingActive(true);
                     triggerHapticFeedback([30]);
                   } else {
-                    setAiLockFeedback('AI Auto-Lock Disabled (Low Battery Mode)');
+                    setAiLockFeedback('Ready');
                   }
                 }}
-                className={`px-2 sm:px-2.5 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[34px] ${
+                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[32px] ${
                   geminiAutoLockEnabled
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 shadow-[0_0_12px_rgba(6,182,212,0.3)] animate-pulse'
-                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/60 shadow-[0_0_12px_rgba(6,182,212,0.3)] animate-pulse'
+                    : 'text-white/70 hover:text-white border border-transparent'
                 }`}
                 title="Toggle Gemini AI Auto-Lock"
               >
-                <Cpu className={`w-3 h-3 ${geminiAutoLockEnabled ? 'text-cyan-400' : 'text-slate-500'}`} />
-                <span>AI: <strong className={geminiAutoLockEnabled ? 'text-cyan-300' : 'text-slate-400'}>{geminiAutoLockEnabled ? 'ON' : 'OFF'}</strong></span>
+                <Cpu className={`w-3.5 h-3.5 ${geminiAutoLockEnabled ? 'text-cyan-400' : 'text-white/50'}`} />
+                <span>AI</span>
               </button>
 
               {/* Screen Tap Lock Toggle */}
@@ -902,48 +1005,61 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                   const next = !manualScreenLockEnabled;
                   setManualScreenLockEnabled(next);
                   if (next) {
-                    setAiLockFeedback('Screen Tap Lock ARMED: Click/Tap target on camera');
+                    setAiLockFeedback('Tap Target');
                     triggerHapticFeedback([25, 25]);
                   } else {
-                    setAiLockFeedback('Screen Tap Lock Disabled (Low Battery Mode)');
+                    setAiLockFeedback('Ready');
                   }
                 }}
-                className={`px-2 sm:px-2.5 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[34px] ${
+                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[32px] ${
                   manualScreenLockEnabled
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-400/60 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                    ? 'bg-amber-500/30 text-amber-300 border border-amber-400/60 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
+                    : 'text-white/70 hover:text-white border border-transparent'
                 }`}
                 title="Toggle Screen Tap Target Lock"
               >
-                <MousePointerClick className={`w-3 h-3 ${manualScreenLockEnabled ? 'text-amber-400' : 'text-slate-500'}`} />
-                <span>TAP: <strong className={manualScreenLockEnabled ? 'text-amber-300' : 'text-slate-400'}>{manualScreenLockEnabled ? 'ARMED' : 'OFF'}</strong></span>
+                <MousePointerClick className={`w-3.5 h-3.5 ${manualScreenLockEnabled ? 'text-amber-400' : 'text-white/50'}`} />
+                <span>Tap</span>
               </button>
 
               {/* Single-Shot Scan */}
               <button
                 onClick={() => runGeminiAutoLock(true)}
                 disabled={isAiScanning}
-                className={`px-2.5 py-1.5 rounded-xl border text-[10px] font-bold transition flex items-center space-x-1 shadow-md cursor-pointer min-h-[34px] ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition flex items-center space-x-1 shadow-sm cursor-pointer min-h-[32px] ${
                   isAiScanning 
-                    ? 'bg-cyan-950 border-cyan-400 text-cyan-300 animate-spin'
-                    : 'bg-slate-900 hover:bg-slate-800 border-amber-500/40 text-amber-300'
+                    ? 'bg-cyan-950/60 border border-cyan-400 text-cyan-300 animate-spin'
+                    : 'bg-black/30 hover:bg-black/50 text-amber-300 border border-amber-500/40'
                 }`}
                 title="Single-Shot Lock On Target Now"
               >
-                <Zap className="w-3 h-3 text-amber-400" />
-                <span>SCAN</span>
-              </button>
-
-              {/* Battery & Power Profile */}
-              <button
-                onClick={() => setPowerDrawerOpen(!powerDrawerOpen)}
-                className="px-2 py-1.5 rounded-xl text-emerald-400 hover:bg-emerald-500/10 transition cursor-pointer flex items-center space-x-1 min-h-[34px]"
-                title="iPhone Battery & Power Profile"
-              >
-                <Battery className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden xs:inline text-[9px] font-bold">ECO</span>
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>Scan</span>
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Right Margin Vertical Zoom Controller - Non-obstructive camera app style */}
+        <div className="absolute right-2 sm:right-3.5 top-1/2 -translate-y-1/2 z-20 pointer-events-auto">
+          <div className="flex flex-col items-center p-1 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10 shadow-lg space-y-1 text-[11px] font-mono">
+            {[5, 2, 1].map((z) => (
+              <button
+                key={z}
+                onClick={() => {
+                  setZoomFactor(z);
+                  triggerHapticFeedback([20]);
+                }}
+                className={`w-8 h-8 rounded-xl font-bold flex items-center justify-center transition cursor-pointer text-xs ${
+                  zoomFactor === z
+                    ? 'bg-cyan-400 text-slate-950 shadow-md font-black'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title={`${z}x Optical / Digital Crop Zoom`}
+              >
+                {z}x
+              </button>
+            ))}
           </div>
         </div>
 
@@ -1011,32 +1127,32 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         <div className="space-y-1.5 pointer-events-auto max-w-2xl mx-auto w-full">
           {/* Target Telemetry Card when locked */}
           {targetLock && (
-            <div className="bg-slate-950/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-rose-500/40 text-xs shadow-xl flex items-center justify-between gap-2 animate-fade-in w-full">
+            <div className="bg-black/40 backdrop-blur-lg px-3 py-2 rounded-2xl border border-rose-500/50 text-xs shadow-xl flex items-center justify-between gap-2 animate-fade-in w-full font-mono">
               <div className="space-y-0.5 min-w-0 flex-1">
                 <div className="flex items-center space-x-1.5">
-                  <Zap className="w-3.5 h-3.5 text-rose-400 animate-pulse shrink-0" />
-                  <span className="text-rose-400 font-extrabold tracking-wider truncate text-[11px] sm:text-xs">
-                    {targetLock.name}
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
+                  <span className="text-rose-400 font-bold tracking-wide truncate text-xs">
+                    {targetLock.name.split(' ')[0] || 'Target'}
                   </span>
-                  <span className="text-[9px] font-mono text-cyan-300 bg-cyan-950/60 px-1.5 py-0.2 rounded border border-cyan-500/30 shrink-0">
-                    {targetLock.confidencePct}%
+                  <span className="text-[10px] text-cyan-300 bg-cyan-950/40 px-1.5 py-0.2 rounded border border-cyan-500/30 shrink-0">
+                    {targetLock.confidencePct}% Lock
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-300 font-mono truncate">
-                  {targetLock.geminiLockDetails?.classicalDeconfliction || targetLock.details}
+                <p className="text-[10px] text-slate-300 truncate">
+                  {Math.round(targetLock.azimuthDeg)}° AZ · {Math.round(targetLock.elevationDeg)}° EL · {targetLock.estimatedSpeed || 'Mach 5'}
                 </p>
               </div>
 
               <div className="flex items-center space-x-1.5 shrink-0">
                 <button
                   onClick={handleCapturePhoto}
-                  className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md min-h-[34px]"
+                  className="px-2.5 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md min-h-[34px]"
                 >
                   Capture
                 </button>
                 <button
                   onClick={() => setTargetLock(null)}
-                  className="px-2 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer min-h-[34px]"
+                  className="px-2 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[34px] border border-white/10"
                 >
                   Release
                 </button>
@@ -1044,31 +1160,41 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             </div>
           )}
 
-          {/* Integrated Airspace & Deconfliction Ribbon (Never overlaps the buttons!) */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800/80 text-[10px] font-mono text-slate-300 shadow-md">
-            <div className="flex items-center space-x-1.5 truncate">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              <span className="text-emerald-400 font-bold shrink-0">ADS-B DECONFLICTED</span>
-              <span className="text-slate-600">·</span>
-              <span className="text-slate-400 truncate">{flights.length} AIRBORNE</span>
+          {/* Just Captured Notice Badge */}
+          {justCapturedNotice && (
+            <div className="flex items-center justify-center">
+              <div className="px-3 py-1.5 rounded-full bg-emerald-500/90 text-slate-950 font-bold text-xs shadow-lg animate-bounce flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-full bg-white"></span>
+                <span>{justCapturedNotice}</span>
+              </div>
             </div>
-            <div className="text-cyan-400 truncate max-w-[140px] xs:max-w-[180px] sm:max-w-[260px] text-right font-medium">
+          )}
+
+          {/* Integrated Airspace & Deconfliction Ribbon (Transparent Frosted Glass) */}
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-300 shadow-sm">
+            <div className="flex items-center space-x-1.5 truncate">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+              <span className="text-emerald-400 font-bold shrink-0">
+                {flights.length > 0 ? `${flights.length} Planes · Clear` : 'Sky Clear'}
+              </span>
+            </div>
+            <div className="text-cyan-400 truncate text-right font-medium shrink-0 ml-2">
               {aiLockFeedback}
             </div>
           </div>
 
-          {/* Main Tactical Action Bar (Mobile-first sizing and touch targets) */}
-          <div className="flex items-center justify-between bg-slate-950/95 backdrop-blur-xl px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-slate-800/90 shadow-2xl mt-1">
+          {/* Main Tactical Action Bar (Transparent Frosted Glass - Maximum Viewport Visibility) */}
+          <div className="flex items-center justify-between bg-black/40 backdrop-blur-xl px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-white/15 shadow-2xl mt-1">
             {/* Standby / Quick Camera Toggle */}
             <div className="flex items-center space-x-1.5">
               {cameraActive ? (
                 <button
                   onClick={stopCamera}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer min-h-[42px] flex items-center space-x-1.5"
+                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[42px] flex items-center space-x-1.5"
                   title="Pause Camera to Save Battery"
                 >
-                  <Camera className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="text-[11px] sm:text-xs">Standby</span>
+                  <Camera className="w-3.5 h-3.5 text-slate-300" />
+                  <span className="text-[11px] sm:text-xs">Pause</span>
                 </button>
               ) : (
                 <button
@@ -1087,7 +1213,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               {/* Primary Shutter Button */}
               <button
                 onClick={handleCapturePhoto}
-                className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_22px_rgba(6,182,212,0.6)] transition cursor-pointer border-3 border-white/70"
+                className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_22px_rgba(6,182,212,0.6)] transition cursor-pointer border-3 border-white/80"
                 title="Capture Target Photo"
               >
                 <Circle className="w-6 h-6 fill-current" />
@@ -1099,7 +1225,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer min-h-[42px] ${
                   isRecordingVideo
                     ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
-                    : 'bg-slate-900 hover:bg-slate-800 border border-slate-700 text-rose-400'
+                    : 'bg-white/10 hover:bg-white/15 border border-white/10 text-rose-400'
                 }`}
                 title="Record Video Track"
               >
@@ -1108,18 +1234,31 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               </button>
             </div>
 
-            {/* Media Vault Link */}
-            <div className="flex items-center">
-              {onOpenVault && (
+            {/* Media Vault & Session Review Link */}
+            <div className="flex items-center space-x-1.5">
+              {sessionCaptures.length > 0 ? (
+                <button
+                  onClick={() => {
+                    if (onCaptureForReview && sessionCaptures.length > 0) {
+                      onCaptureForReview(sessionCaptures[0]);
+                    }
+                  }}
+                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black transition flex items-center space-x-1.5 cursor-pointer min-h-[42px] shadow-lg animate-pulse"
+                  title="Review session captures and prepare report"
+                >
+                  <span className="text-[11px] sm:text-xs">Review ({sessionCaptures.length})</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              ) : onOpenVault ? (
                 <button
                   onClick={onOpenVault}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[42px]"
+                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[42px]"
                   title="Open Captured Photos & Videos"
                 >
                   <span className="text-[11px] sm:text-xs">Vault</span>
                   <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
