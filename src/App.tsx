@@ -3,7 +3,7 @@ import {
   Camera, Crosshair, Radar, ListFilter, Activity, Bell, 
   Compass, ShieldAlert, Sparkles, Plus, MapPin, 
   Settings, Share2, Info, ChevronRight, ChevronDown, Volume2, VolumeX, Landmark, ScanSearch,
-  FileText, Radio
+  FileText, Radio, Zap, Leaf
 } from 'lucide-react';
 import { 
   LocationCoords, SightingReport, FlightTrack, CelestialBody, 
@@ -19,6 +19,12 @@ import {
   loadLocationPreference, 
   saveLocationPreference 
 } from './lib/storage';
+import { 
+  PowerProfile, 
+  loadPowerSettings, 
+  savePowerSettings, 
+  subscribePowerSettings 
+} from './lib/powerSettings';
 
 // Core Components
 import { CheckEngineLogo } from './components/CheckEngineLogo';
@@ -43,6 +49,8 @@ import { LogoStudioModal } from './components/LogoStudioModal';
 import { GpsPermissionModal } from './components/GpsPermissionModal';
 import { LocationPickerModal } from './components/LocationPickerModal';
 import { SoundOptionsModal } from './components/SoundOptionsModal';
+import { AppPermissionsModal, PermissionTarget } from './components/AppPermissionsModal';
+import { EulaPrivacyModal } from './components/EulaPrivacyModal';
 import { PreReportCheckModal, PreReportCapture } from './components/PreReportCheckModal';
 import { unlockAudioContext } from './components/ar/ArAudioSynthesizer';
 import { loadSoundSettings, subscribeSoundSettings, SoundSettings } from './lib/soundSettings';
@@ -98,7 +106,35 @@ export default function App() {
   const [isGpsHelpOpen, setIsGpsHelpOpen] = useState<boolean>(false);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState<boolean>(false);
   const [isSoundOptionsOpen, setIsSoundOptionsOpen] = useState<boolean>(false);
+  // Contextual on-demand permission request (never blocks on app startup)
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState<boolean>(false);
+  const [permissionTarget, setPermissionTarget] = useState<PermissionTarget>('camera');
+  const [permissionRetryCallback, setPermissionRetryCallback] = useState<(() => void) | null>(null);
+  const [isEulaOpen, setIsEulaOpen] = useState<boolean>(false);
   const [soundSettings, setSoundSettings] = useState<SoundSettings>(loadSoundSettings);
+  const [powerSettings, setPowerSettings] = useState(loadPowerSettings);
+
+  const togglePowerProfile = () => {
+    unlockAudioContext();
+    const nextProfile: PowerProfile = powerSettings.profile === 'standard' ? 'eco' : 'standard';
+    const updated = { ...powerSettings, profile: nextProfile };
+    setPowerSettings(updated);
+    savePowerSettings(updated);
+  };
+
+  // Synchronize power settings across the application
+  useEffect(() => {
+    const unsubscribe = subscribePowerSettings((newSettings) => {
+      setPowerSettings(newSettings);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleRequirePermission = (target: PermissionTarget, retryAction: () => void) => {
+    setPermissionTarget(target);
+    setPermissionRetryCallback(() => retryAction);
+    setIsPermissionsModalOpen(true);
+  };
 
   // Synchronize sound settings across the application
   useEffect(() => {
@@ -128,6 +164,9 @@ export default function App() {
 
   // Fetch real-world airspace data around sector (ADS-B flights, NOAA weather balloons, LEO satellites)
   const fetchSectorAirspace = async () => {
+    // If the tab is hidden or phone locked, suspend all background network polling to prevent battery/thermal drain
+    if (document.hidden) return;
+
     try {
       const [flightsRes, balloonsRes, satsRes] = await Promise.allSettled([
         fetch(`/api/flights?lat=${userLocation.lat}&lng=${userLocation.lng}`),
@@ -162,8 +201,20 @@ export default function App() {
 
   useEffect(() => {
     fetchSectorAirspace();
-    const interval = setInterval(fetchSectorAirspace, 20000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchSectorAirspace, 25000);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Instant fresh airspace update when user returns to tab
+        fetchSectorAirspace();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [userLocation]);
 
   // Request HTML5 Geolocation with reverse geocode and gentle fallback
@@ -324,6 +375,33 @@ export default function App() {
                   <ChevronDown className="w-3 h-3 text-cyan-400/70 shrink-0" />
                 </button>
 
+                {/* Hardware Power Profile Toggle (Thermal Eco vs Tactical Performance) */}
+                <button
+                  onClick={togglePowerProfile}
+                  className={`p-2 rounded-xl transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative ${
+                    powerSettings.profile === 'eco'
+                      ? 'text-teal-400 bg-teal-500/15 border border-teal-500/30 hover:bg-teal-500/25'
+                      : 'text-amber-400 hover:text-amber-300 hover:bg-white/[0.06]'
+                  }`}
+                  title={
+                    powerSettings.profile === 'eco'
+                      ? "Thermal Eco Mode: ACTIVE (Reduced frame-rate, cool chassis, throttled background draw). Tap for Standard Tactical."
+                      : "Standard Tactical Mode: ACTIVE. Tap to switch to Thermal Eco Mode."
+                  }
+                  aria-label="Toggle Power Profile"
+                >
+                  {powerSettings.profile === 'eco' ? (
+                    <Leaf className="w-4 h-4 text-teal-300" />
+                  ) : (
+                    <Zap className="w-4 h-4 text-amber-400" />
+                  )}
+                  <span
+                    className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
+                      powerSettings.profile === 'eco' ? 'bg-teal-400 animate-pulse' : 'bg-amber-400'
+                    }`}
+                  />
+                </button>
+
                 {/* Acoustic & Sound Options (Stealth by Default for Clean Mic Encounter Capture) */}
                 <button
                   onClick={() => setIsSoundOptionsOpen(true)}
@@ -406,6 +484,7 @@ export default function App() {
                 }}
                 onOpenVault={() => setIsVaultOpen(true)}
                 onOpenSoundOptions={() => setIsSoundOptionsOpen(true)}
+                onRequirePermission={handleRequirePermission}
                 isFullView={isTargetFullView}
                 onToggleFullView={(full) => setIsTargetFullView(full)}
               />
@@ -718,6 +797,37 @@ export default function App() {
         <SoundOptionsModal
           isOpen={isSoundOptionsOpen}
           onClose={() => setIsSoundOptionsOpen(false)}
+        />
+
+        <AppPermissionsModal
+          isOpen={isPermissionsModalOpen}
+          target={permissionTarget}
+          onGrant={(target) => {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('csl_sensor_consent_acknowledged', 'true');
+            }
+            setIsPermissionsModalOpen(false);
+            if (target === 'location') {
+              requestLiveGps();
+            }
+            if (permissionRetryCallback) {
+              permissionRetryCallback();
+              setPermissionRetryCallback(null);
+            }
+          }}
+          onCancel={() => {
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('csl_sensor_consent_acknowledged', 'simulation_mode');
+            }
+            setIsPermissionsModalOpen(false);
+            setPermissionRetryCallback(null);
+          }}
+          onViewEula={() => setIsEulaOpen(true)}
+        />
+
+        <EulaPrivacyModal
+          isOpen={isEulaOpen}
+          onClose={() => setIsEulaOpen(false)}
         />
       </div>
     </ErrorBoundary>

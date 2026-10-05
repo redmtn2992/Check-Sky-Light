@@ -97,8 +97,19 @@ export function useDeviceOrientation(initialHeading = 0): UseDeviceOrientationRe
       setPermissionState('granted');
     }
 
+    let lastUpdateTimestamp = 0;
+    // Throttle orientation dispatch to max 30Hz to prevent mobile CPU thermal throttling
+    const MIN_EVENT_INTERVAL_MS = 33; 
+
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (isManualControl) return;
+      if (document.hidden) return; // Zero computation while tab is in background or phone locked
+
+      const now = performance.now();
+      if (now - lastUpdateTimestamp < MIN_EVENT_INTERVAL_MS) {
+        return;
+      }
+      lastUpdateTimestamp = now;
 
       let rawHeading = 0;
       let rawPitch = e.beta ?? 25;

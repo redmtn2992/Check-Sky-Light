@@ -115,6 +115,7 @@ export const AudioSonicMonitor: React.FC<AudioSonicMonitorProps> = ({ onSendToGe
     const dataArray = new Uint8Array(bufferLength);
     const render = () => {
       animFrameRef.current = requestAnimationFrame(render);
+      if (document.hidden) return; // Zero canvas draws when tab is hidden
       analyser.getByteFrequencyData(dataArray);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const barWidth = (canvas.width / bufferLength) * 2;
@@ -154,6 +155,7 @@ export const AudioSonicMonitor: React.FC<AudioSonicMonitorProps> = ({ onSendToGe
     if (!ctx) return;
     let step = 0;
     const interval = setInterval(() => {
+      if (document.hidden) return; // Zero canvas math when tab is backgrounded
       step++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const bufferLength = 64;

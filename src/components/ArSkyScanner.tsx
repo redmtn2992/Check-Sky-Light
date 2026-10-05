@@ -33,6 +33,7 @@ import {
   SoundSettings 
 } from '../lib/soundSettings';
 import { PreReportCapture } from './PreReportCheckModal';
+import { PermissionTarget } from './AppPermissionsModal';
 
 export interface ArSkyScannerProps {
   userLocation: LocationCoords;
@@ -44,6 +45,7 @@ export interface ArSkyScannerProps {
   onOpenVault?: () => void;
   onOpenTriangulation?: () => void;
   onOpenSoundOptions?: () => void;
+  onRequirePermission?: (target: PermissionTarget, retryAction: () => void) => void;
   isFullView?: boolean;
   onToggleFullView?: (fullView: boolean) => void;
 }
@@ -58,6 +60,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   onOpenVault,
   onOpenTriangulation,
   onOpenSoundOptions,
+  onRequirePermission,
   isFullView: propIsFullView,
   onToggleFullView
 }) => {
@@ -128,9 +131,21 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   }, []);
 
   // Start Camera (Quick Camera Access)
-  const startCamera = async () => {
+  const startCamera = async (forcePrompt = false) => {
     setCameraError(null);
     unlockAudioContext();
+
+    // Contextual on-demand permission check (Apple HIG Guideline 5.1.1)
+    if (typeof window !== 'undefined') {
+      const acknowledged = localStorage.getItem('csl_sensor_consent_acknowledged');
+      if (!acknowledged && onRequirePermission) {
+        onRequirePermission('camera', () => {
+          startCamera(true);
+        });
+        return;
+      }
+    }
+
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         setCameraError('Camera API not accessible in this environment. Operating in sensor simulation mode.');
@@ -139,8 +154,9 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: { ideal: 'environment' },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          frameRate: { ideal: 30, max: 30 }
         },
         audio: false
       });
@@ -167,9 +183,33 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     setCameraActive(false);
   };
 
-  // Attempt Quick Camera start immediately on component mount
+  // Attempt Quick Camera start only if user has previously authorized, otherwise remain in non-blocking standby
   useEffect(() => {
-    startCamera();
+    if (typeof window !== 'undefined') {
+      const acknowledged = localStorage.getItem('csl_sensor_consent_acknowledged');
+      if (acknowledged === 'true') {
+        startCamera();
+      }
+
+      // Thermal Mitigation: Auto-pause camera tracks when tab is hidden or phone is locked
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          stopCamera();
+        } else {
+          const consented = localStorage.getItem('csl_sensor_consent_acknowledged');
+          if (consented === 'true') {
+            startCamera();
+          }
+        }
+      };
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        stopCamera();
+      };
+    }
     return () => {
       stopCamera();
     };
@@ -194,9 +234,17 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     }
   };
 
-  // Device Orientation Handler (iPhone Compass & Gyro)
+  // Device Orientation Handler (iPhone Compass & Gyro) with thermal rate-limiting
   useEffect(() => {
+    let lastSensorDispatch = 0;
+    const SENSOR_MIN_INTERVAL_MS = 33; // 30Hz limit avoids GPU/CPU bus congestion
+
     const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (document.hidden) return; // Zero calculation while backgrounded
+      const now = performance.now();
+      if (now - lastSensorDispatch < SENSOR_MIN_INTERVAL_MS) return;
+      lastSensorDispatch = now;
+
       let rawAz = e.alpha ?? 180;
       let rawPitch = e.beta ?? 35;
       let rawRoll = e.gamma ?? 0;
@@ -212,7 +260,13 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       setRoll(smoothed.roll);
     };
 
+    let lastMotionDispatch = 0;
     const handleMotion = (e: DeviceMotionEvent) => {
+      if (document.hidden) return;
+      const now = performance.now();
+      if (now - lastMotionDispatch < 66) return; // 15Hz motion is sufficient for G-force
+      lastMotionDispatch = now;
+
       if (e.accelerationIncludingGravity) {
         setAcceleration({
           x: e.accelerationIncludingGravity.x ?? 0,
@@ -447,60 +501,72 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     };
   }, [geminiAutoLockEnabled, cameraActive, azimuth, pitch]);
 
-  // Optical Centroid Tracker (local computer vision layer)
+  // Optical Centroid Tracker (local computer vision layer) with thermal governor
   useEffect(() => {
     let active = true;
+    let lastCentroidSample = 0;
+    const OPTICAL_SAMPLE_INTERVAL_MS = 66; // 15 fps sampling provides responsive centroid tracking with ~70% lower GPU/CPU load
 
     const runOpticalLoop = () => {
       if (!active) return;
 
+      if (document.hidden) {
+        // Tab is hidden or phone locked: idle sleep
+        opticalLoopRef.current = requestAnimationFrame(runOpticalLoop);
+        return;
+      }
+
+      const now = performance.now();
       if (opticalTrackingActive && videoRef.current && cameraActive && !targetLock) {
-        const centroid = sampleOpticalCentroid(videoRef.current, 50, 50, 110);
+        if (now - lastCentroidSample >= OPTICAL_SAMPLE_INTERVAL_MS) {
+          lastCentroidSample = now;
+          const centroid = sampleOpticalCentroid(videoRef.current, 50, 50, 110);
 
-        if (centroid.detected && centroid.confidence > 55) {
-          lockHoldTimerRef.current += 1;
-          setLockProgress(Math.min(100, lockHoldTimerRef.current * 8));
-
-          if (lockHoldTimerRef.current === 4 && soundEnabled) {
-            playTargetAcquiringTone();
-            triggerHapticFeedback([15, 20]);
-          }
-
-          if (lockHoldTimerRef.current >= 12 && (!targetLock || targetLock.lockState !== 'LOCKED')) {
-            const newLock: TargetLockData = {
-              id: `TGT-${Math.floor(1000 + Math.random() * 9000)}`,
-              name: 'Optical Centroid Anomaly',
-              type: 'UAP',
-              lockState: 'LOCKED',
-              screenX: 50 + centroid.deltaScreenX,
-              screenY: 50 + centroid.deltaScreenY,
-              azimuthDeg: azimuth,
-              elevationDeg: pitch,
-              azimuthStr: `${azimuth.toFixed(1)}°`,
-              elevationStr: `${pitch.toFixed(1)}°`,
-              distance: `${(8.4 + Math.random() * 4).toFixed(1)} km`,
-              angularVelocityDegPerSec: 14.2,
-              estimatedSpeed: `Mach ${(4.8 + Math.random() * 2).toFixed(1)}`,
-              estimatedAltitude: `${(3200 + Math.floor(Math.random() * 1200)).toLocaleString()} m`,
-              kinematicGForce: '48 G',
-              deconflictionStatus: 'ANOMALOUS_UNIDENTIFIED',
-              details: 'Optical centroid tracked with zero civilian transponder match.',
-              confidencePct: centroid.confidence,
-              timestamp: new Date().toISOString()
-            };
-            setTargetLock(newLock);
-            if (soundEnabled) {
-              playFighterJetMissileLockTone();
-              triggerHapticFeedback([40, 50, 60]);
-            }
-            if (onTargetLocked) {
-              onTargetLocked(newLock);
-            }
-          }
-        } else {
-          if (lockHoldTimerRef.current > 0) {
-            lockHoldTimerRef.current = Math.max(0, lockHoldTimerRef.current - 2);
+          if (centroid.detected && centroid.confidence > 55) {
+            lockHoldTimerRef.current += 1;
             setLockProgress(Math.min(100, lockHoldTimerRef.current * 8));
+
+            if (lockHoldTimerRef.current === 4 && soundEnabled) {
+              playTargetAcquiringTone();
+              triggerHapticFeedback([15, 20]);
+            }
+
+            if (lockHoldTimerRef.current >= 12 && (!targetLock || targetLock.lockState !== 'LOCKED')) {
+              const newLock: TargetLockData = {
+                id: `TGT-${Math.floor(1000 + Math.random() * 9000)}`,
+                name: 'Optical Centroid Anomaly',
+                type: 'UAP',
+                lockState: 'LOCKED',
+                screenX: 50 + centroid.deltaScreenX,
+                screenY: 50 + centroid.deltaScreenY,
+                azimuthDeg: azimuth,
+                elevationDeg: pitch,
+                azimuthStr: `${azimuth.toFixed(1)}°`,
+                elevationStr: `${pitch.toFixed(1)}°`,
+                distance: `${(8.4 + Math.random() * 4).toFixed(1)} km`,
+                angularVelocityDegPerSec: 14.2,
+                estimatedSpeed: `Mach ${(4.8 + Math.random() * 2).toFixed(1)}`,
+                estimatedAltitude: `${(3200 + Math.floor(Math.random() * 1200)).toLocaleString()} m`,
+                kinematicGForce: '48 G',
+                deconflictionStatus: 'ANOMALOUS_UNIDENTIFIED',
+                details: 'Optical centroid tracked with zero civilian transponder match.',
+                confidencePct: centroid.confidence,
+                timestamp: new Date().toISOString()
+              };
+              setTargetLock(newLock);
+              if (soundEnabled) {
+                playFighterJetMissileLockTone();
+                triggerHapticFeedback([40, 50, 60]);
+              }
+              if (onTargetLocked) {
+                onTargetLocked(newLock);
+              }
+            }
+          } else {
+            if (lockHoldTimerRef.current > 0) {
+              lockHoldTimerRef.current = Math.max(0, lockHoldTimerRef.current - 2);
+              setLockProgress(Math.min(100, lockHoldTimerRef.current * 8));
+            }
           }
         }
       }
@@ -637,6 +703,16 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
         // Ambient Acoustic Capture: If enabled, embed live microphone track into encounter video
         if (soundSettings.recordAmbientAudio && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          if (typeof window !== 'undefined') {
+            const micConsented = localStorage.getItem('csl_mic_consent_acknowledged');
+            if (!micConsented && onRequirePermission) {
+              onRequirePermission('microphone', () => {
+                localStorage.setItem('csl_mic_consent_acknowledged', 'true');
+                handleToggleRecordVideo();
+              });
+              return;
+            }
+          }
           try {
             const micStream = await navigator.mediaDevices.getUserMedia({
               audio: soundSettings.rawAcousticMode ? {
@@ -931,34 +1007,6 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 </span>
               </button>
 
-              {/* Radar Audio Synthesizer / Silence Mode Toggle */}
-              <button
-                onClick={() => {
-                  if (onOpenSoundOptions) {
-                    onOpenSoundOptions();
-                  } else {
-                    const next = !soundEnabled;
-                    const updated = { ...soundSettings, soundEnabled: next };
-                    setSoundSettings(updated);
-                    saveSoundSettings(updated);
-                    setSoundModeToast(next ? 'Audible HUD Sound Active' : 'Absolute Silence Active: 0 dB UI Noise');
-                    setTimeout(() => setSoundModeToast(null), 3000);
-                  }
-                }}
-                className={`p-1.5 sm:p-2 rounded-xl bg-black/30 hover:bg-black/50 border text-xs transition cursor-pointer shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center ${
-                  soundEnabled 
-                    ? 'border-amber-400/60 text-amber-300' 
-                    : 'border-white/10 text-emerald-400'
-                }`}
-                title={
-                  soundEnabled 
-                    ? "Audible HUD Active (Speaker sound active. Tap for sound options)" 
-                    : "Absolute Silence Active (Speaker muted for pure microphone acoustic capture. Tap for sound options)"
-                }
-              >
-                {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5 text-emerald-400" />}
-              </button>
-
               {/* Full View Toggle */}
               <button
                 onClick={handleToggleFullView}
@@ -1198,7 +1246,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 </button>
               ) : (
                 <button
-                  onClick={startCamera}
+                  onClick={() => startCamera(false)}
                   className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold transition flex items-center space-x-1.5 shadow-md cursor-pointer min-h-[42px]"
                   title="Start Camera Feed"
                 >

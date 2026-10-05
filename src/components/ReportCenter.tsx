@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FileText, Download, Copy, Check, ExternalLink, 
-  ArrowUpDown, Plus, ChevronDown, ChevronUp, Radio, MapPin
+  ArrowUpDown, Plus, ChevronDown, ChevronUp, Radio, MapPin, ShieldCheck
 } from 'lucide-react';
 import { SightingReport, LocationCoords } from '../types';
 import { getAllVaultMedia, VaultMediaRecord } from '../lib/storage/mediaVault';
@@ -10,6 +10,7 @@ import {
   generateIncidentPdf, 
   formatMufonCmsSubmissionText 
 } from '../lib/pdfReportGenerator';
+import { EulaPrivacyModal } from './EulaPrivacyModal';
 
 interface ReportCenterProps {
   sightings: SightingReport[];
@@ -38,6 +39,7 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
   const [pdfSuccessMessage, setPdfSuccessMessage] = useState<string | null>(null);
   const [showTechnicalDetails, setShowTechnicalDetails] = useState<boolean>(false);
+  const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
 
   // Load vault media and synthesize incident reports
   useEffect(() => {
@@ -561,6 +563,29 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
           )}
         </div>
       </div>
+      {/* Legal, EULA & Privacy Disclosure (Apple Store Guideline 5.1.1 & 5.1.2) */}
+      <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-400 font-mono">
+        <div className="flex items-center space-x-2">
+          <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Check Sky Light v2.1 • Licensed Application</span>
+        </div>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setIsEulaModalOpen(true)}
+            className="text-cyan-400 hover:text-cyan-300 underline cursor-pointer transition"
+          >
+            EULA & Privacy Policy
+          </button>
+          <span>•</span>
+          <span className="text-slate-400">Zero Commercial Data Monetization</span>
+        </div>
+      </div>
+
+      <EulaPrivacyModal
+        isOpen={isEulaModalOpen}
+        onClose={() => setIsEulaModalOpen(false)}
+      />
     </div>
   );
 };
+

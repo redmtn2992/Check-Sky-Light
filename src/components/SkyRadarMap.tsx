@@ -110,9 +110,10 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
     }
   }, [isDeconflictToolOpen]);
 
-  // Countdown timer for real-time polling indicator
+  // Countdown timer for real-time polling indicator with visibility gating
   useEffect(() => {
     const timer = setInterval(() => {
+      if (document.hidden) return; // Freeze timer and network triggers while backgrounded
       setAutoRefreshCountdown((prev) => {
         if (prev <= 1) {
           if (onRefreshAirspace) onRefreshAirspace();
@@ -590,10 +591,11 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
 
         {/* Tactical Simulated Conical Radar Sweep (Authentic Military HUD) */}
         {showRadarSweep && (
-          <div className="absolute inset-0 pointer-events-none z-1 overflow-hidden flex items-center justify-center opacity-30">
-            <div className="w-[180vw] h-[180vw] max-w-[1200px] max-h-[1200px] rounded-full border border-cyan-500/15 animate-[spin_8s_linear_infinite]"
+          <div className="absolute inset-0 pointer-events-none z-1 overflow-hidden flex items-center justify-center opacity-25">
+            <div className="w-[100vw] h-[100vw] max-w-[700px] max-h-[700px] rounded-full border border-cyan-500/15 animate-[spin_10s_linear_infinite] motion-reduce:animate-none"
                  style={{
-                   background: 'conic-gradient(from 0deg, rgba(6,182,212,0.18) 0deg, rgba(6,182,212,0.02) 60deg, transparent 75deg)'
+                   background: 'conic-gradient(from 0deg, rgba(6,182,212,0.14) 0deg, rgba(6,182,212,0.01) 45deg, transparent 60deg)',
+                   willChange: 'transform'
                  }}
             />
           </div>
