@@ -308,7 +308,6 @@ export interface GeminiForensicAnalysis {
   audioAcousticNotes?: string;
   mundaneObjectDetected?: boolean;
   mundaneCategory?: 'pet' | 'furniture' | 'vehicle' | 'selfie_friend' | 'household' | 'other';
-  humorousQuirk?: string;
   educationalAeroAstronomyLesson?: {
     topic: string;
     concept: string;
@@ -319,6 +318,60 @@ export interface GeminiForensicAnalysis {
     corroboratedAviationPlume?: boolean;
     faaSchedulingConflict?: boolean;
     vfxArtifactFlags?: string[];
+  };
+  mediaMetadataWarning?: {
+    isCompressedWebMedia: boolean;
+    warningText: string;
+    missingElements: string[];
+    sleuthingAdvice: string;
+  };
+  compilationScopeNotice?: CompilationScopeNotice;
+  parallaxPanel?: ParallaxPanelReview;
+}
+
+export interface CompilationScopeNotice {
+  isCompilationOrPodcast: boolean;
+  targetedTimestamp?: string;
+  guidanceNote: string;
+}
+
+export interface MediaMetadataWarning {
+  isCompressedWebMedia: boolean;
+  warningText: string;
+  missingElements: string[];
+  sleuthingAdvice: string;
+}
+
+export interface ParallaxPanelMember {
+  name: string;
+  role: string;
+  badge: string;
+  color: string;
+  assessment: string;
+  verdict: string;
+  confidence: number;
+  keyPoints: string[];
+}
+
+export interface ParallaxPanelReview {
+  consensusVerdict: string;
+  consensusConfidence: number; // 0 to 100
+  agreementLevel: 'UNANIMOUS' | 'MAJORITY_CONSENSUS' | 'SPLIT_DECISION' | 'ACTIVE_DEBATE';
+  primarySuspect: string;
+  unresolvedQuestion: string;
+  panelists: {
+    gemini: ParallaxPanelMember; // Gemini: Kinematics & Sensor Telemetry
+    claude: ParallaxPanelMember; // Gemini: Lens A (Classical Aerospace Baseline)
+    luna: ParallaxPanelMember;   // Gemini: Lens B (Theoretical Metric Physics)
+  };
+  unbiasedCaseFactsPrompt: string; // Objective case report of facts WITHOUT evaluation score for external review (Claude, ChatGPT, etc.)
+  externalDebatePrompt: string; // Full debate prompt
+  readingLevelNote?: string;
+  mediaMetadataWarning?: MediaMetadataWarning;
+  compilationScopeNotice?: CompilationScopeNotice;
+  engineTransparency?: {
+    internalModel: string;
+    description: string;
   };
 }
 

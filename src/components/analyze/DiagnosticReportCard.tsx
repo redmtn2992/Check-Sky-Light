@@ -3,9 +3,10 @@ import {
   ShieldCheck, ShieldAlert, Sparkles, CheckCircle2, 
   Share2, HardDrive, FileText, Check, GraduationCap, 
   Telescope, ChevronDown, ChevronUp, Cpu, Activity,
-  MapPin, Landmark, Award, Shield, UserCheck, Info
+  MapPin, Landmark, Award, Shield, UserCheck, Info, AlertTriangle, AlertCircle
 } from 'lucide-react';
 import { GeminiForensicAnalysis } from '../../types';
+import { ParallaxTribunalCard } from '../parallax/ParallaxTribunalCard';
 
 interface DiagnosticReportCardProps {
   analysis: GeminiForensicAnalysis;
@@ -20,6 +21,9 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   onSaveToVault,
   isPublished = false
 }) => {
+  const [viewMode, setViewMode] = useState<'diagnostic' | 'tribunal'>(
+    analysis.parallaxPanel ? 'tribunal' : 'diagnostic'
+  );
   const [copiedLink, setCopiedLink] = useState(false);
   // Default to compact summary; deep technical details collapsed to avoid overwhelming users
   const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
@@ -28,6 +32,9 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   const isAuthentic = analysis.verdict === 'AUTHENTIC_INCIDENT';
   const isSynthetic = analysis.verdict === 'SYNTHETIC_FAKE';
   const isConventional = analysis.verdict === 'CONVENTIONAL_AIRCRAFT';
+  const isMundane = !!analysis.mundaneObjectDetected;
+  const isBirdDeconflicted = analysis.dtcCode === 'P0006' || 
+    (analysis.verdictTitle && (analysis.verdictTitle.toLowerCase().includes('avian') || analysis.verdictTitle.toLowerCase().includes('bird') || analysis.verdictTitle.toLowerCase().includes('pr-016')));
 
   const dtcCode = analysis.dtcCode || (isAuthentic ? 'P1947' : isSynthetic ? 'P0420' : isConventional ? 'P0505' : 'P0100');
 
@@ -53,7 +60,15 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   };
 
   // Verdict Accent Colors
-  const verdictTheme = isAuthentic
+  const verdictTheme = isMundane
+    ? {
+        border: 'border-emerald-500/40',
+        bg: 'bg-emerald-950/25',
+        badge: 'bg-emerald-500 text-slate-950',
+        text: 'text-emerald-300',
+        icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+      }
+    : isAuthentic
     ? {
         border: 'border-purple-500/40',
         bg: 'bg-purple-950/20',
@@ -86,7 +101,46 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
       };
 
   return (
-    <div className={`glass-panel border ${verdictTheme.border} rounded-2xl p-4 sm:p-5 space-y-4 bg-slate-950/90 text-slate-100 shadow-xl`}>
+    <div className="space-y-3">
+      {/* Top Tab Bar if multi-lens review exists */}
+      {analysis.parallaxPanel && (
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10 w-fit">
+          <button
+            onClick={() => setViewMode('tribunal')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+              viewMode === 'tribunal'
+                ? 'bg-cyan-400 text-slate-950 shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Multi-Lens Review</span>
+          </button>
+          <button
+            onClick={() => setViewMode('diagnostic')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+              viewMode === 'diagnostic'
+                ? 'bg-slate-800 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>Technical Specs</span>
+          </button>
+        </div>
+      )}
+
+      {viewMode === 'tribunal' && analysis.parallaxPanel ? (
+        <ParallaxTribunalCard
+          panelReview={analysis.parallaxPanel}
+          caseTitle={analysis.verdictTitle}
+          sourceUrl={analysis.sourceTitle}
+          onPublishToFeed={onPublishToFeed}
+          onSaveToDossier={onSaveToVault}
+          isPublished={isPublished}
+        />
+      ) : (
+        <div className={`glass-panel border ${verdictTheme.border} rounded-2xl p-4 sm:p-5 space-y-4 bg-slate-950/90 text-slate-100 shadow-xl`}>
       {/* 1. HERO VERDICT: Bottom Line Up Front (BLUF) - Clean, Zero Overwhelm */}
       <div className={`p-4 rounded-xl ${verdictTheme.bg} border ${verdictTheme.border} space-y-3`}>
         {/* Top Badges & Anomaly Score Callout */}
@@ -94,7 +148,17 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
           <div className="flex items-center space-x-2">
             {verdictTheme.icon}
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-black uppercase tracking-tight ${verdictTheme.badge}`}>
-              {isConventional ? 'DECONFLICTED: CONVENTIONAL OBJECT' : isAuthentic ? 'POTENTIAL ANOMALY CANDIDATE' : isSynthetic ? 'SYNTHETIC / CGI MEDIA' : 'UNRESOLVED TARGET'}
+              {isBirdDeconflicted
+                ? 'TIER I DECONFLICTED: AVIAN BIOLOGY (BIRDS)'
+                : isMundane 
+                ? 'TERRESTRIAL GROUND OBJECT: DECONFLICTED' 
+                : isConventional 
+                ? 'DECONFLICTED: CONVENTIONAL OBJECT' 
+                : isAuthentic 
+                ? 'POTENTIAL ANOMALY CANDIDATE' 
+                : isSynthetic 
+                ? 'SYNTHETIC / CGI MEDIA' 
+                : 'UNRESOLVED TARGET'}
             </span>
             {analysis.sourceMetadata?.positiveControlVerified && (
               <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
@@ -108,6 +172,29 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
             <span className="text-slate-400">DTC {dtcCode}</span>
           </div>
         </div>
+
+        {/* Uploaded Evidence Media Preview (If Present) */}
+        {analysis.sourcePreviewUrl && (
+          <div className="relative rounded-xl overflow-hidden border border-white/10 bg-black/60 max-h-56 flex items-center justify-center my-1">
+            {analysis.sourceType === 'video' ? (
+              <video src={analysis.sourcePreviewUrl} controls className="max-h-52 w-full object-contain rounded-lg" />
+            ) : analysis.sourceType === 'audio' ? (
+              <audio src={analysis.sourcePreviewUrl} controls className="w-full p-2" />
+            ) : (
+              <img 
+                src={analysis.sourcePreviewUrl} 
+                alt={analysis.sourceTitle || 'Analyzed Evidence'} 
+                className="max-h-52 w-full object-contain rounded-lg"
+              />
+            )}
+            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm border border-white/10 text-[10px] font-mono text-cyan-300 flex items-center gap-1">
+              <span>Analyzed Evidence</span>
+              {analysis.mundaneCategory && (
+                <span className="text-amber-300 font-bold uppercase">({analysis.mundaneCategory})</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Hero Title & Intuitive Score Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 border-t border-white/5">
@@ -152,6 +239,43 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
         <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
           {analysis.verdictSummary}
         </p>
+
+        {/* Media Metadata Degradation Warning for Web/Social Videos */}
+        {analysis.mediaMetadataWarning?.isCompressedWebMedia && (
+          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] font-mono text-amber-300 flex items-start space-x-2">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+            <div className="space-y-0.5 font-sans">
+              <span className="font-bold text-amber-200 block font-mono text-[10px] uppercase tracking-wider">
+                Web Video Forensic Warning: Stripped Camera EXIF / Telemetry
+              </span>
+              <p className="text-slate-300 text-xs leading-relaxed">
+                {analysis.mediaMetadataWarning.warningText} {analysis.mediaMetadataWarning.sleuthingAdvice}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Compilation / Multi-Clip Scope Notice */}
+        {analysis.compilationScopeNotice?.isCompilationOrPodcast && (
+          <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-[11px] font-mono text-purple-300 flex items-start space-x-2">
+            <AlertCircle className="w-3.5 h-3.5 text-purple-400 shrink-0 mt-0.5" />
+            <div className="space-y-0.5 font-sans">
+              <div className="flex flex-wrap items-center justify-between gap-1">
+                <span className="font-bold text-purple-200 block font-mono text-[10px] uppercase tracking-wider">
+                  Single-Target Scope: Multi-Clip Compilation / Podcast
+                </span>
+                {analysis.compilationScopeNotice.targetedTimestamp && (
+                  <span className="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 font-mono text-[10px]">
+                    Clip: {analysis.compilationScopeNotice.targetedTimestamp}
+                  </span>
+                )}
+              </div>
+              <p className="text-slate-300 text-xs leading-relaxed">
+                {analysis.compilationScopeNotice.guidanceNote}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Action Controls */}
         <div className="flex items-center justify-between pt-1 text-xs">
@@ -315,16 +439,6 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
         </div>
       )}
 
-      {/* 5. Terrestrial Observation Notes (If applicable) */}
-      {(analysis.humorousQuirk || analysis.mundaneObjectDetected) && (
-        <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-700/60 flex items-start space-x-2.5 text-xs text-slate-300">
-          <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-          <span className="font-sans leading-relaxed">
-            {analysis.humorousQuirk || 'Terrestrial object verified. Standard Newtonian dynamics confirmed.'}
-          </span>
-        </div>
-      )}
-
       {/* 5. Avionics Lesson (Compact with Expandable Details) */}
       {analysis.educationalAeroAstronomyLesson && (
         <div className="p-3 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-xs font-sans space-y-1">
@@ -359,7 +473,7 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
           onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
           className="w-full py-1.5 text-center text-xs font-mono text-slate-400 hover:text-slate-200 transition flex items-center justify-center space-x-1.5 cursor-pointer"
         >
-          <span>{showTechnicalDetails ? 'Collapse Deep Telemetry' : 'Expand Deep Forensics & Lens A/B Telemetry'}</span>
+          <span>{showTechnicalDetails ? 'Collapse Deep Telemetry' : 'Deep Telemetry & Sensor Forensics'}</span>
           {showTechnicalDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
 
@@ -416,6 +530,8 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
           </div>
         )}
       </div>
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 };

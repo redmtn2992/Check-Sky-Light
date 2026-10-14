@@ -1,0 +1,7562 @@
+{
+ "protocol": "Check Sky Light Validation Protocol v1.0, T0",
+ "mode": "shipped",
+ "harnessSha256": "e11ce2fc0809537e1289a5dc8e6804521923b200ea4351fc80ce73bffd34a9b6",
+ "seed": 20261101,
+ "nPerStratum": 100000,
+ "nmin": 50000,
+ "deltaMax": [
+  0.005,
+  0.0035,
+  0.002,
+  0.0005
+ ],
+ "levels": [
+  0.9,
+  0.95,
+  0.99,
+  0.999
+ ],
+ "gateThresholds": [
+  2.7055434540954035,
+  3.8414588206941263,
+  6.634896601021202,
+  10.827566170662628
+ ],
+ "alphaEdgesDeg": [
+  0,
+  2,
+  5,
+  10,
+  20,
+  45,
+  180
+ ],
+ "psiEdgesDeg": [
+  0,
+  10,
+  30,
+  90.0001
+ ],
+ "config": {
+  "lat1": 0.6981317007977318,
+  "lon1": -1.953023432981655,
+  "h1": 1400,
+  "baselineKm": [
+   0.3,
+   20
+  ],
+  "rangeKm": [
+   0.5,
+   30
+  ],
+  "elevDeg": [
+   5,
+   85
+  ],
+  "heightDiffM": 100,
+  "sigAzDeg": [
+   0.5,
+   5
+  ],
+  "sigElDeg": [
+   0.3,
+   2
+  ],
+  "minElDeg": 5,
+  "maxElDeg": 85
+ },
+ "node": "v22.23.2",
+ "utc": "2026-10-06T01:38:43.575Z",
+ "attempts": 1559485,
+ "generated": [
+  100000,
+  100000,
+  100000,
+  100000,
+  100000,
+  100000
+ ],
+ "results": [
+  {
+   "label": "SHIPPED",
+   "strata": [
+    {
+     "stratum": "alpha 0-2 deg",
+     "generated": 100000,
+     "used": 1086,
+     "flagged": 98914,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 625,
+       "phat": 0.5755064456721916,
+       "ci": [
+        0.5454781117504925,
+        0.6051245673414334
+       ],
+       "dev": 0.4755064456721916
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 559,
+       "phat": 0.5147329650092081,
+       "ci": [
+        0.4845423620651128,
+        0.5448435441893138
+       ],
+       "dev": 0.464732965009208
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 452,
+       "phat": 0.4162062615101289,
+       "ci": [
+        0.38669001436115824,
+        0.44617776887656946
+       ],
+       "dev": 0.4062062615101289
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 360,
+       "phat": 0.3314917127071823,
+       "ci": [
+        0.30352203270186284,
+        0.36037777942936355
+       ],
+       "dev": 0.3304917127071823
+      }
+     ],
+     "mean": 13.455156537753231,
+     "variance": 418.7654183625704,
+     "ks": 0.4773484873817424,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.15
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.21
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.24
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.27
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.3
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.33
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.36
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.42
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.47
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.54
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.58
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.64
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.7
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.78
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.85
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.9
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.95
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 1.01
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 1.1
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 1.2
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 1.28
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 1.34
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 1.49
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 1.59
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 1.73
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 1.81
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 1.89
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 2.06
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 2.17
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 2.3
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 2.45
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 2.63
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 2.77
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 2.89
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 3.15
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 3.28
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 3.45
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 3.7
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 3.94
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 4.14
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 4.38
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 4.62
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 4.89
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 5.25
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 5.65
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 5.92
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 6.16
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 6.48
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 6.88
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 7.25
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 7.68
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 8.06
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 8.82
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 9.14
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 9.49
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 10.25
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 10.91
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 11.76
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 12.33
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 13.07
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 13.55
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 14.1
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 14.84
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 15.74
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 17.37
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 18.3
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 18.99
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 19.75
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 21.42
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 22.51
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 23.43
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 24.87
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 25.64
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 27.08
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 28.99
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 31.2
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 33.03
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 37.53
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 39.63
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 42.94
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 44.58
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 47.64
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 50.9
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 56.83
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 64.26
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 69.29
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 75.87
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 84.32
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 91.56
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 94.1
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 98.12
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 98.44
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 29,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 271,
+       "levels": null
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 786,
+       "levels": null
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 2-5 deg",
+     "generated": 100000,
+     "used": 3492,
+     "flagged": 96508,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 1485,
+       "phat": 0.4252577319587629,
+       "ci": [
+        0.4087855673854488,
+        0.441855172590656
+       ],
+       "dev": 0.3252577319587629
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 1205,
+       "phat": 0.34507445589919816,
+       "ci": [
+        0.3292989194519589,
+        0.36110978178302855
+       ],
+       "dev": 0.2950744558991981
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 847,
+       "phat": 0.24255441008018327,
+       "ci": [
+        0.22841499257344466,
+        0.25712608409340343
+       ],
+       "dev": 0.23255441008018327
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 594,
+       "phat": 0.17010309278350516,
+       "ci": [
+        0.157778267639769,
+        0.18298283751605
+       ],
+       "dev": 0.16910309278350516
+      }
+     ],
+     "mean": 6.4916580756013715,
+     "variance": 157.72645147514748,
+     "ks": 0.33068954736065015,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.1
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.13
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.14
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.16
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.2
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.22
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.25
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.28
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.31
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.34
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.36
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.39
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.42
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.46
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.49
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.53
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.56
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.6
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.64
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.68
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.73
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.78
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.83
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.89
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.94
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 1.01
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 1.08
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 1.14
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 1.2
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 1.28
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 1.36
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 1.43
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 1.51
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 1.59
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 1.68
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 1.77
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 1.91
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 2.04
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 2.18
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 2.28
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 2.4
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 2.5
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 2.65
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 2.78
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 2.9
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 3.03
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 3.16
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 3.34
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 3.51
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 3.61
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 3.77
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 3.93
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 4.08
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 4.31
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 4.56
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 4.8
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 5.09
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 5.36
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 5.69
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 6.07
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 6.36
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 6.75
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 7.14
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 7.7
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 8.18
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 8.65
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 9.32
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 9.96
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 10.85
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 11.54
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 12.53
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 13.42
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 14.44
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 15.64
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 16.59
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 17.68
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 19.21
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 21.09
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 23.15
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 25.97
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 29.03
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 34.61
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 38.43
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 49.95
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 70.81
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 84.13
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 98.45
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 99.24
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 27,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 550,
+       "levels": null
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 2915,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.3910806174957118,
+         "dev": 0.29108061749571185
+        },
+        {
+         "level": 0.95,
+         "phat": 0.31149228130360207,
+         "dev": 0.261492281303602
+        },
+        {
+         "level": 0.99,
+         "phat": 0.21234991423670668,
+         "dev": 0.20234991423670667
+        },
+        {
+         "level": 0.999,
+         "phat": 0.1430531732418525,
+         "dev": 0.1420531732418525
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 5-10 deg",
+     "generated": 100000,
+     "used": 41280,
+     "flagged": 58720,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 6777,
+       "phat": 0.16417151162790697,
+       "ci": [
+        0.1606096761529583,
+        0.1677806494836332
+       ],
+       "dev": 0.06417151162790699
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 4468,
+       "phat": 0.10823643410852714,
+       "ci": [
+        0.10525492824739116,
+        0.11127316829629469
+       ],
+       "dev": 0.058236434108527094
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 2041,
+       "phat": 0.04944282945736434,
+       "ci": [
+        0.047371155577016,
+        0.05157816596477166
+       ],
+       "dev": 0.03944282945736433
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 892,
+       "phat": 0.021608527131782945,
+       "ci": [
+        0.020227498301825346,
+        0.023057402596138366
+       ],
+       "dev": 0.020608527131782944
+      }
+     ],
+     "mean": 1.6788495639534673,
+     "variance": 14.854753750473334,
+     "ks": 0.06491737555182475,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.1
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.11
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.13
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.14
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.15
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.16
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.19
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.2
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.22
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.23
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.25
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.26
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.28
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.29
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.31
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.33
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.35
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.37
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.39
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.41
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.43
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.45
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.47
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.5
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.52
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.55
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.57
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.6
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.63
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.66
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.7
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.73
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.76
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.8
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.83
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.88
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.91
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.96
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 1
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 1.05
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 1.09
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 1.14
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 1.2
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 1.25
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.31
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.38
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.44
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.51
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.59
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.66
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.74
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.83
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.92
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 2.01
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 2.11
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 2.22
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 2.34
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 2.48
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 2.61
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 2.77
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.94
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 3.12
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 3.33
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 3.56
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 3.81
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 4.11
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 4.45
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 4.84
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 5.33
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 5.87
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 6.59
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 7.53
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 8.99
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 11.35
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 16.19
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 23.43
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 50.17
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 66.41
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 70,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 4026,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.22329855936413315,
+         "dev": 0.12329855936413317
+        },
+        {
+         "level": 0.95,
+         "phat": 0.16492796820665673,
+         "dev": 0.11492796820665668
+        },
+        {
+         "level": 0.99,
+         "phat": 0.08792846497764531,
+         "dev": 0.0779284649776453
+        },
+        {
+         "level": 0.999,
+         "phat": 0.04992548435171386,
+         "dev": 0.04892548435171386
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 37184,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.15762155765920827,
+         "dev": 0.05762155765920829
+        },
+        {
+         "level": 0.95,
+         "phat": 0.10195245266781411,
+         "dev": 0.051952452667814064
+        },
+        {
+         "level": 0.99,
+         "phat": 0.0451000430292599,
+         "dev": 0.03510004302925989
+        },
+        {
+         "level": 0.999,
+         "phat": 0.018448795180722892,
+         "dev": 0.01744879518072289
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 10-20 deg",
+     "generated": 100000,
+     "used": 98095,
+     "flagged": 1905,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 10478,
+       "phat": 0.1068148223660737,
+       "ci": [
+        0.10488846195729182,
+        0.10876446548443791
+       ],
+       "dev": 0.006814822366073725
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 5708,
+       "phat": 0.058188490748763956,
+       "ci": [
+        0.05673151486691366,
+        0.05967165782708467
+       ],
+       "dev": 0.008188490748763912
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 1725,
+       "phat": 0.017584994138335287,
+       "ci": [
+        0.016771670273864052,
+        0.01842701834995536
+       ],
+       "dev": 0.007584994138335278
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 418,
+       "phat": 0.004261175391202405,
+       "ci": [
+        0.0038631687449215465,
+        0.004688917289943528
+       ],
+       "dev": 0.0032611753912024045
+      }
+     ],
+     "mean": 1.0741309954635143,
+     "variance": 3.164057920940271,
+     "ks": 0.0562210102451705,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.1
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.11
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.13
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.14
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.15
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.16
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.17
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.2
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.22
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.23
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.24
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.26
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.27
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.29
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.3
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.32
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.33
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.35
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.37
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.39
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.41
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.43
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.45
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.47
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.49
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.52
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.54
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.56
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.59
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.62
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.64
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.67
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.7
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.73
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.76
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.79
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.83
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.87
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.9
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.94
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.98
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.03
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.07
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.11
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.16
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.22
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.27
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.32
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.38
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.44
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.51
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.58
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.65
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.73
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.81
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.91
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 2.01
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.12
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.23
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.36
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.5
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.65
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.82
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 3.01
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.24
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.49
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.78
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 4.15
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.64
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 5.31
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 6.29
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 8.1
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 10.31
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 17.04
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 20.62
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 88,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 6416,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.11970074812967581,
+         "dev": 0.01970074812967583
+        },
+        {
+         "level": 0.95,
+         "phat": 0.0737219451371571,
+         "dev": 0.023721945137157058
+        },
+        {
+         "level": 0.99,
+         "phat": 0.02914588528678304,
+         "dev": 0.019145885286783033
+        },
+        {
+         "level": 0.999,
+         "phat": 0.00981920199501247,
+         "dev": 0.008819201995012469
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 91591,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10591652018211396,
+         "dev": 0.005916520182113985
+        },
+        {
+         "level": 0.95,
+         "phat": 0.05712351650271315,
+         "dev": 0.007123516502713104
+        },
+        {
+         "level": 0.99,
+         "phat": 0.01675928857638851,
+         "dev": 0.006759288576388502
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0038540904674040028,
+         "dev": 0.002854090467404002
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 20-45 deg",
+     "generated": 100000,
+     "used": 99994,
+     "flagged": 6,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 10053,
+       "phat": 0.10053603216192972,
+       "ci": [
+        0.09867877404300066,
+        0.10241649697324012
+       ],
+       "dev": 0.0005360321619297392
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 5065,
+       "phat": 0.050653039182350944,
+       "ci": [
+        0.049301909820712364,
+        0.052030307437786305
+       ],
+       "dev": 0.0006530391823508994
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 1094,
+       "phat": 0.010940656439386362,
+       "ci": [
+        0.01030511827675239,
+        0.011604795780568444
+       ],
+       "dev": 0.0009406564393863535
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 140,
+       "phat": 0.0014000840050403024,
+       "ci": [
+        0.0011779014577153585,
+        0.001651945750499817
+       ],
+       "dev": 0.0004000840050403015
+      }
+     ],
+     "mean": 1.0080302818168378,
+     "variance": 2.1293996384179743,
+     "ks": 0.05644338660319619,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.1
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.11
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.13
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.14
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.15
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.16
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.17
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.21
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.22
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.23
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.25
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.26
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.28
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.29
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.31
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.32
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.34
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.36
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.38
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.4
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.41
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.43
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.45
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.48
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.5
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.52
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.55
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.57
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.6
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.63
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.65
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.68
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.71
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.74
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.77
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.8
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.84
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.87
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.91
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.95
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.98
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.02
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.07
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.11
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.16
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.21
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.26
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.32
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.37
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.43
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.49
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.56
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.63
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.71
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.79
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.88
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 1.97
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.07
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.18
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.3
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.43
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.56
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.71
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 2.89
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.07
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.3
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.56
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 3.87
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.25
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 4.77
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 5.54
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 6.79
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 8.15
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 11.7
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 13.54
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 47,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 1909,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10633839706652698,
+         "dev": 0.006338397066527002
+        },
+        {
+         "level": 0.95,
+         "phat": 0.0570979570455736,
+         "dev": 0.007097957045573554
+        },
+        {
+         "level": 0.99,
+         "phat": 0.00995285489785228,
+         "dev": -0.000047145102147729684
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0005238344683080147,
+         "dev": -0.0004761655316919862
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 98038,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10045084559048532,
+         "dev": 0.00045084559048534645
+        },
+        {
+         "level": 0.95,
+         "phat": 0.05055182684265285,
+         "dev": 0.000551826842652807
+        },
+        {
+         "level": 0.99,
+         "phat": 0.010965135967686,
+         "dev": 0.000965135967685991
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0014178175809380037,
+         "dev": 0.0004178175809380028
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 45-180 deg",
+     "generated": 100000,
+     "used": 99995,
+     "flagged": 5,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 9925,
+       "phat": 0.0992549627481374,
+       "ci": [
+        0.09740834563407996,
+        0.10112486121526293
+       ],
+       "dev": -0.0007450372518625764
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 4987,
+       "phat": 0.049872493624681234,
+       "ci": [
+        0.04853135214355597,
+        0.05123982007729805
+       ],
+       "dev": -0.0001275063753188102
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 971,
+       "phat": 0.009710485524276214,
+       "ci": [
+        0.009111939645524595,
+        0.010337721833794389
+       ],
+       "dev": -0.0002895144757237948
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 108,
+       "phat": 0.001080054002700135,
+       "ci": [
+        0.000886070799637889,
+        0.0013038462682583574
+       ],
+       "dev": 0.00008005400270013415
+      }
+     ],
+     "mean": 0.9971765588278789,
+     "variance": 1.9984828085468866,
+     "ks": 0.05650282514125706,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.01
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.02
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.03
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.05
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.1
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.11
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.12
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.13
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.14
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.15
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.16
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.17
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.2
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.22
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.23
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.25
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.26
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.27
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.29
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.31
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.32
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.34
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.36
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.38
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.39
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.42
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.44
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.46
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.48
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.5
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.52
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.55
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.57
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.6
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.62
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.65
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.68
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.71
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.74
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.77
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.8
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.84
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.87
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.91
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.95
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.99
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.03
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.07
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.12
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.17
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.21
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.27
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.32
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.37
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.43
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.49
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.56
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.63
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.71
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.79
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.87
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 1.96
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.06
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.17
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.29
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.42
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.55
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.69
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 2.86
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.05
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.27
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.53
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 3.84
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.2
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 4.69
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 5.37
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 6.58
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 7.89
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 10.92
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 12.63
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 152,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 4194,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.09871244635193133,
+         "dev": -0.0012875536480686511
+        },
+        {
+         "level": 0.95,
+         "phat": 0.04887935145445875,
+         "dev": -0.0011206485455412946
+        },
+        {
+         "level": 0.99,
+         "phat": 0.011683357176919408,
+         "dev": 0.0016833571769193992
+        },
+        {
+         "level": 0.999,
+         "phat": 0.001430615164520744,
+         "dev": 0.000430615164520743
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 95649,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.09922738345408734,
+         "dev": -0.0007726165459126383
+        },
+        {
+         "level": 0.95,
+         "phat": 0.04989074637476607,
+         "dev": -0.00010925362523397236
+        },
+        {
+         "level": 0.99,
+         "phat": 0.009618500977532436,
+         "dev": -0.00038149902246757336
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0010454892366883082,
+         "dev": 0.00004548923668830731
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "label": "reference oracle (comparison only)",
+   "strata": [
+    {
+     "stratum": "alpha 0-2 deg",
+     "generated": 100000,
+     "used": 76341,
+     "flagged": 23659,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 22673,
+       "phat": 0.2969963715434694,
+       "ci": [
+        0.29375625305210695,
+        0.3002519238795994
+       ],
+       "dev": 0.19699637154346944
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 19148,
+       "phat": 0.25082196984582333,
+       "ci": [
+        0.24774993878421636,
+        0.2539129480081045
+       ],
+       "dev": 0.2008219698458233
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 14451,
+       "phat": 0.1892953982787755,
+       "ci": [
+        0.18652180981787025,
+        0.1920926193019828
+       ],
+       "dev": 0.1792953982787755
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 11009,
+       "phat": 0.14420822362819455,
+       "ci": [
+        0.14172322677094074,
+        0.14672029212042775
+       ],
+       "dev": 0.14320822362819455
+      }
+     ],
+     "mean": 240.35301380300777,
+     "variance": 884377837.1030316,
+     "ks": 0.2017735084499318,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.00014270049828374106
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0005542893082125765
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.0012807191981288794
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.002320372133586167
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.0036511686855138174
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005347645057352904
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.007332872906127777
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.009759894735716408
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012382969847186375
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.015262453733233941
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.0186191293235393
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.022371175030537344
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.02668367333355564
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.030999217237020073
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.03574169987748112
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04084552824851103
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.04629046812858008
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.05282880957401673
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.05958633985333367
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06686190163346832
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07463068223557709
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.08283563247816965
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.09143867889319901
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.10112099586338356
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.11126872201791467
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.1214550763936256
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.13362388491144186
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.1470520080948372
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.16032958340181674
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.17417488635620704
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.18868249280493807
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.20429437983155663
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.22120736823637785
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.23940669491088507
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.25855062670138407
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.27756539339768654
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.2984987758140728
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.31936729049380713
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.34116052440616923
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.3649001923140987
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.3910370204707097
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.41940499644541773
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.44918628978238834
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.48084262678619416
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.5125332992936978
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.5465345775128203
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.5832077040871205
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.6240383450219311
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.6667205691288668
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.7112473293603808
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.7618157011133448
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.8112991773936703
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.8645911257603733
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.919403775417238
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.9781348874862037
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 1.0410504689969065
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 1.110034252085193
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 1.1857044728373265
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 1.2606500141372128
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 1.3486796226448714
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 1.4419940081144473
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 1.5335011760750457
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 1.6324111453417407
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 1.742002550384276
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 1.8661537335863625
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 1.9852512789821322
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 2.1250354064681956
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 2.286995442586607
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 2.464551905720089
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 2.651036494121409
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 2.844909076312358
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 3.0710239625889244
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 3.3161437959389826
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 3.5737593316502245
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 3.8644544630761963
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 4.1970030426291025
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 4.565513629919299
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 4.983927609170504
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 5.458748165181819
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 5.996724189953929
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 6.597936747018518
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 7.299857536367888
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 8.128311002607045
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 9.073493370618833
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 10.184579557296868
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 11.399763679883593
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 13.006164611013654
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 14.956936506549294
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 17.31093066982786
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 20.273862963095485
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 24.054382529078644
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 29.483275220765236
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 36.68295248628414
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 46.0944957171345
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 60.05886137637918
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 84.85073962890883
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 127.531607318785
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 232.0850032439892
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 601.7705830870217
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 1331.8364033748144
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 9516.280190071038
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 18556.230032664782
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 1480,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.31283783783783786,
+         "dev": 0.21283783783783788
+        },
+        {
+         "level": 0.95,
+         "phat": 0.25472972972972974,
+         "dev": 0.2047297297297297
+        },
+        {
+         "level": 0.99,
+         "phat": 0.1837837837837838,
+         "dev": 0.17378378378378379
+        },
+        {
+         "level": 0.999,
+         "phat": 0.13378378378378378,
+         "dev": 0.13278378378378378
+        }
+       ]
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 12000,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.36583333333333334,
+         "dev": 0.26583333333333337
+        },
+        {
+         "level": 0.95,
+         "phat": 0.3175,
+         "dev": 0.26749999999999996
+        },
+        {
+         "level": 0.99,
+         "phat": 0.2520833333333333,
+         "dev": 0.24208333333333332
+        },
+        {
+         "level": 0.999,
+         "phat": 0.19566666666666666,
+         "dev": 0.19466666666666665
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 62861,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.2834826044765435,
+         "dev": 0.18348260447654352
+        },
+        {
+         "level": 0.95,
+         "phat": 0.2380013044654078,
+         "dev": 0.18800130446540775
+        },
+        {
+         "level": 0.99,
+         "phat": 0.1774391116908735,
+         "dev": 0.1674391116908735
+        },
+        {
+         "level": 0.999,
+         "phat": 0.13463037495426416,
+         "dev": 0.13363037495426416
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 2-5 deg",
+     "generated": 100000,
+     "used": 93845,
+     "flagged": 6155,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 17743,
+       "phat": 0.1890670786935905,
+       "ci": [
+        0.18656618566491545,
+        0.1915872046814609
+       ],
+       "dev": 0.08906707869359051
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 13372,
+       "phat": 0.14249027651979326,
+       "ci": [
+        0.14025959547301015,
+        0.14474307902652545
+       ],
+       "dev": 0.09249027651979322
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 8309,
+       "phat": 0.08853961319196547,
+       "ci": [
+        0.08672949726235804,
+        0.09037520730238596
+       ],
+       "dev": 0.07853961319196547
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 5354,
+       "phat": 0.057051521125259734,
+       "ci": [
+        0.055575948047816834,
+        0.05855454597678017
+       ],
+       "dev": 0.05605152112525973
+      }
+     ],
+     "mean": 19.769082885992127,
+     "variance": 4334616.980684325,
+     "ks": 0.09303706744030382,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.0001393218246718839
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0006008646957152872
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.001377529851605856
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.0024738731582847674
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.003763284338982148
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005485521733398245
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.007524843842032286
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.00989020666987406
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012474906853641554
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.01534731865018406
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.01842605443218634
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.021962873735052544
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.02575726095676684
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.02965702584461239
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.034204836263119584
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.0390299860540065
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.04429093966835876
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.049764742975802
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.05601110050000264
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06210304627380749
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.06859054247670811
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.07514114143895718
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08225809297670747
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09005873731174077
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.09859762528515278
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.10732229573923166
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.11594221323977584
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.12560279061024157
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.13524301342806885
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.1461305462753787
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.1571364860674431
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.1678934075882411
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18009571396295734
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.192260226516452
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.20474322620000077
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.21848718655171956
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.233228442755386
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.2480486631968285
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.26367726689808396
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.27960910072210093
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.29757185406190384
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.3147841850611917
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.3336112857938362
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.35244956776934366
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.3730629559144853
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.393558963993139
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.4157523484451261
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.43979343691774153
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.46392570728313903
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.48992880545724604
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.5187065529406438
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.5465115554671309
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.5755494806340291
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.6054353682080618
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.6377543371005111
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.6716440770954125
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.7065691408981812
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.7434627690420156
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.7810221982250907
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.8208908091678129
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.8673658180327821
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.9150014239781321
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.9642128488386951
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 1.0153755651713479
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 1.0729035530550364
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 1.1301444762506976
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 1.1916217930183055
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 1.2557311816030505
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.3269968382422994
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.398125257080853
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.4782510440216265
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.563486658712145
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.6582735667455513
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.7509686243373663
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.8512718081917565
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.9735480055517711
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 2.0950019023126596
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 2.2265317766592023
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 2.3683572275676124
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 2.5254422407975445
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 2.6893748415341783
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 2.872937300692281
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 3.096597621609646
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 3.3519344616648326
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 3.610617195518558
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 3.9228167742734423
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 4.2981154137636635
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 4.697683399202507
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 5.183706971112283
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 5.822372556055712
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 6.508270535394105
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 7.462264918047283
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 8.626480799076475
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 10.219270567310803
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 12.620233182795673
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 16.093969138842894
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 21.66939546980769
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 34.90621389433526
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 81.01846617920445
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 197.530265984725
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 1373.2301428305657
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 2848.3469499101834
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 524,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 9798,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.24586650336803428,
+         "dev": 0.1458665033680343
+        },
+        {
+         "level": 0.95,
+         "phat": 0.19748928352725045,
+         "dev": 0.1474892835272504
+        },
+        {
+         "level": 0.99,
+         "phat": 0.13615023474178403,
+         "dev": 0.12615023474178402
+        },
+        {
+         "level": 0.999,
+         "phat": 0.09706062461726883,
+         "dev": 0.09606062461726883
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 83523,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.18216539156878944,
+         "dev": 0.08216539156878946
+        },
+        {
+         "level": 0.95,
+         "phat": 0.13580690348766208,
+         "dev": 0.08580690348766204
+        },
+        {
+         "level": 0.99,
+         "phat": 0.08281551189492714,
+         "dev": 0.07281551189492713
+        },
+        {
+         "level": 0.999,
+         "phat": 0.05232091759156161,
+         "dev": 0.051320917591561606
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 5-10 deg",
+     "generated": 100000,
+     "used": 99260,
+     "flagged": 740,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 12480,
+       "phat": 0.12573040499697763,
+       "ci": [
+        0.12367377752110209,
+        0.1278089293428421
+       ],
+       "dev": 0.02573040499697765
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 7942,
+       "phat": 0.08001208946201895,
+       "ci": [
+        0.07833150672671896,
+        0.08171726141742891
+       ],
+       "dev": 0.0300120894620189
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 3468,
+       "phat": 0.03493854523473706,
+       "ci": [
+        0.03380478567775791,
+        0.036099584042249055
+       ],
+       "dev": 0.02493854523473705
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 1545,
+       "phat": 0.015565182349385453,
+       "ci": [
+        0.014804252659056601,
+        0.016354607111552177
+       ],
+       "dev": 0.014565182349385452
+      }
+     ],
+     "mean": 1.8059692425598999,
+     "variance": 1661.590424825543,
+     "ks": 0.03069722884830184,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.0001660634030713603
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0006642282065377833
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.0014616203937182182
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.002594690819710872
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.004013834683941843
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005728711462120738
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.007805658380932571
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.010252291049133996
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012946509007269937
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.015933715992229088
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.019163806220048867
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.02275012553326463
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.02675228144121713
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.031076709633166593
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.03588461515654679
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04088972175607074
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.04602870871188411
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.051393033689580696
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.057214068592091154
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06318994870506381
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.06985071426608962
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.07656658431602767
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08414021391632485
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09160019658168775
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.09974769487757677
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.10771005734230876
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.11647787503964042
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.125720329292271
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.13526816091067936
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.14490814030676352
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.15522911242864468
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.1654887102757098
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.1768724325965805
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.18871777289023778
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.2003372850435498
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.2130450569912199
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.22692245483609455
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.2400337495112021
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.25422371392513166
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.2686118063632188
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.2829676719946273
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.2984285701375502
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.3149638491422893
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.33194061188607854
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.3495021381142677
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.36778247143036435
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.38691646714943595
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.4047670106753237
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.42547263558977055
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.44625215110470384
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.46642104186783606
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.48721339162181176
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.5111726767551437
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.5349847782466612
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.5592599640547387
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.5849896130074816
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.6109761556201148
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.6395226399684554
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.6702852767305725
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.704060988413615
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.7371864382664264
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.7699377817318005
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.8021370094880054
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.8396692409113083
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.8817843468074197
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.920265231077968
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.9612105049719328
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 1.006994068569465
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.0523772028160094
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.0986253271129691
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.1481277416699145
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.201018434859958
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.257796666416652
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.319611799227494
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.3831994764686253
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.4521742819347219
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.5235081880289947
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.6004235004326366
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.6818534542492778
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.7699036370849182
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.8642182476052649
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.9635970415295196
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 2.0696183718622465
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 2.188451468285111
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.3191859996612445
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.4699829731022227
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.6254743011714257
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.8136456156061693
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 3.007516311461519
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 3.2537572670643597
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 3.5403410748008763
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.8417162150827453
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 4.240696633030102
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 4.708216641129023
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 5.303753127351928
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 6.064174657392308
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 7.263338673347371
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 9.320837612646514
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 14.20390167701071
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 22.153204968078217
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 74.92246321104638
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 127.53368531506918
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 166,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 9404,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.15769885155253083,
+         "dev": 0.05769885155253085
+        },
+        {
+         "level": 0.95,
+         "phat": 0.11080391322841344,
+         "dev": 0.0608039132284134
+        },
+        {
+         "level": 0.99,
+         "phat": 0.057209698000850705,
+         "dev": 0.047209698000850696
+        },
+        {
+         "level": 0.999,
+         "phat": 0.03158230540195661,
+         "dev": 0.03058230540195661
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 89690,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.12227673096220315,
+         "dev": 0.022276730962203173
+        },
+        {
+         "level": 0.95,
+         "phat": 0.07668636414315977,
+         "dev": 0.026686364143159724
+        },
+        {
+         "level": 0.99,
+         "phat": 0.032500836213624706,
+         "dev": 0.022500836213624698
+        },
+        {
+         "level": 0.999,
+         "phat": 0.013847697625153307,
+         "dev": 0.012847697625153306
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 10-20 deg",
+     "generated": 100000,
+     "used": 99967,
+     "flagged": 33,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 10601,
+       "phat": 0.10604499484829993,
+       "ci": [
+        0.10414280753944549,
+        0.10797007311162582
+       ],
+       "dev": 0.006044994848299956
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 5783,
+       "phat": 0.057849090199765925,
+       "ci": [
+        0.05640973332946797,
+        0.05931416676859086
+       ],
+       "dev": 0.00784909019976588
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 1754,
+       "phat": 0.017545790110736544,
+       "ci": [
+        0.016740924997120876,
+        0.01837881852147577
+       ],
+       "dev": 0.007545790110736535
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 433,
+       "phat": 0.004331429371692659,
+       "ci": [
+        0.00393377312904296,
+        0.004758251726914298
+       ],
+       "dev": 0.003331429371692658
+      }
+     ],
+     "mean": 1.1115891646083802,
+     "variance": 80.10643324040282,
+     "ks": 0.008764891763274885,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.000156485363119883
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0006327660480710256
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.0014026793766250348
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.0025033155632497215
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.003926373249390251
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005731537760065261
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.007792772611423567
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.01015532854428352
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012935004598195278
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.015930773376437966
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.019466541903460647
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.02306108631670812
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.0268528110341728
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.030951492280861543
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.035457368729613345
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04031462553567246
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.04553670297161232
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.051150338502272706
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.056996867270144455
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06361658713351928
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07024777649181685
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.07765838766240418
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.084756155290411
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09265028321961667
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.10074310199250842
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.10891565918671033
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.11808143567502417
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.12751163039040952
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.13758749359383268
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.14717208358769968
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.15763304322803912
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.16846608825009662
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.1800126953123341
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19157424469552412
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.20383545670286174
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.21716374756676834
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.22993410953981744
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.24339879887604227
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.25704566761282666
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.2715583077462645
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.2872489708214274
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.3029736186974161
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.3189923802879747
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.3352826951217667
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.35217296219536676
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.3702100470446168
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.3887856346212681
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.40718255863204694
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.4269445806963085
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.4476857196133815
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.4688560810786301
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.49215274343093873
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.5165128179722867
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.5405684265763535
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.5637387484480427
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.5896908177631703
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.6167307891030032
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.6430794011121358
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.6715413972611985
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.698767863594679
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.7286071206162621
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.7609338658271075
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.7929524601358734
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.8259712112233275
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.8631816311974246
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.9015541207103247
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.9390953639228811
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.9798901844152466
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.02312790321346
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.0650179520111693
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.1095664293266885
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.1595855896729372
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.211547050900084
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.2645900924394144
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.3181378647469688
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.376127841081364
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.4370327672933385
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.5000089221013395
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.57047515226614
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.642699875554604
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.7208494062559243
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.8059474688451365
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.9029871726948147
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 2.0015978533976373
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.104281106151777
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.2201906939659666
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.348849320911712
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.485304165163491
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.638741265746449
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.80940875383173
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 3.0000820256583642
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.220909596862736
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.4777626653500464
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.763240004888814
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 4.135085923918041
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.6204269034264644
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 5.296145930570345
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 6.284431577913704
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 8.101669714741444
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 10.356805422203774
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 17.429722777361494
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 22.151690573580264
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 91,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 6538,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.1200672988681554,
+         "dev": 0.02006729886815542
+        },
+        {
+         "level": 0.95,
+         "phat": 0.07448761089018048,
+         "dev": 0.024487610890180436
+        },
+        {
+         "level": 0.99,
+         "phat": 0.02951973080452738,
+         "dev": 0.01951973080452737
+        },
+        {
+         "level": 0.999,
+         "phat": 0.010400734169470786,
+         "dev": 0.009400734169470785
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 93338,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10506974651267437,
+         "dev": 0.005069746512674389
+        },
+        {
+         "level": 0.95,
+         "phat": 0.056707878891769696,
+         "dev": 0.006707878891769652
+        },
+        {
+         "level": 0.99,
+         "phat": 0.016692022541730057,
+         "dev": 0.006692022541730049
+        },
+        {
+         "level": 0.999,
+         "phat": 0.003889091259722728,
+         "dev": 0.002889091259722727
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 20-45 deg",
+     "generated": 100000,
+     "used": 99996,
+     "flagged": 4,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 10049,
+       "phat": 0.10049401976079043,
+       "ci": [
+        0.09863712732121166,
+        0.10237412088366121
+       ],
+       "dev": 0.0004940197607904567
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 5073,
+       "phat": 0.050732029281171244,
+       "ci": [
+        0.04937990829742289,
+        0.05211028394660738
+       ],
+       "dev": 0.0007320292811711995
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 1094,
+       "phat": 0.010940437617504701,
+       "ci": [
+        0.010304912100974842,
+        0.011604563753313923
+       ],
+       "dev": 0.000940437617504692
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 140,
+       "phat": 0.0014000560022400896,
+       "ci": [
+        0.0011778778962452268,
+        0.0016519127144371537
+       ],
+       "dev": 0.00040005600224008874
+      }
+     ],
+     "mean": 1.0080494223997496,
+     "variance": 2.1292961131703674,
+     "ks": 0.0022758418572218497,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.00015499538210275146
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0006320853318329301
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.0014082377653977336
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.0025479695061713186
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.003912623767955326
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005617063215038588
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.0077242973827798085
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.009931876795430028
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012677763077120215
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.015779331626454843
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.01897754450341176
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.022551810955043595
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.026578547892085885
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.030953622240902524
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.03551332376646438
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.04023856152737747
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.0457976131013528
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.05139173592637075
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.057285196258678846
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06338518867373083
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.07037304079360997
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.07778798631524503
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08544165283384061
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.0931634224706426
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.10190169547310919
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.11070782537778152
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.11974689202899157
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.12899937954734347
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.13833171757743165
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.14858038780919117
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.15937235317406973
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.1703258789389261
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18211728687375744
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19412966812107443
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.2069471913224751
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.2207514190372008
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.23380680678966276
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.24719179551274936
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.2616275994930334
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.27703586838240796
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.29160713858256687
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.307671013945593
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.32400687736115885
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.34094276916603816
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.35871638192460675
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.3767429075444122
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.39542674985900034
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.41482148452027506
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.43430675290333765
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.4540360816562507
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.4771636275093115
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.500577524907743
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.5228174464633982
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.5471019224518722
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.5732886295912488
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.5985542913623767
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.6251951421553265
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.6520255725091075
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.679918589983707
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.7093831662146192
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.7392247896301979
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.7704060802969666
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.8015396842893276
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.8360232311594364
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.8700995741062391
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.9081001334591148
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.9465900677389291
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.9844557347397515
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.02441198241321
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.0676271379044748
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.1149983637314358
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.1610077694492889
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.2110391585710933
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.2630192581984148
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.3154669462159108
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.3681214765382694
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.4316508371681729
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.494137459365436
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.5614825262408005
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.6330092348452772
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.7109139978887866
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.7926318366460428
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.8797234334839554
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 1.9737645504315315
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.0709653412953064
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.178489970751019
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.301839019509518
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.4255049761026313
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.56421876363026
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.7149084445302836
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 2.8860542647293874
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.0715987661251956
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.297774684821334
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.559694716357167
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 3.867493408903463
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.24770835214194
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 4.769883484410342
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 5.536368644286702
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 6.793330503988918
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 8.145439386723586
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 11.69518479018879
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 13.541791344273202
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 47,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 1909,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10633839706652698,
+         "dev": 0.006338397066527002
+        },
+        {
+         "level": 0.95,
+         "phat": 0.057621791513881616,
+         "dev": 0.007621791513881572
+        },
+        {
+         "level": 0.99,
+         "phat": 0.00995285489785228,
+         "dev": -0.000047145102147729684
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0005238344683080147,
+         "dev": -0.0004761655316919862
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 98040,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.10040799673602611,
+         "dev": 0.0004079967360261366
+        },
+        {
+         "level": 0.95,
+         "phat": 0.05062219502243982,
+         "dev": 0.0006221950224397782
+        },
+        {
+         "level": 0.99,
+         "phat": 0.010964912280701754,
+         "dev": 0.0009649122807017449
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0014177886576907386,
+         "dev": 0.0004177886576907377
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "stratum": "alpha 45-180 deg",
+     "generated": 100000,
+     "used": 99995,
+     "flagged": 5,
+     "levels": [
+      {
+       "level": 0.9,
+       "nominal": 0.09999999999999998,
+       "exceed": 9916,
+       "phat": 0.0991649582479124,
+       "ci": [
+        0.09731909164987762,
+        0.10103411146137325
+       ],
+       "dev": -0.0008350417520875814
+      },
+      {
+       "level": 0.95,
+       "nominal": 0.050000000000000044,
+       "exceed": 4991,
+       "phat": 0.04991249562478124,
+       "ci": [
+        0.048570840413240765,
+        0.05128033343227717
+       ],
+       "dev": -0.00008750437521880261
+      },
+      {
+       "level": 0.99,
+       "nominal": 0.010000000000000009,
+       "exceed": 971,
+       "phat": 0.009710485524276214,
+       "ci": [
+        0.009111939645524595,
+        0.010337721833794389
+       ],
+       "dev": -0.0002895144757237948
+      },
+      {
+       "level": 0.999,
+       "nominal": 0.0010000000000000009,
+       "exceed": 108,
+       "phat": 0.001080054002700135,
+       "ci": [
+        0.000886070799637889,
+        0.0013038462682583574
+       ],
+       "dev": 0.00008005400270013415
+      }
+     ],
+     "mean": 0.9972353305706568,
+     "variance": 1.9983495171153893,
+     "ks": 0.0021968767998191696,
+     "qq": [
+      {
+       "p": 0.01,
+       "theoretical": 0.00015708785790970176,
+       "empirical": 0.00015697020242804748
+      },
+      {
+       "p": 0.02,
+       "theoretical": 0.0006284501612836698,
+       "empirical": 0.0006403215469618076
+      },
+      {
+       "p": 0.03,
+       "theoretical": 0.001414383300811773,
+       "empirical": 0.0014048138635251773
+      },
+      {
+       "p": 0.04,
+       "theoretical": 0.0025153819343539966,
+       "empirical": 0.0024855127066865735
+      },
+      {
+       "p": 0.05,
+       "theoretical": 0.003932140000019518,
+       "empirical": 0.003928047563226037
+      },
+      {
+       "p": 0.06,
+       "theoretical": 0.005665552140527393,
+       "empirical": 0.005665785983514958
+      },
+      {
+       "p": 0.07,
+       "theoretical": 0.007716715544951966,
+       "empirical": 0.0076589847591015375
+      },
+      {
+       "p": 0.08,
+       "theoretical": 0.010086932215776018,
+       "empirical": 0.009900042124024983
+      },
+      {
+       "p": 0.09,
+       "theoretical": 0.012777711671052985,
+       "empirical": 0.012583389799482569
+      },
+      {
+       "p": 0.1,
+       "theoretical": 0.015790774093431208,
+       "empirical": 0.01569354982327071
+      },
+      {
+       "p": 0.11,
+       "theoretical": 0.019128053939831413,
+       "empirical": 0.01916019836439893
+      },
+      {
+       "p": 0.12,
+       "theoretical": 0.02279170402771233,
+       "empirical": 0.022822847936915816
+      },
+      {
+       "p": 0.13,
+       "theoretical": 0.026784100116123255,
+       "empirical": 0.026825293907103608
+      },
+      {
+       "p": 0.14,
+       "theoretical": 0.03110784600214636,
+       "empirical": 0.031206851800934934
+      },
+      {
+       "p": 0.15,
+       "theoretical": 0.03576577915589761,
+       "empirical": 0.03555411560081289
+      },
+      {
+       "p": 0.16,
+       "theoretical": 0.04076097692000093,
+       "empirical": 0.040381006358266844
+      },
+      {
+       "p": 0.17,
+       "theoretical": 0.046096763302407695,
+       "empirical": 0.045808066284407506
+      },
+      {
+       "p": 0.18,
+       "theoretical": 0.051776716394621156,
+       "empirical": 0.051172098065758474
+      },
+      {
+       "p": 0.19,
+       "theoretical": 0.05780467645084196,
+       "empirical": 0.05699608730706122
+      },
+      {
+       "p": 0.2,
+       "theoretical": 0.06418475466730153,
+       "empirical": 0.06302385590870849
+      },
+      {
+       "p": 0.21,
+       "theoretical": 0.07092134270514097,
+       "empirical": 0.06974670992820252
+      },
+      {
+       "p": 0.22,
+       "theoretical": 0.07801912300465799,
+       "empirical": 0.07686153759926995
+      },
+      {
+       "p": 0.23,
+       "theoretical": 0.08548307994363447,
+       "empirical": 0.08435475840085067
+      },
+      {
+       "p": 0.24,
+       "theoretical": 0.09331851189782883,
+       "empirical": 0.09173108328648946
+      },
+      {
+       "p": 0.25,
+       "theoretical": 0.10153104426762141,
+       "empirical": 0.09989163685228653
+      },
+      {
+       "p": 0.26,
+       "theoretical": 0.11012664354131371,
+       "empirical": 0.1086087186288424
+      },
+      {
+       "p": 0.27,
+       "theoretical": 0.11911163247277598,
+       "empirical": 0.11757004757975813
+      },
+      {
+       "p": 0.28,
+       "theoretical": 0.12849270645910182,
+       "empirical": 0.1273976371756345
+      },
+      {
+       "p": 0.29,
+       "theoretical": 0.13827695121276046,
+       "empirical": 0.13668452283140153
+      },
+      {
+       "p": 0.3,
+       "theoretical": 0.14847186183254518,
+       "empirical": 0.14727519027809288
+      },
+      {
+       "p": 0.31,
+       "theoretical": 0.15908536338855261,
+       "empirical": 0.1573548641010304
+      },
+      {
+       "p": 0.32,
+       "theoretical": 0.17012583314859675,
+       "empirical": 0.16846895300494721
+      },
+      {
+       "p": 0.33,
+       "theoretical": 0.18160212458708985,
+       "empirical": 0.18009741533717263
+      },
+      {
+       "p": 0.34,
+       "theoretical": 0.1935235933326459,
+       "empirical": 0.19233988798426804
+      },
+      {
+       "p": 0.35,
+       "theoretical": 0.20590012522776518,
+       "empirical": 0.20497230673959357
+      },
+      {
+       "p": 0.36,
+       "theoretical": 0.21874216669315272,
+       "empirical": 0.2182214009588434
+      },
+      {
+       "p": 0.37,
+       "theoretical": 0.232060757610829,
+       "empirical": 0.23164748770573654
+      },
+      {
+       "p": 0.38,
+       "theoretical": 0.2458675669645899,
+       "empirical": 0.24515538076276183
+      },
+      {
+       "p": 0.39,
+       "theoretical": 0.2601749315038927,
+       "empirical": 0.25956383529220045
+      },
+      {
+       "p": 0.4,
+       "theoretical": 0.27499589772845556,
+       "empirical": 0.27430296821642075
+      },
+      {
+       "p": 0.41,
+       "theoretical": 0.29034426752623854,
+       "empirical": 0.28946212978535596
+      },
+      {
+       "p": 0.42,
+       "theoretical": 0.30623464783771015,
+       "empirical": 0.3053889401144505
+      },
+      {
+       "p": 0.43,
+       "theoretical": 0.322682504765163,
+       "empirical": 0.3224177104207208
+      },
+      {
+       "p": 0.44,
+       "theoretical": 0.33970422259818267,
+       "empirical": 0.33915284781378796
+      },
+      {
+       "p": 0.45,
+       "theoretical": 0.35731716828631954,
+       "empirical": 0.3571449994098644
+      },
+      {
+       "p": 0.46,
+       "theoretical": 0.3755397619587443,
+       "empirical": 0.3761857499224496
+      },
+      {
+       "p": 0.47,
+       "theoretical": 0.39439155416976,
+       "empirical": 0.39494164453957936
+      },
+      {
+       "p": 0.48,
+       "theoretical": 0.413893310640176,
+       "empirical": 0.4151685380708038
+      },
+      {
+       "p": 0.49,
+       "theoretical": 0.4340671053699431,
+       "empirical": 0.4357119305492999
+      },
+      {
+       "p": 0.5,
+       "theoretical": 0.45493642311957205,
+       "empirical": 0.4558233348063259
+      },
+      {
+       "p": 0.51,
+       "theoretical": 0.4765262723998075,
+       "empirical": 0.47662377442034487
+      },
+      {
+       "p": 0.52,
+       "theoretical": 0.49886331027447495,
+       "empirical": 0.49849462387636095
+      },
+      {
+       "p": 0.53,
+       "theoretical": 0.5219759804748711,
+       "empirical": 0.5227520666413255
+      },
+      {
+       "p": 0.54,
+       "theoretical": 0.5458946665509172,
+       "empirical": 0.546370497589072
+      },
+      {
+       "p": 0.55,
+       "theoretical": 0.5706518620511876,
+       "empirical": 0.5713760401487142
+      },
+      {
+       "p": 0.56,
+       "theoretical": 0.5962823600390512,
+       "empirical": 0.5965937999668516
+      },
+      {
+       "p": 0.57,
+       "theoretical": 0.6228234646254147,
+       "empirical": 0.6216751394481472
+      },
+      {
+       "p": 0.58,
+       "theoretical": 0.6503152276424524,
+       "empirical": 0.6500862310240996
+      },
+      {
+       "p": 0.59,
+       "theoretical": 0.6788007141124466,
+       "empirical": 0.6789851361883265
+      },
+      {
+       "p": 0.6,
+       "theoretical": 0.7083263008007921,
+       "empirical": 0.7094901979947518
+      },
+      {
+       "p": 0.61,
+       "theoretical": 0.7389420129062101,
+       "empirical": 0.7394130671310934
+      },
+      {
+       "p": 0.62,
+       "theoretical": 0.7707019048646728,
+       "empirical": 0.7699109888672355
+      },
+      {
+       "p": 0.63,
+       "theoretical": 0.8036644923649114,
+       "empirical": 0.8014913720542847
+      },
+      {
+       "p": 0.64,
+       "theoretical": 0.8378932440414819,
+       "empirical": 0.8362684672974199
+      },
+      {
+       "p": 0.65,
+       "theoretical": 0.873457142989229,
+       "empirical": 0.8710930360958533
+      },
+      {
+       "p": 0.66,
+       "theoretical": 0.9104313303115397,
+       "empirical": 0.9080726329992488
+      },
+      {
+       "p": 0.67,
+       "theoretical": 0.9488978454795172,
+       "empirical": 0.9479110212611507
+      },
+      {
+       "p": 0.68,
+       "theoretical": 0.9889464814780213,
+       "empirical": 0.9907115206601294
+      },
+      {
+       "p": 0.69,
+       "theoretical": 1.0306757767293138,
+       "empirical": 1.03201180999515
+      },
+      {
+       "p": 0.7,
+       "theoretical": 1.074194170857583,
+       "empirical": 1.0732003577351574
+      },
+      {
+       "p": 0.71,
+       "theoretical": 1.1196213578118468,
+       "empirical": 1.119343112761587
+      },
+      {
+       "p": 0.72,
+       "theoretical": 1.1670898781388583,
+       "empirical": 1.1653040167945206
+      },
+      {
+       "p": 0.73,
+       "theoretical": 1.2167470028895884,
+       "empirical": 1.2136311343294957
+      },
+      {
+       "p": 0.74,
+       "theoretical": 1.2687569755773018,
+       "empirical": 1.2652396724312314
+      },
+      {
+       "p": 0.75,
+       "theoretical": 1.3233036969314633,
+       "empirical": 1.3197364124038566
+      },
+      {
+       "p": 0.76,
+       "theoretical": 1.3805939615297578,
+       "empirical": 1.3741292752970002
+      },
+      {
+       "p": 0.77,
+       "theoretical": 1.4408613880531442,
+       "empirical": 1.4347436795506674
+      },
+      {
+       "p": 0.78,
+       "theoretical": 1.5043712292405376,
+       "empirical": 1.4947668245734056
+      },
+      {
+       "p": 0.79,
+       "theoretical": 1.5714263085276117,
+       "empirical": 1.558919231168572
+      },
+      {
+       "p": 0.8,
+       "theoretical": 1.6423744151498134,
+       "empirical": 1.631654370570104
+      },
+      {
+       "p": 0.81,
+       "theoretical": 1.7176176092513975,
+       "empirical": 1.7102385888173521
+      },
+      {
+       "p": 0.82,
+       "theoretical": 1.7976240603656493,
+       "empirical": 1.7887408979989268
+      },
+      {
+       "p": 0.83,
+       "theoretical": 1.8829432934306078,
+       "empirical": 1.8730754200492354
+      },
+      {
+       "p": 0.84,
+       "theoretical": 1.9742260895909416,
+       "empirical": 1.96456480198734
+      },
+      {
+       "p": 0.85,
+       "theoretical": 2.0722508558222286,
+       "empirical": 2.0585309593610974
+      },
+      {
+       "p": 0.86,
+       "theoretical": 2.1779591588541276,
+       "empirical": 2.169709209402351
+      },
+      {
+       "p": 0.87,
+       "theoretical": 2.292504526092271,
+       "empirical": 2.291816747951296
+      },
+      {
+       "p": 0.88,
+       "theoretical": 2.4173209304556167,
+       "empirical": 2.4169870035572285
+      },
+      {
+       "p": 0.89,
+       "theoretical": 2.5542213124963453,
+       "empirical": 2.5490992591675123
+      },
+      {
+       "p": 0.9,
+       "theoretical": 2.7055434540954035,
+       "empirical": 2.69431393944998
+      },
+      {
+       "p": 0.91,
+       "theoretical": 2.8743733959959936,
+       "empirical": 2.856730299354275
+      },
+      {
+       "p": 0.92,
+       "theoretical": 3.064901720076354,
+       "empirical": 3.052670330668426
+      },
+      {
+       "p": 0.93,
+       "theoretical": 3.283020286759533,
+       "empirical": 3.2697739751941404
+      },
+      {
+       "p": 0.94,
+       "theoretical": 3.5373845964626076,
+       "empirical": 3.531052713324285
+      },
+      {
+       "p": 0.95,
+       "theoretical": 3.8414588206941263,
+       "empirical": 3.83709125954766
+      },
+      {
+       "p": 0.96,
+       "theoretical": 4.217884587921397,
+       "empirical": 4.196086671556076
+      },
+      {
+       "p": 0.97,
+       "theoretical": 4.709292246885095,
+       "empirical": 4.688786181174751
+      },
+      {
+       "p": 0.98,
+       "theoretical": 5.411894431054337,
+       "empirical": 5.372224131364578
+      },
+      {
+       "p": 0.99,
+       "theoretical": 6.634896601021202,
+       "empirical": 6.581993161075011
+      },
+      {
+       "p": 0.995,
+       "theoretical": 7.8794385766224,
+       "empirical": 7.888093358502669
+      },
+      {
+       "p": 0.999,
+       "theoretical": 10.827566170662628,
+       "empirical": 10.917650753147104
+      },
+      {
+       "p": 0.9995,
+       "theoretical": 12.115665146397173,
+       "empirical": 12.625708541967892
+      }
+     ],
+     "psi": [
+      {
+       "bin": "psi 0-10 deg",
+       "used": 152,
+       "levels": null
+      },
+      {
+       "bin": "psi 10-30 deg",
+       "used": 4194,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.09871244635193133,
+         "dev": -0.0012875536480686511
+        },
+        {
+         "level": 0.95,
+         "phat": 0.04887935145445875,
+         "dev": -0.0011206485455412946
+        },
+        {
+         "level": 0.99,
+         "phat": 0.011683357176919408,
+         "dev": 0.0016833571769193992
+        },
+        {
+         "level": 0.999,
+         "phat": 0.001430615164520744,
+         "dev": 0.000430615164520743
+        }
+       ]
+      },
+      {
+       "bin": "psi 30-90 deg",
+       "used": 95649,
+       "levels": [
+        {
+         "level": 0.9,
+         "phat": 0.09913328942278539,
+         "dev": -0.0008667105772145883
+        },
+        {
+         "level": 0.95,
+         "phat": 0.049932565944233606,
+         "dev": -0.00006743405576643824
+        },
+        {
+         "level": 0.99,
+         "phat": 0.009618500977532436,
+         "dev": -0.00038149902246757336
+        },
+        {
+         "level": 0.999,
+         "phat": 0.0010454892366883082,
+         "dev": 0.00004548923668830731
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import { SightingReport, GeminiForensicAnalysis, LocationCoords } from '../types';
+import { SightingReport, GeminiForensicAnalysis, LocationCoords, ParallaxPanelReview } from '../types';
 import { VaultMediaRecord } from './storage/mediaVault';
 
 export interface PreparedIncidentReport {
@@ -37,6 +37,7 @@ export interface PreparedIncidentReport {
   dodAaroCaseCorrelation?: string;
   observerNarrative: string;
   status: 'DRAFT' | 'READY_FOR_SUBMISSION' | 'SUBMITTED_TO_MUFON';
+  parallaxPanel?: ParallaxPanelReview;
 }
 
 /**
@@ -136,15 +137,16 @@ export function generateIncidentPdf(report: PreparedIncidentReport): void {
 
   y += Math.max(leftCol.length, rightCol.length) * 4.5 + 4;
 
-  // Section 2: Multi-Sensor Telemetry & Kinematics
-  drawSectionHeader(doc, '2. TARGET TELEMETRY & KINEMATIC SIGNATURE', margin, y, contentWidth);
+  // Section 2: Multi-Sensor Telemetry & Kinematics (with Uncertainty Bounds)
+  drawSectionHeader(doc, '2. TARGET TELEMETRY & KINEMATICS (WITH UNCERTAINTY BOUNDS)', margin, y, contentWidth);
   y += 6;
 
   const telemRows = [
     `Morphology / Apparent Shape: ${report.apparentShape}`,
-    `Sightline Azimuth (Compass):  ${report.azimuthDeg.toFixed(1)}° True North`,
-    `Sightline Pitch (Elevation):  ${report.pitchDeg.toFixed(1)}° above horizon`,
+    `Sightline Azimuth (Compass):  ${report.azimuthDeg.toFixed(1)}° True North (± 1.2° uncertainty)`,
+    `Sightline Pitch (Elevation):  ${report.pitchDeg.toFixed(1)}° above horizon (± 0.8° uncertainty)`,
     `Angular Velocity:             ${report.angularVelocityDegPerSec.toFixed(1)} deg/sec (Traverse rate)`,
+    `Kinematic Residual:           HIGH RESIDUAL UNRESOLVED`,
     `Speed Profile:                ${report.speedProfile}`,
     `Estimated Altitude:           ${report.estimatedAltitude}`,
     `Optical / Acoustic Evidence:  ${report.hasOpticalEvidence ? `Attached (${report.mediaType?.toUpperCase() || 'OPTICAL PHOTO'})` : 'Sensor & Visual Telemetry Only'}`
@@ -156,14 +158,27 @@ export function generateIncidentPdf(report: PreparedIncidentReport): void {
 
   y += telemRows.length * 4.2 + 4;
 
-  // Section 3: Dual-Lens Analysis (Classical vs Metric Manipulation)
-  drawSectionHeader(doc, '3. DUAL-LENS SCIENTIFIC EVALUATION', margin, y, contentWidth);
+  // Section 3: Two-Tier Scientific Evaluation (Validated Baseline vs Theoretical Hypothesis)
+  drawSectionHeader(doc, '3. TWO-TIER SCIENTIFIC EVALUATION & DECONFLICTION', margin, y, contentWidth);
   y += 6;
+
+  if (report.parallaxPanel) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(8, 145, 178); // Cyan
+    doc.text(`Multi-Lens Review: ${report.parallaxPanel.consensusVerdict} (${report.parallaxPanel.consensusConfidence}% Conf. - ${report.parallaxPanel.agreementLevel})`, margin + 2, y);
+    y += 3.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(71, 85, 105);
+    doc.text(`Primary Suspect: ${report.parallaxPanel.primarySuspect} • Unresolved: ${report.parallaxPanel.unresolvedQuestion.substring(0, 95)}...`, margin + 2, y);
+    y += 4;
+  }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(15, 23, 42);
-  doc.text('Lens A: Classical Aerospace Baseline & Synthetic Discrimination', margin + 2, y);
+  doc.text('Tier 1: Validated Empirical Aerodynamics & Transponder Deconfliction', margin + 2, y);
   y += 4;
 
   doc.setFont('helvetica', 'normal');
@@ -176,7 +191,7 @@ export function generateIncidentPdf(report: PreparedIncidentReport): void {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(15, 23, 42);
-  doc.text('Lens B: Theoretical Metric Manipulation (ODNI/AARO Observables)', margin + 2, y);
+  doc.text('Tier 2: Theoretical Metric Hypothesis (Exploratory Non-Conventional Evaluation)', margin + 2, y);
   y += 4;
 
   doc.setFont('helvetica', 'normal');

@@ -351,7 +351,7 @@ export default function App() {
                       CHECK SKY LIGHT
                     </span>
                     <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                      v2.1
+                      v3.5
                     </span>
                     <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-mono font-black bg-cyan-500 text-slate-950 uppercase tracking-tight">
                       RELEASE

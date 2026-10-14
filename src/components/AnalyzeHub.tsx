@@ -44,7 +44,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
   onNavigateToRadar,
   onNavigateToTarget
 }) => {
-  const [activeTier, setActiveTier] = useState<AnalyzeTier>('witness');
+  const [activeTier, setActiveTier] = useState<AnalyzeTier>('osint');
 
   // Convert analysis result into a community verified sighting report
   const handlePublishAnalysis = (analysis: GeminiForensicAnalysis) => {
@@ -74,7 +74,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
       timestamp: new Date().toISOString(),
       location: resolvedLocation,
       locationName: resolvedLocationName,
-      description: `${analysis.verdictSummary}\n\n[DTC Code]: ${analysis.dtcCode || 'P1947'} - ${analysis.dtcTitle || ''}\n\n[Lens A Classical Baseline]: ${analysis.dualLens?.classicalDeconfliction || 'Screened against FAA airspace'}\n\n[Lens B Metric Signature]: ${analysis.dualLens?.metricSignature || 'Boundary-layer decoupling evaluated'}`,
+      description: `${analysis.verdictSummary}\n\n[DTC Code]: ${analysis.dtcCode || 'P1947'} - ${analysis.dtcTitle || ''}\n\n${analysis.parallaxPanel ? `[Multi-Lens Review]: ${analysis.parallaxPanel.consensusVerdict} (${analysis.parallaxPanel.consensusConfidence}% Conf. - ${analysis.parallaxPanel.agreementLevel})\nPrimary Suspect: ${analysis.parallaxPanel.primarySuspect}\nKey Question: ${analysis.parallaxPanel.unresolvedQuestion}\n\n` : ''}[Lens A Classical Baseline]: ${analysis.dualLens?.classicalDeconfliction || 'Screened against FAA airspace'}\n\n[Lens B Metric Signature]: ${analysis.dualLens?.metricSignature || 'Boundary-layer decoupling evaluated'}`,
       probabilityScore: analysis.authenticityScore,
       status: analysis.authenticityScore >= 70 ? 'AI_ANOMALY_CONFIRMED' : 'COMMUNITY_VERIFIED',
       upvotes: 1,
@@ -85,6 +85,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
       tags: [
         `Score: ${analysis.authenticityScore}%`,
         analysis.dtcCode || 'P1947',
+        analysis.parallaxPanel ? 'MultiLensReview' : 'Analyzed',
         analysis.verdict === 'AUTHENTIC_INCIDENT' ? 'Authentic Target' : 'Deconflicted',
         ...(analysis.detectedFeatures || []).slice(0, 2)
       ]
@@ -135,161 +136,105 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div>
-          <div className="flex items-center space-x-2">
-            <div className="p-1.5 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
-              <ScanSearch className="w-4 h-4" />
-            </div>
-            <h2 className="text-lg sm:text-xl font-black text-slate-100 uppercase tracking-wide">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-2">
+        <div className="flex items-center space-x-2">
+          <div className="p-1 rounded-lg bg-cyan-500/20 text-cyan-300">
+            <ScanSearch className="w-4 h-4" />
+          </div>
+          <div>
+            <h2 className="text-base sm:text-lg font-black text-slate-100 uppercase tracking-wide">
               Analyze Sky Phenomena
             </h2>
+            <p className="text-[11px] text-slate-400">
+              Forensic media inspection, triangulation, and sensor deconfliction.
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Multi-modal investigation: witness capture, sightline triangulation, and OSINT synthetic fake detection.
-          </p>
         </div>
 
-        {/* Global actions */}
-        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+        {/* Utility Shortcuts */}
+        <div className="flex items-center gap-1.5 self-start sm:self-auto shrink-0 font-mono text-[11px]">
           {onOpenUapClassesGuide && (
             <button
               onClick={onOpenUapClassesGuide}
-              className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-mono font-bold text-slate-300 hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
-              title="Official 9 Observed UAP Morphology Reference Guide"
+              className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-slate-300 hover:text-white transition flex items-center space-x-1 cursor-pointer"
             >
-              <Landmark className="w-3.5 h-3.5 text-cyan-400" />
-              <span>9 UAP Classes</span>
+              <Landmark className="w-3 h-3 text-cyan-400" />
+              <span>9 Classes</span>
             </button>
           )}
 
           {onOpenVault && (
             <button
               onClick={onOpenVault}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
-              title="Target Capture Offline Vault"
+              className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 transition flex items-center space-x-1 cursor-pointer font-bold"
             >
-              <HardDrive className="w-3.5 h-3.5 text-amber-400" />
+              <HardDrive className="w-3 h-3 text-amber-400" />
               <span>Vault</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Primary Navigation Switcher (Less-Ink Streamlined) */}
-      <div className="glass-panel border border-white/10 rounded-2xl p-1 bg-slate-950/80 shadow-md">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 text-xs font-mono">
-          {/* Option 1: URL / Media Link */}
-          <button
-            onClick={() => setActiveTier('osint')}
-            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
-              activeTier === 'osint'
-                ? 'bg-amber-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
-            }`}
-          >
-            <Globe className={`w-4 h-4 ${activeTier === 'osint' ? 'text-slate-950' : 'text-amber-400'}`} />
-            <span className="font-extrabold text-[11px] block truncate">URL / Media</span>
-          </button>
-
-          {/* Option 2: Witness Capture */}
-          <button
-            onClick={() => setActiveTier('witness')}
-            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
-              activeTier === 'witness'
-                ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
-            }`}
-          >
-            <Sparkles className={`w-4 h-4 ${activeTier === 'witness' ? 'text-slate-950' : 'text-cyan-400'}`} />
-            <span className="font-extrabold text-[11px] block truncate">Capture / Photo</span>
-          </button>
-
-          {/* Option 3: Triangulate */}
-          <button
-            onClick={() => setActiveTier('triangulate')}
-            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
-              activeTier === 'triangulate'
-                ? 'bg-teal-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-300 border border-white/5'
-            }`}
-          >
-            <Users className={`w-4 h-4 ${activeTier === 'triangulate' ? 'text-slate-950' : 'text-teal-400'}`} />
-            <span className="font-extrabold text-[11px] block truncate">Triangulate</span>
-          </button>
-
-          {/* Option 4: Sonic FFT */}
-          <button
-            onClick={() => setActiveTier('sonic')}
-            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
-              activeTier === 'sonic'
-                ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-400 border border-white/5'
-            }`}
-          >
-            <Volume2 className={`w-4 h-4 ${activeTier === 'sonic' ? 'text-slate-950' : 'text-cyan-400'}`} />
-            <span className="font-extrabold text-[11px] block truncate">Sonic FFT</span>
-          </button>
-
-          {/* Option 5: Feed */}
-          <button
-            onClick={() => setActiveTier('feed')}
-            className={`p-2 rounded-xl text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 ${
-              activeTier === 'feed'
-                ? 'bg-purple-500 text-slate-950 shadow-md font-bold'
-                : 'bg-white/[0.02] hover:bg-white/[0.05] text-slate-400 border border-white/5'
-            }`}
-          >
-            <Radio className={`w-4 h-4 ${activeTier === 'feed' ? 'text-slate-950' : 'text-purple-400'}`} />
-            <span className="font-extrabold text-[11px] block truncate">Ledger ({sightings.length})</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Sleek Tactical Pipeline Stepper */}
-      <div className="flex items-center justify-between bg-slate-950/70 border border-slate-800/80 rounded-xl px-2.5 py-1.5 text-[10px] font-mono text-slate-400">
+      {/* Primary Navigation Switcher (Tool-001 Clean Low-Ink Bar) */}
+      <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-950/80 border border-white/10 overflow-x-auto text-xs font-mono">
         <button
-          onClick={onNavigateToTarget}
-          disabled={!onNavigateToTarget}
-          className={`flex items-center space-x-1 px-2 py-0.5 rounded-lg transition ${
-            onNavigateToTarget ? 'hover:bg-slate-800 text-slate-300 cursor-pointer' : 'opacity-60 cursor-default'
+          onClick={() => setActiveTier('osint')}
+          className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap ${
+            activeTier === 'osint'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Crosshair className="w-3 h-3 text-slate-400" />
-          <span>1. Target</span>
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Forensics</span>
         </button>
 
-        <span className="text-slate-700">›</span>
-
         <button
-          onClick={onNavigateToRadar}
-          disabled={!onNavigateToRadar}
-          className={`flex items-center space-x-1 px-2 py-0.5 rounded-lg transition ${
-            onNavigateToRadar ? 'hover:bg-slate-800 text-slate-300 cursor-pointer' : 'opacity-60 cursor-default'
+          onClick={() => setActiveTier('witness')}
+          className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap ${
+            activeTier === 'witness'
+              ? 'bg-cyan-500 text-slate-950 font-black shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Radar className="w-3 h-3 text-slate-400" />
-          <span>2. Radar</span>
+          <Crosshair className="w-3.5 h-3.5" />
+          <span>Sensor View</span>
         </button>
 
-        <span className="text-slate-700">›</span>
-
-        <div className="flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold">
-          <ScanSearch className="w-3 h-3 text-cyan-400" />
-          <span>3. Analyze</span>
-        </div>
-
-        <span className="text-slate-700">›</span>
-
         <button
-          onClick={onNavigateToReport}
-          disabled={!onNavigateToReport}
-          className={`flex items-center space-x-1 px-2 py-0.5 rounded-lg transition ${
-            onNavigateToReport ? 'hover:bg-slate-800 text-slate-300 cursor-pointer' : 'opacity-60 cursor-default'
+          onClick={() => setActiveTier('triangulate')}
+          className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap ${
+            activeTier === 'triangulate'
+              ? 'bg-teal-500 text-slate-950 font-black shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          <FileText className="w-3 h-3 text-slate-400" />
-          <span>4. Report</span>
+          <Users className="w-3.5 h-3.5" />
+          <span>Triangulate</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTier('sonic')}
+          className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap ${
+            activeTier === 'sonic'
+              ? 'bg-cyan-500 text-slate-950 font-black shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Volume2 className="w-3.5 h-3.5" />
+          <span>Sonic FFT</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTier('feed')}
+          className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center space-x-1.5 whitespace-nowrap ${
+            activeTier === 'feed'
+              ? 'bg-purple-500 text-slate-950 font-black shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Radio className="w-3.5 h-3.5" />
+          <span>Ledger ({sightings.length})</span>
         </button>
       </div>
 

@@ -11,6 +11,10 @@ import {
   calculateDistanceMiles, 
   TriangulationResult 
 } from '../lib/sightlineMath';
+import { 
+  computeEcefSkewLineTriangulation, 
+  EcefTriangulationResult 
+} from '../lib/triangulationMath';
 
 interface SightlineTriangulationModalProps {
   isOpen: boolean;
@@ -40,10 +44,12 @@ export const SightlineTriangulationModal: React.FC<SightlineTriangulationModalPr
   const [obs2El, setObs2El] = useState<number>(34);
 
   const [triangulationResult, setTriangulationResult] = useState<TriangulationResult | null>(null);
+  const [ecefResult, setEcefResult] = useState<EcefTriangulationResult | null>(null);
 
   if (!isOpen) return null;
 
   const handleComputeTriangulation = () => {
+    // 1. Classical spherical geodesic approximation
     const res = calculateSightlineIntersection(
       obs1Lat,
       obs1Lng,
@@ -55,6 +61,25 @@ export const SightlineTriangulationModal: React.FC<SightlineTriangulationModalPr
       obs2El
     );
     setTriangulationResult(res);
+
+    // 2. High-precision 3D WGS84 ECEF Skew-Line Closest Approach with Chi-Square Gating (Rigorous ECEF Triangulation)
+    const ecefRes = computeEcefSkewLineTriangulation(
+      {
+        coords: { lat: obs1Lat, lng: obs1Lng, altMeters: 1600 },
+        azimuthDeg: obs1Az,
+        elevationDeg: obs1El,
+        sigmaAzDeg: 1.5,
+        sigmaElDeg: 0.8
+      },
+      {
+        coords: { lat: obs2Lat, lng: obs2Lng, altMeters: 1600 },
+        azimuthDeg: obs2Az,
+        elevationDeg: obs2El,
+        sigmaAzDeg: 1.5,
+        sigmaElDeg: 0.8
+      }
+    );
+    setEcefResult(ecefRes);
   };
 
   return (
@@ -246,6 +271,46 @@ export const SightlineTriangulationModal: React.FC<SightlineTriangulationModalPr
               <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/60 text-xs text-slate-300 leading-relaxed font-sans">
                 <strong className="text-cyan-300 font-mono">Dual-Lens Kinematics Assessment:</strong> {triangulationResult.notes}
               </div>
+
+              {/* High-Precision WGS84 ECEF & Chi-Square Card (Roundtable Specification) */}
+              {ecefResult && (
+                <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-800/60 space-y-3 font-mono text-xs">
+                  <div className="flex items-center justify-between border-b border-purple-800/50 pb-2">
+                    <span className="text-purple-300 font-bold flex items-center space-x-1.5">
+                      <Layers className="w-4 h-4 text-purple-400" />
+                      <span>WGS84 ECEF Skew-Line Closest Approach (POCA)</span>
+                    </span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      ecefResult.valid ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'
+                    }`}>
+                      {ecefResult.valid ? 'CHI-SQUARE ACCEPTED (99% GATE)' : 'REJECTED: RESIDUAL EXCEEDS COVARIANCE'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-[11px]">
+                    <div className="p-2 rounded-lg bg-black/40 border border-purple-900/50">
+                      <span className="text-slate-400 block text-[9px] uppercase">Miss Distance</span>
+                      <span className="font-bold text-slate-200">{ecefResult.missDistanceMeters} m</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-black/40 border border-purple-900/50">
+                      <span className="text-slate-400 block text-[9px] uppercase">Range-Scaled 1σ</span>
+                      <span className="font-bold text-slate-200">±{ecefResult.rangeScaledSigmaMeters} m</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-black/40 border border-purple-900/50">
+                      <span className="text-slate-400 block text-[9px] uppercase">Epipolar Out-of-Plane</span>
+                      <span className="font-bold text-purple-300">{ecefResult.epipolarResidualDeg}°</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-black/40 border border-purple-900/50">
+                      <span className="text-slate-400 block text-[9px] uppercase">Convergence Angle</span>
+                      <span className="font-bold text-cyan-300">{ecefResult.convergenceAngleDeg}°</span>
+                    </div>
+                  </div>
+
+                  <div className="text-[11px] text-purple-200 font-sans leading-relaxed">
+                    <strong>Statistical Validation:</strong> {ecefResult.notes}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -4,7 +4,7 @@ import {
   Layers, Volume2, VolumeX, Eye, Compass, Navigation, RefreshCw, 
   Circle, Maximize2, Minimize2, Zap, Radio, Sun, Moon, Video, Square, Download, 
   ExternalLink, FileText, ChevronRight, Cpu, Target, Scan, Lock, Mic,
-  Battery, BatteryCharging, MousePointerClick, Fingerprint, Power, Info, Check, HelpCircle, X
+  Battery, BatteryCharging, Fingerprint, Power, Info, Check, HelpCircle, X
 } from 'lucide-react';
 import { LocationCoords, FlightTrack, CelestialBody } from '../types';
 import { 
@@ -95,10 +95,6 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   // Digital Crop Zoom (1x, 2x, 5x) for long-distance sky targets
   const [zoomFactor, setZoomFactor] = useState<number>(1);
 
-  // Manual Screen Tap Target Lock: Disabled at app launch for minimal battery draw
-  const [manualScreenLockEnabled, setManualScreenLockEnabled] = useState<boolean>(false);
-  const [tapMarker, setTapMarker] = useState<{ x: number; y: number; id: number } | null>(null);
-  const [tapHintToast, setTapHintToast] = useState<string | null>(null);
   const [powerDrawerOpen, setPowerDrawerOpen] = useState<boolean>(false);
 
   // Device orientation & motion telemetry (iPhone Compass, Pitch, Roll & Accelerometers)
@@ -154,9 +150,9 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: { ideal: 'environment' },
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30, max: 30 }
+          width: { ideal: 1920, max: 3840 },
+          height: { ideal: 1080, max: 2160 },
+          frameRate: { ideal: 30, max: 60 }
         },
         audio: false
       });
@@ -397,90 +393,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     }
   };
 
-  // Manual Screen Tap Target Lock on camera viewfinder (gated & disabled at startup for low power)
-  const handleScreenTapLock = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    // Avoid triggering if interacting with buttons, inputs or HUD controls
-    const target = e.target as HTMLElement;
-    if (target.closest('button, a, input, select, textarea, [data-interactive="true"]')) {
-      return;
-    }
 
-    if (!manualScreenLockEnabled) {
-      setTapHintToast('Tap "Tap" in HUD first to arm target selection.');
-      setTimeout(() => setTapHintToast(null), 3000);
-      return;
-    }
-
-    unlockAudioContext();
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0 || rect.height === 0) return;
-
-    let clientX = 0;
-    let clientY = 0;
-    if ('touches' in e) {
-      if (e.touches.length === 0) return;
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = (e as React.MouseEvent).clientX;
-      clientY = (e as React.MouseEvent).clientY;
-    }
-
-    const clickX = clientX - rect.left;
-    const clickY = clientY - rect.top;
-    const xPct = Math.round(Math.max(5, Math.min(95, (clickX / rect.width) * 100)));
-    const yPct = Math.round(Math.max(5, Math.min(95, (clickY / rect.height) * 100)));
-
-    setTapMarker({ x: xPct, y: yPct, id: Date.now() });
-    setTimeout(() => setTapMarker(null), 1800);
-
-    if (soundEnabled) {
-      playTargetAcquiringTone();
-      triggerHapticFeedback([25, 35]);
-    }
-
-    // Instant lock on designated screen coordinate
-    const immediateLock: TargetLockData = {
-      id: `MAN-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: 'Manual Target',
-      type: 'UAP',
-      lockState: 'LOCKED',
-      screenX: xPct,
-      screenY: yPct,
-      azimuthDeg: azimuth,
-      elevationDeg: pitch,
-      azimuthStr: `${azimuth.toFixed(1)}°`,
-      elevationStr: `${pitch.toFixed(1)}°`,
-      distance: 'Estimated 8,500 m',
-      angularVelocityDegPerSec: 14.5,
-      estimatedSpeed: 'Tracking Vector',
-      estimatedAltitude: '16,200 ft',
-      kinematicGForce: '40 G (Non-Inertial)',
-      deconflictionStatus: 'MANUAL_OPTICAL_TRACK',
-      details: `Manual optical lock acquired by observer at screen coordinate (${xPct}%, ${yPct}%). Azimuth ${azimuth.toFixed(1)}°, Elevation ${pitch.toFixed(1)}°.`,
-      confidencePct: 92,
-      timestamp: new Date().toISOString(),
-      geminiLockDetails: {
-        detected: true,
-        confidencePct: 92,
-        classicalDeconfliction: 'Observer designated manual optical coordinate. Correlated against local airspace.',
-        analysisNotes: `Manual screen target lock established at (${xPct}%, ${yPct}%).`,
-        isGeminiAiLocked: false
-      }
-    };
-
-    setTargetLock(immediateLock);
-    setLockProgress(100);
-    setAiLockFeedback(`Lock (${xPct}%, ${yPct}%)`);
-    if (onTargetLocked) {
-      onTargetLocked(immediateLock);
-    }
-
-    // If camera is running, trigger an instant targeted dual-lens AI evaluation
-    if (cameraActive) {
-      runGeminiAutoLock(true, { xPct, yPct });
-    }
-  };
 
   // Periodic Gemini Auto-Lock Loop
   useEffect(() => {
@@ -584,6 +497,14 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     };
   }, [cameraActive, opticalTrackingActive, azimuth, pitch, soundEnabled, targetLock]);
 
+  // Optical Filter Presets for day and night sky aircraft deconfliction
+  const videoFilterStyle = 
+    dayNightMode === 'nvg_green' ? 'contrast(1.6) brightness(1.25) sepia(1) hue-rotate(85deg) saturate(3)' :
+    dayNightMode === 'night_strobe' ? 'contrast(2.6) brightness(1.3) saturate(2.2)' :
+    dayNightMode === 'flir_thermal' ? 'invert(1) grayscale(1) contrast(2.2) brightness(0.95)' :
+    dayNightMode === 'night_tactical' ? 'contrast(1.5) brightness(1.2) saturate(1.4)' :
+    'none';
+
   // Capture Photo
   const handleCapturePhoto = async () => {
     unlockAudioContext();
@@ -595,8 +516,8 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
     let dataUrl = '';
     if (videoRef.current && cameraActive) {
       const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth || 1280;
-      canvas.height = videoRef.current.videoHeight || 720;
+      canvas.width = videoRef.current.videoWidth || 1920;
+      canvas.height = videoRef.current.videoHeight || 1080;
       const ctx = canvas.getContext('2d');
       if (ctx) {
         const vw = canvas.width;
@@ -605,7 +526,11 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         const cropH = vh / zoomFactor;
         const cropX = (vw - cropW) / 2;
         const cropY = (vh - cropH) / 2;
+        if (videoFilterStyle && videoFilterStyle !== 'none') {
+          ctx.filter = videoFilterStyle;
+        }
         ctx.drawImage(videoRef.current, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
+        ctx.filter = 'none';
         // Draw HUD stamp
         ctx.fillStyle = '#06b6d4';
         ctx.font = '24px monospace';
@@ -855,15 +780,13 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   return (
     <div 
       ref={containerRef}
-      onClick={handleScreenTapLock}
-      onTouchStart={handleScreenTapLock}
       className={
         isFullView
           ? "fixed inset-0 z-50 w-screen h-[100dvh] bg-black select-none font-mono flex flex-col overflow-hidden"
-          : "relative w-full h-[calc(100dvh-13rem)] min-h-[380px] max-h-[720px] rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl font-mono select-none flex flex-col cursor-crosshair"
+          : "relative w-full h-[calc(100dvh-13rem)] min-h-[380px] max-h-[720px] rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl font-mono select-none flex flex-col"
       }
     >
-      {/* Video / Camera Feed (Full View Object Cover with smooth optical/digital crop zoom) */}
+      {/* Video / Camera Feed (Full View Object Cover with smooth optical/digital crop zoom & day/night filters) */}
       <video
         ref={videoRef}
         playsInline
@@ -871,40 +794,11 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         autoPlay
         style={{
           transform: zoomFactor > 1 ? `scale(${zoomFactor})` : undefined,
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          filter: videoFilterStyle
         }}
         className={`absolute inset-0 w-full h-full object-cover z-0 transition-all duration-200 ease-out ${cameraActive ? 'opacity-100' : 'opacity-0'}`}
       />
-
-      {/* Visual Ripple and Reticle on User Screen Tap */}
-      {tapMarker && (
-        <div 
-          className="absolute z-30 pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
-          style={{ left: `${tapMarker.x}%`, top: `${tapMarker.y}%` }}
-        >
-          <div className="w-16 h-16 rounded-full border-2 border-amber-400/80 animate-ping absolute -top-8 -left-8" />
-          <div className="w-10 h-10 rounded-full border-2 border-amber-300 flex items-center justify-center bg-amber-400/20 -top-5 -left-5 absolute shadow-[0_0_15px_rgba(251,191,36,0.6)]">
-            <Crosshair className="w-5 h-5 text-amber-300" />
-          </div>
-          <div className="absolute top-6 -left-14 px-2 py-0.5 rounded bg-amber-950/90 border border-amber-400 text-amber-300 text-[10px] font-mono whitespace-nowrap shadow-md">
-            TARGET DESIGNATED ({tapMarker.x}%, {tapMarker.y}%)
-          </div>
-        </div>
-      )}
-
-      {/* Screen Tap Hint Toast when disabled */}
-      {tapHintToast && (
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-40 bg-slate-950/95 border border-amber-500/50 text-amber-200 px-3.5 py-2 rounded-2xl text-[11px] font-mono shadow-2xl flex items-center space-x-2 animate-fade-in pointer-events-auto max-w-[90%] sm:max-w-md">
-          <Battery className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span className="leading-tight">{tapHintToast}</span>
-          <button 
-            onClick={(e) => { e.stopPropagation(); setTapHintToast(null); }}
-            className="text-slate-400 hover:text-white ml-1 p-0.5 cursor-pointer"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
 
       {/* Sound Mode Change Toast */}
       {soundModeToast && (
@@ -946,7 +840,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           <div className="mt-4 flex items-center gap-2.5">
             <button
               id="target-quick-camera-btn"
-              onClick={startCamera}
+              onClick={() => { void startCamera(); }}
               className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs tracking-wide transition flex items-center space-x-2 shadow-lg cursor-pointer active:scale-95 min-h-[42px]"
             >
               <Camera className="w-4 h-4" />
@@ -981,12 +875,12 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         <div className="space-y-2">
           {/* Top Telemetry & Viewport Bar - Transparent Glass Backdrops */}
           <div className="flex items-center justify-between gap-2">
-            {/* Left: Compass Telemetry Pill */}
+            {/* Left: Compass Telemetry Pill with Explicit Covariance / Uncertainty Bounds (±) */}
             <div className="flex items-center space-x-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/10 pointer-events-auto text-[11px] sm:text-xs font-mono font-bold shadow-sm">
               <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="text-cyan-400">{azimuth.toFixed(0)}° AZ</span>
+              <span className="text-cyan-400">{azimuth.toFixed(0)}°<span className="text-[9px] text-cyan-400/70 font-normal">±1.2°</span> AZ</span>
               <span className="text-white/40">·</span>
-              <span className="text-teal-400">{pitch.toFixed(0)}° EL</span>
+              <span className="text-teal-400">{pitch.toFixed(0)}°<span className="text-[9px] text-teal-400/70 font-normal">±0.8°</span> EL</span>
             </div>
 
             {/* Right: Display Filters, Audio Synthesizer, & Full View */}
@@ -994,16 +888,16 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               {/* Filter Mode Cycle */}
               <button
                 onClick={() => {
-                  const modes: DisplayDayNightMode[] = ['nvg_green', 'flir_thermal', 'night_tactical', 'day_antiglare'];
+                  const modes: DisplayDayNightMode[] = ['nvg_green', 'night_strobe', 'flir_thermal', 'night_tactical', 'day_antiglare'];
                   const nextIdx = (modes.indexOf(dayNightMode) + 1) % modes.length;
                   setDayNightMode(modes[nextIdx]);
                 }}
                 className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-black/30 hover:bg-black/50 border border-white/10 text-cyan-300 text-[10px] sm:text-xs font-bold transition flex items-center space-x-1 cursor-pointer shadow-sm min-h-[36px]"
-                title="Toggle Optical Filter (NVG, FLIR, Tactical, Day)"
+                title="Toggle Optical Filter (NVG, Strobe, FLIR, Tactical, Day)"
               >
                 <Layers className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="text-[9px] sm:text-[10px] font-mono uppercase">
-                  {dayNightMode === 'nvg_green' ? 'NVG' : dayNightMode === 'flir_thermal' ? 'FLIR' : dayNightMode === 'night_tactical' ? 'TAC' : 'DAY'}
+                  {dayNightMode === 'nvg_green' ? 'NVG' : dayNightMode === 'night_strobe' ? 'STROBE' : dayNightMode === 'flir_thermal' ? 'FLIR' : dayNightMode === 'night_tactical' ? 'TAC' : 'DAY'}
                 </span>
               </button>
 
@@ -1046,29 +940,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 <span>AI</span>
               </button>
 
-              {/* Screen Tap Lock Toggle */}
-              <button
-                id="target-tap-lock-toggle"
-                onClick={() => {
-                  const next = !manualScreenLockEnabled;
-                  setManualScreenLockEnabled(next);
-                  if (next) {
-                    setAiLockFeedback('Tap Target');
-                    triggerHapticFeedback([25, 25]);
-                  } else {
-                    setAiLockFeedback('Ready');
-                  }
-                }}
-                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[32px] ${
-                  manualScreenLockEnabled
-                    ? 'bg-amber-500/30 text-amber-300 border border-amber-400/60 shadow-[0_0_12px_rgba(251,191,36,0.3)]'
-                    : 'text-white/70 hover:text-white border border-transparent'
-                }`}
-                title="Toggle Screen Tap Target Lock"
-              >
-                <MousePointerClick className={`w-3.5 h-3.5 ${manualScreenLockEnabled ? 'text-amber-400' : 'text-white/50'}`} />
-                <span>Tap</span>
-              </button>
+
 
               {/* Single-Shot Scan */}
               <button
@@ -1088,10 +960,10 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           </div>
         </div>
 
-        {/* Right Margin Vertical Zoom Controller - Non-obstructive camera app style */}
+        {/* Right Margin Vertical Zoom Controller - Optical & Digital Telephoto Steps */}
         <div className="absolute right-2 sm:right-3.5 top-1/2 -translate-y-1/2 z-20 pointer-events-auto">
           <div className="flex flex-col items-center p-1 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10 shadow-lg space-y-1 text-[11px] font-mono">
-            {[5, 2, 1].map((z) => (
+            {[5, 3, 2, 1].map((z) => (
               <button
                 key={z}
                 onClick={() => {
@@ -1367,26 +1239,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 </button>
               </div>
 
-              {/* Screen Tap Lock Toggle Card */}
-              <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
-                    <MousePointerClick className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Screen Tap-to-Lock</span>
-                  </div>
-                  <p className="text-[10px] text-slate-400">Click or tap any point on camera to designate target</p>
-                </div>
-                <button
-                  onClick={() => setManualScreenLockEnabled(!manualScreenLockEnabled)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-                    manualScreenLockEnabled 
-                      ? 'bg-amber-400 text-slate-950 font-black' 
-                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                  }`}
-                >
-                  {manualScreenLockEnabled ? 'ARMED' : 'DISABLED'}
-                </button>
-              </div>
+
 
               {/* Instant Single-Shot Scan */}
               <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 flex items-center justify-between">

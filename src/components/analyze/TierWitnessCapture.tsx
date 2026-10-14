@@ -49,54 +49,25 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
     }
   };
 
-  const handleUseSampleWitnessCapture = (type: 'orb' | 'triangle' | 'drone' | 'jet' | 'dog' | 'car' | 'sofa' | 'selfie' | 'fan') => {
-    setMediaType(type === 'orb' || type === 'drone' || type === 'jet' || type === 'dog' || type === 'car' || type === 'fan' ? 'video' : 'photo');
+  const handleUseSampleWitnessCapture = (type: 'positive' | 'negative' | 'puppy') => {
+    setMediaType(type === 'negative' ? 'video' : 'photo');
     
-    if (type === 'orb') {
+    if (type === 'positive') {
       setPreviewUrl('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80');
-      setWitnessNotes('Single glowing spherical orb witnessed hovering silently at ~3,500 ft AGL over ridge line, sudden instant vertical acceleration without sound.');
+      setWitnessNotes('Positive Control: Glowing spherical orb witnessed hovering silently at ~3,500 ft AGL over ridge line, sudden instant vertical acceleration without sound or downwash.');
       setDeviceAzimuth(224);
       setDeviceElevation(38);
-    } else if (type === 'triangle') {
-      setPreviewUrl('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80');
-      setWitnessNotes('Equilateral triangular array with three corner luminous apertures maintaining fixed orientation during 45° planar tilt.');
-      setDeviceAzimuth(185);
-      setDeviceElevation(55);
-    } else if (type === 'drone') {
+    } else if (type === 'negative') {
       setPreviewUrl('https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Consumer quadcopter drone hovering at 120 ft AGL with 4 distinct rotor blade wash patterns and standard red/green navigation LED strobes.');
+      setWitnessNotes('Negative Control: Consumer quadcopter drone hovering at 120 ft AGL with 4 distinct rotor blade wash patterns and standard red/green navigation LED strobes.');
       setDeviceAzimuth(175);
       setDeviceElevation(22);
-    } else if (type === 'jet') {
-      setPreviewUrl('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Commercial twin-engine passenger airliner cruising at FL340 leaving distinct condensation trail (contrail) with FAA 1.2 Hz anti-collision strobes.');
-      setDeviceAzimuth(310);
-      setDeviceElevation(48);
-    } else if (type === 'dog') {
-      setPreviewUrl('https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Golden retriever puppy executing rapid living room zoomies. Checking for gravitational field distortion or bio-warp engine.');
+    } else {
+      // Puppy Control
+      setPreviewUrl('https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1000&q=80');
+      setWitnessNotes('Puppy Control: Golden retriever puppy executing rapid living room zoomies. Checking for gravitational field distortion or bio-warp engine.');
       setDeviceAzimuth(145);
       setDeviceElevation(2);
-    } else if (type === 'car') {
-      setPreviewUrl('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Automobile with illuminated headlamps on suburban driveway. Testing headlamp photometry vs runway PAPI glide slope lights.');
-      setDeviceAzimuth(270);
-      setDeviceElevation(4);
-    } else if (type === 'sofa') {
-      setPreviewUrl('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Living room sofa sitting motionless in den. Checking for anomalous metric levitation, antigravity, or sedentary mass anomaly.');
-      setDeviceAzimuth(90);
-      setDeviceElevation(0);
-    } else if (type === 'selfie') {
-      setPreviewUrl('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('App user front-facing camera selfie test. Scanning homo sapiens for bipedal anti-gravity signatures or telepathic beacons.');
-      setDeviceAzimuth(0);
-      setDeviceElevation(0);
-    } else if (type === 'fan') {
-      setPreviewUrl('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=80');
-      setWitnessNotes('Ceiling fan spinning rapidly on high setting. Testing rotor blade tip aerodynamics and blade wash vs Alcubierre warp curvature.');
-      setDeviceAzimuth(45);
-      setDeviceElevation(75);
     }
 
     setSelectedFile(null);
@@ -108,7 +79,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
   const handleRunWitnessAnalysis = async () => {
     setIsAnalyzing(true);
     setAnalysisError(null);
-    setAnalysisProgress('Stabilizing witness optical frames & extracting device sensor telemetry...');
+    setAnalysisProgress('Stabilizing optical frames & extracting sensor telemetry...');
 
     try {
       // Step 1: Extract base64 if user uploaded a file
@@ -122,7 +93,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
       }
 
       await new Promise((r) => setTimeout(r, 600));
-      setAnalysisProgress('Querying Gemini AI multimodal vision & kinematic model...');
+      setAnalysisProgress('Computing multimodal vision & kinematic trajectory...');
 
       const response = await fetch('/api/analyze/media', {
         method: 'POST',
@@ -257,10 +228,9 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           verdictSummary: 'Target is a four-legged terrestrial domestic organism. Telemetry registers enthusiastic physical propulsion via paws with zero spacetime metric distortion or anti-gravity signature. Highly anomalous cuteness index, but strictly zero UAP probability.',
           confidenceScore: 99,
           dtcCode: 'P0001',
-          dtcTitle: 'P0001: Domestic Bio-Unit / Zero Spacetime Metric Distortion',
+          dtcTitle: 'P0001: Terrestrial Companion Animal / Newtonian Baseline',
           mundaneObjectDetected: true,
           mundaneCategory: 'pet',
-          humorousQuirk: 'Diagnostic scanner detected zero Alcubierre warp bubble, though bio-acoustic sensor detected loud happy panting and tail oscillation at 4.2 Hz.',
           educationalAeroAstronomyLesson: {
             topic: 'Bio-Acoustics & Infrasound Sky Perception',
             concept: 'Canines have an auditory range of 67 Hz to 45,000 Hz (far beyond humans). In historical aerospace investigations, domestic animals often react to high-frequency electromagnetic radar spikes and supersonic acoustic pressure pulses seconds before human observers notice incoming high-altitude craft.',
@@ -295,14 +265,13 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           authenticityScore: 0,
           fakeProbability: 2,
           verdict: 'CONVENTIONAL_AIRCRAFT',
-          verdictTitle: 'Sedentary Domestic Furniture (Zero Metric Displacement)',
-          verdictSummary: 'Target is a high-mass upholstered living room couch. Zero metric displacement or vertical levitation observed. Inertial mass firmly anchored to local floorboards.',
+          verdictTitle: 'Sedentary Domestic Furniture (Ground Rest)',
+          verdictSummary: 'Target is stationary domestic furniture. Object exhibits static equilibrium under planetary gravity with zero vertical levitation or flight dynamics.',
           confidenceScore: 99,
           dtcCode: 'P0003',
-          dtcTitle: 'P0003: Sedentary Domestic Furniture / Zero Metric Displacement',
+          dtcTitle: 'P0003: Sedentary Domestic Furniture / Static Ground Rest',
           mundaneObjectDetected: true,
           mundaneCategory: 'furniture',
-          humorousQuirk: 'Diagnostic scanner registered zero anti-gravity field, although the seat cushions may induce couch-lock in fatigued human observers.',
           educationalAeroAstronomyLesson: {
             topic: 'Inertial Mass vs Gravitational Mass in General Relativity',
             concept: 'Einstein’s Equivalence Principle states that inertial mass (resistance to acceleration) and gravitational mass (attraction to Earth) are fundamentally identical. A UAP metric engine theoretically bypasses this by curving local spacetime, rendering a massive vehicle essentially massless in freefall!',
@@ -339,7 +308,6 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
           dtcTitle: 'P0002: Ground Combustion Vehicle / High Photometric Output',
           mundaneObjectDetected: true,
           mundaneCategory: 'vehicle',
-          humorousQuirk: 'Diagnostic scanner found zero warp nacelles. Emissions test shows standard carbon output; recommend checking tire pressure rather than space-time coordinates.',
           educationalAeroAstronomyLesson: {
             topic: 'Runway Approach Lighting & PAPI vs Terrestrial Halogens',
             concept: 'Automobile headlights viewed from distant ridges or coastal bluffs frequently mimic runway Precision Approach Path Indicators (PAPI) or aircraft taxi lights. Atmospheric temperature inversions can cause headlights to refract and appear suspended in mid-air.',
@@ -363,20 +331,19 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
         fallbackReport = {
           id: `witness-${Date.now()}`,
           sourceType: mediaType,
-          sourceTitle: `Eyewitness Optical: Homo Sapiens Observer`,
+          sourceTitle: `Eyewitness Optical: Human Observer Portrait`,
           sourcePreviewUrl: previewUrl || undefined,
           timestamp: new Date().toISOString(),
           authenticityScore: 1,
           fakeProbability: 4,
           verdict: 'CONVENTIONAL_AIRCRAFT',
-          verdictTitle: 'Homo Sapiens Bipedal Observer (Zero Extraterrestrial Biomarkers)',
-          verdictSummary: 'Target identified as a carbon-based bipedal primate testing the forensic scanner. Zero anti-gravity levitation or telepathic broadcast detected.',
+          verdictTitle: 'Homo Sapiens Bipedal Observer (Terrestrial Portrait)',
+          verdictSummary: 'Target identified as a human observer portrait. Shows standard terrestrial human biometric features and ambient illumination.',
           confidenceScore: 99,
           dtcCode: 'P0004',
           dtcTitle: 'P0004: Homo Sapiens Biped / Terrestrial Observer Profile',
           mundaneObjectDetected: true,
           mundaneCategory: 'selfie_friend',
-          humorousQuirk: 'Facial scanner confirms subject is 100% human, with a 98% likelihood of being curious about aliens and needing a snack.',
           educationalAeroAstronomyLesson: {
             topic: 'Human Eye Angular Resolution & Night Sky Dark Adaptation',
             concept: 'The human fovea has an angular resolution limit of ~1 arcminute (0.016°), and the eye takes 20-30 minutes in total darkness for rhodopsin in rod cells to fully regenerate. Looking at bright smartphone screens immediately destroys night adaptation!',
@@ -573,76 +540,30 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
               )}
             </div>
 
-            {/* Quick Test Presets (Consolidated Compact Bar) */}
+            {/* Quick Test Presets (Consolidated 3 Controls: Positive, Negative, Puppy) */}
             <div className="space-y-1.5 pt-0.5">
               <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
-                <span className="text-cyan-400 font-bold uppercase tracking-wider shrink-0">UAP:</span>
+                <span className="text-slate-400 font-bold uppercase tracking-wider shrink-0">Presets:</span>
                 <button
-                  onClick={() => handleUseSampleWitnessCapture('orb')}
-                  className="px-2 py-0.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 transition cursor-pointer"
+                  onClick={() => handleUseSampleWitnessCapture('positive')}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-bold transition cursor-pointer"
+                  title="Positive Control: Declassified UAP benchmark"
                 >
-                  Orb Hover
+                  🛸 Positive Control
                 </button>
                 <button
-                  onClick={() => handleUseSampleWitnessCapture('triangle')}
-                  className="px-2 py-0.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 transition cursor-pointer"
+                  onClick={() => handleUseSampleWitnessCapture('negative')}
+                  className="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 font-bold transition cursor-pointer"
+                  title="Negative Control: FAA Drone deconfliction"
                 >
-                  Delta Array
-                </button>
-
-                <span className="text-slate-600 px-0.5">|</span>
-                <span className="text-emerald-400 font-bold uppercase tracking-wider shrink-0">Lens A Deconflict:</span>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('drone')}
-                  className="px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 transition cursor-pointer"
-                  title="Test Lens A deconfliction against consumer quadcopter drone"
-                >
-                  🚁 Drone
+                  🚁 Negative Control
                 </button>
                 <button
-                  onClick={() => handleUseSampleWitnessCapture('jet')}
-                  className="px-2 py-0.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 transition cursor-pointer"
-                  title="Test Lens A deconfliction against commercial airliner"
+                  onClick={() => handleUseSampleWitnessCapture('puppy')}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 font-bold transition cursor-pointer"
+                  title="Puppy Control: Terrestrial pet baseline"
                 >
-                  ✈️ Airliner
-                </button>
-
-                <span className="text-slate-600 px-0.5">|</span>
-                <span className="text-purple-400 font-bold uppercase tracking-wider shrink-0">Tests:</span>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('dog')}
-                  className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-                  title="Test bio-canine zoomies with PG-13 humor and bio-acoustics lesson"
-                >
-                  🐶 Dog
-                </button>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('sofa')}
-                  className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-                  title="Test living room sofa with PG-13 humor and gravitational mass lesson"
-                >
-                  🛋️ Sofa
-                </button>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('car')}
-                  className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-                  title="Test car headlights vs runway approach lighting"
-                >
-                  🚗 Car
-                </button>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('selfie')}
-                  className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-                  title="Test human selfie with visual angular resolution lesson"
-                >
-                  🤳 Selfie
-                </button>
-                <button
-                  onClick={() => handleUseSampleWitnessCapture('fan')}
-                  className="px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-200 transition cursor-pointer"
-                  title="Test ceiling fan rotor wash and blade aerodynamics"
-                >
-                  🌀 Fan
+                  🐶 Puppy Control
                 </button>
               </div>
             </div>
@@ -731,12 +652,12 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
               {isAnalyzing ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
-                  <span>{analysisProgress || 'Running Gemini Forensic Engine...'}</span>
+                  <span>{analysisProgress || 'Running Forensic Engine...'}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Run Gemini Witness Analysis & Score</span>
+                  <span>Analyze Witness Capture</span>
                 </>
               )}
             </button>
@@ -749,7 +670,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
         <div className="space-y-4 pt-4 animate-fade-in">
           <div className="flex items-center space-x-2 text-xs font-mono font-bold text-emerald-400">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>AI Forensic Inspection Complete — Report Ready for Review</span>
+            <span>Forensic Inspection Complete — Report Ready</span>
           </div>
           <DiagnosticReportCard
             analysis={analysisResult}
