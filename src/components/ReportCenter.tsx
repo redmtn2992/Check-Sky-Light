@@ -296,7 +296,7 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
       setSleuthUrl('https://www.defense.gov/News/Releases/Release/Article/2165714/statement-by-the-department-of-defense-on-the-release-of-historical-navy-videos/');
       setSleuthNotes('2004 USS Nimitz (FLIR1). Oblong Tic-Tac vehicle demonstrating instantaneous 80,000 ft descent with zero heat plume or sonic boom.');
     } else if (type === 'triangle') {
-      setSleuthUrl('https://www.youtube.com/watch?v=zbdeehdduyc');
+      setSleuthUrl('https://www.youtube.com/watch?v=zBdEeHYDuyc');
       setSleuthNotes('Equilateral Black Triangle UFO. Three luminous corner apertures and central emitter displaying silent low-velocity glide.');
     } else {
       setSleuthUrl('https://www.reddit.com/r/UFOs/comments/starlink_satellite_train_night_sky/');

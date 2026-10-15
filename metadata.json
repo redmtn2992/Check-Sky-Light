@@ -1,6 +1,6 @@
 {
   "name": "Check Sky Light",
-  "description": "Check Sky Light v3.5 is an empirical civilian sky diagnostics and aerospace deconfliction platform. Features real-time IMU sensor fusion, WGS84 3D optical tracking, live ADS-B flight deconfliction, satellite transit tracking, multi-lens scientific review (Kinematics, Classical Aerospace, Metric Physics), and objective Case Facts export.",
+  "description": "Check Sky Light v3.5 is an empirical civilian sky diagnostics and aerospace deconfliction platform. Features real-time IMU optical tracking, live ADS-B & satellite deconfliction, 4-Pillar forensic review, and Dual-Lens aerospace analysis.",
   "requestFramePermissions": ["geolocation", "camera", "microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

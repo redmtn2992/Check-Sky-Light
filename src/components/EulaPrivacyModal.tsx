@@ -96,7 +96,7 @@ export const EulaPrivacyModal: React.FC<EulaPrivacyModalProps> = ({ isOpen, onCl
         {/* Footer */}
         <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-[10px] font-mono text-slate-400">
-            Last Updated: October 2026 • v3.5 Release
+            Last Updated: October 2026 • v3.5
           </span>
           <button
             onClick={onClose}

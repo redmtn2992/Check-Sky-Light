@@ -1,4 +1,5 @@
-import { AARO_CASE_RECORDS, AARO_INFORMATION_PAPERS, AaroCaseRecord, matchAaroCase } from '../data/aaroRecordsData';
+import { AARO_CASE_RECORDS, AARO_INFORMATION_PAPERS, matchAaroCase } from '../data/aaroRecordsData.ts';
+import type { AaroCaseRecord } from '../data/aaroRecordsData.ts';
 
 /**
  * Builds a concise, authoritative knowledge base string for injection into Gemini prompts

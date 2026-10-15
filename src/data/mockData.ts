@@ -1,4 +1,4 @@
-import { SightingReport, ChatChannel, ChatMessage, AlertNotification } from '../types';
+import type { SightingReport, ChatChannel, ChatMessage, AlertNotification } from '../types.ts';
 
 export const INITIAL_SIGHTINGS: SightingReport[] = [
   {

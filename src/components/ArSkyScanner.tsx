@@ -66,7 +66,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 }) => {
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [dayNightMode, setDayNightMode] = useState<DisplayDayNightMode>('nvg_green');
+  const [dayNightMode, setDayNightMode] = useState<DisplayDayNightMode>('day_antiglare');
   
   // Sound & Acoustic Capture Configuration: ABSOLUTELY SILENT BY DEFAULT (false)
   // Ensures phone speaker does not contaminate genuine ambient acoustic recordings
@@ -869,8 +869,10 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         <div className="absolute inset-0 z-50 bg-white opacity-80 animate-fade-out pointer-events-none" />
       )}
 
-      {/* Tactical HUD Overlay Container */}
-      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-2.5 sm:p-4">
+      {/* Tactical HUD Overlay Container (with iOS Safe Area clearance in Full View) */}
+      <div className={`absolute inset-0 z-10 pointer-events-none flex flex-col justify-between ${
+        isFullView ? 'p-2.5 sm:p-4 pt-safe-top pb-safe' : 'p-2.5 sm:p-4'
+      }`}>
         {/* Top Control Section: Telemetry + Filter/Tools + Tactical Mode Island */}
         <div className="space-y-2">
           {/* Top Telemetry & Viewport Bar - Transparent Glass Backdrops */}
@@ -888,7 +890,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               {/* Filter Mode Cycle */}
               <button
                 onClick={() => {
-                  const modes: DisplayDayNightMode[] = ['nvg_green', 'night_strobe', 'flir_thermal', 'night_tactical', 'day_antiglare'];
+                  const modes: DisplayDayNightMode[] = ['day_antiglare', 'night_strobe', 'nvg_green', 'flir_thermal', 'night_tactical'];
                   const nextIdx = (modes.indexOf(dayNightMode) + 1) % modes.length;
                   setDayNightMode(modes[nextIdx]);
                 }}

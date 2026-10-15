@@ -328,15 +328,15 @@ export default function App() {
 
         {/* iOS Dynamic Island & Tactical Status Bar (Mobile-first with safe-area padding) */}
         {!isTargetFullView && (
-          <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-2.5 sm:px-4 pt-safe pb-2 select-none">
-            <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-2">
+          <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-2 sm:px-4 pt-safe-top pb-2 select-none">
+            <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-2">
               {/* Left: Check Engine Logo & DTC code badge */}
               <button
                 onClick={() => setIsLogoStudioOpen(true)}
-                className="flex items-center space-x-1.5 sm:space-x-2.5 text-left group cursor-pointer focus:outline-none min-h-[44px] py-0.5 shrink-0"
+                className="flex items-center space-x-1.5 sm:space-x-2 text-left group cursor-pointer focus:outline-none min-h-[38px] sm:min-h-[44px] py-0.5 shrink min-w-0"
                 title="Tap to customize Check Sky Light branding & DTC fault codes"
               >
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden border-2 border-amber-500/80 shadow-[0_0_15px_rgba(245,158,11,0.35)] shrink-0 group-hover:scale-105 transition bg-slate-900">
+                <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden border-2 border-amber-500/80 shadow-[0_0_12px_rgba(245,158,11,0.3)] shrink-0 group-hover:scale-105 transition bg-slate-900">
                   <img
                     src={conceptOneImg}
                     alt="Check Sky Light Icon - Candidate 1"
@@ -345,31 +345,28 @@ export default function App() {
                   />
                   <div className="absolute inset-0 ring-1 ring-inset ring-amber-400/40 rounded-xl pointer-events-none" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center space-x-1 sm:space-x-1.5">
-                    <span className="text-[12px] xs:text-[13px] sm:text-sm font-black tracking-wider text-slate-100 uppercase group-hover:text-amber-400 transition whitespace-nowrap">
-                      CHECK SKY LIGHT
+                    <span className="text-[11px] xs:text-[12px] sm:text-sm font-black tracking-wider text-slate-100 uppercase group-hover:text-amber-400 transition truncate">
+                      <span className="hidden min-[350px]:inline">CHECK </span>SKY LIGHT
                     </span>
-                    <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    <span className="inline-flex items-center px-1 sm:px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
                       v3.5
-                    </span>
-                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-mono font-black bg-cyan-500 text-slate-950 uppercase tracking-tight">
-                      RELEASE
                     </span>
                   </div>
                 </div>
               </button>
 
-              {/* Right: Unified Mobile Action Capsule (Sector + Vault + Comms + Alerts) */}
-              <div className="flex items-center space-x-1 sm:space-x-1.5 bg-white/[0.03] border border-white/10 rounded-2xl p-0.5 sm:p-1 backdrop-blur-md shrink-0">
+              {/* Right: Unified Mobile Action Capsule (Sector + Power + Sound + Alerts) */}
+              <div className="flex items-center space-x-0.5 sm:space-x-1 bg-white/[0.03] border border-white/10 rounded-2xl p-0.5 sm:p-1 backdrop-blur-md shrink-0">
                 {/* Sector Selector */}
                 <button
                   onClick={() => setIsLocationPickerOpen(true)}
-                  className="flex items-center space-x-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 text-xs font-mono text-cyan-300 transition cursor-pointer min-h-[38px]"
+                  className="flex items-center space-x-1 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 text-xs font-mono text-cyan-300 transition cursor-pointer min-h-[34px] sm:min-h-[38px]"
                   title="Change sector / view UAP hotspots"
                 >
                   <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                  <span className="font-bold truncate max-w-[65px] xs:max-w-[90px] sm:max-w-[120px] text-[11px] sm:text-xs">
+                  <span className="font-bold truncate max-w-[48px] xs:max-w-[70px] sm:max-w-[120px] text-[10px] sm:text-xs">
                     {userLocation.city || 'Sector'}
                   </span>
                   <ChevronDown className="w-3 h-3 text-cyan-400/70 shrink-0" />
@@ -378,7 +375,7 @@ export default function App() {
                 {/* Hardware Power Profile Toggle (Thermal Eco vs Tactical Performance) */}
                 <button
                   onClick={togglePowerProfile}
-                  className={`p-2 rounded-xl transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative ${
+                  className={`p-1.5 sm:p-2 rounded-xl transition cursor-pointer min-h-[34px] min-w-[34px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center relative ${
                     powerSettings.profile === 'eco'
                       ? 'text-teal-400 bg-teal-500/15 border border-teal-500/30 hover:bg-teal-500/25'
                       : 'text-amber-400 hover:text-amber-300 hover:bg-white/[0.06]'
@@ -391,9 +388,9 @@ export default function App() {
                   aria-label="Toggle Power Profile"
                 >
                   {powerSettings.profile === 'eco' ? (
-                    <Leaf className="w-4 h-4 text-teal-300" />
+                    <Leaf className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-300" />
                   ) : (
-                    <Zap className="w-4 h-4 text-amber-400" />
+                    <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
                   )}
                   <span
                     className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
@@ -405,7 +402,7 @@ export default function App() {
                 {/* Acoustic & Sound Options (Stealth by Default for Clean Mic Encounter Capture) */}
                 <button
                   onClick={() => setIsSoundOptionsOpen(true)}
-                  className={`p-2 rounded-xl transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative ${
+                  className={`p-1.5 sm:p-2 rounded-xl transition cursor-pointer min-h-[34px] min-w-[34px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center relative ${
                     !soundSettings.soundEnabled
                       ? 'text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.06]'
                       : 'text-amber-400 hover:text-amber-300 hover:bg-white/[0.06]'
@@ -418,9 +415,9 @@ export default function App() {
                   aria-label="Sound and Acoustic Options"
                 >
                   {!soundSettings.soundEnabled ? (
-                    <VolumeX className="w-4 h-4" />
+                    <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   ) : (
-                    <Volume2 className="w-4 h-4" />
+                    <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   )}
                   <span
                     className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
@@ -432,10 +429,10 @@ export default function App() {
                 {/* Airspace Alerts */}
                 <button
                   onClick={() => setIsAlertsOpen(true)}
-                  className="p-2 rounded-xl text-slate-300 hover:text-amber-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative"
+                  className="p-1.5 sm:p-2 rounded-xl text-slate-300 hover:text-amber-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[34px] min-w-[34px] sm:min-h-[38px] sm:min-w-[38px] flex items-center justify-center relative"
                   title="Airspace Anomaly Alerts"
                 >
-                  <Bell className="w-4 h-4" />
+                  <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {unreadAlertsCount > 0 && (
                     <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-rose-500 text-[9px] font-mono font-bold text-white shadow-sm">
                       {unreadAlertsCount}
@@ -443,12 +440,12 @@ export default function App() {
                   )}
                 </button>
 
-                {/* UAP Incident Feed Quick Monitor */}
+                {/* UAP Incident Feed Quick Monitor (Desktop / Tablet view; mobile accesses via Bottom Nav) */}
                 <button
                   onClick={() => {
                     setActiveTab('analyze');
                   }}
-                  className="p-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center relative"
+                  className="hidden md:flex p-1.5 sm:p-2 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition cursor-pointer min-h-[38px] min-w-[38px] items-center justify-center relative"
                   title="Monitor Live UAP Community Incident Stream"
                 >
                   <Radio className="w-4 h-4 text-cyan-400" />

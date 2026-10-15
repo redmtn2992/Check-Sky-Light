@@ -24,8 +24,9 @@
 }
 
 /* iOS Safe Area Utility Classes */
-.pt-safe {
-  padding-top: max(env(safe-area-inset-top, 0px), 0.75rem);
+.pt-safe,
+.pt-safe-top {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.625rem);
 }
 
 .pb-safe {
@@ -33,11 +34,11 @@
 }
 
 .pl-safe {
-  padding-left: env(safe-area-inset-left, 0px);
+  padding-left: max(env(safe-area-inset-left, 0px), 0.5rem);
 }
 
 .pr-safe {
-  padding-right: env(safe-area-inset-right, 0px);
+  padding-right: max(env(safe-area-inset-right, 0px), 0.5rem);
 }
 
 .safe-area-pb {
