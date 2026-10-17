@@ -18,10 +18,10 @@ Check Sky Light operates as a rigorous decision-support engine rather than an un
 * **Lens B: Theoretical Metric Manipulation & Non-Conventional Physics**
   * **Mechanisms**: Acknowledges that authentic Unidentified Anomalous Phenomena (UAP) and potential Non-Human Intelligence (NHI) technology may operate via localized spacetime metric engineering (e.g., Alcubierre-type distortion tensors, Lentz positive-energy solitons, or geodesic frame-dragging).
   * **Physical Decoupling Principle**: Recognizes that advanced metric manipulation naturally decouples a craft from the surrounding ambient fluid medium. Under this framework:
-    * The **absence of barometric downwash or rotor wash** is not an impossibility—it is the direct theoretical signature of gravitational or field-propulsion decoupling.
-    * **Transmedium travel** (vacuum $\rightarrow$ atmosphere $\rightarrow$ ocean) occurs without hydrodynamic drag, cavitation, water displacement, or thermal heating.
-    * **Hypersonic acceleration** occurs without acoustic sonic booms ($N$-waves) or atmospheric thermal ionization.
-  * **The Five Observables Baseline**: Evaluates sightings against the formal criteria established by ODNI/AARO: instantaneous acceleration, hypersonic velocity without signatures, low observability/cloaking, transmedium travel, and positive lift without aerodynamic surfaces.
+    * The **absence of barometric downwash or rotor wash** is consistent with theoretical models of gravitational or field-propulsion decoupling. However, an unobserved downwash or lack of visible plume on consumer optical sensors is an *observational limitation*, not positive proof of metric manipulation.
+    * **Transmedium travel** (vacuum $\rightarrow$ atmosphere $\rightarrow$ ocean) is hypothesized to occur without hydrodynamic drag, cavitation, water displacement, or thermal heating under metric envelope models.
+    * **Hypersonic acceleration** is hypothesized to occur without acoustic shockwaves ($N$-waves) or atmospheric thermal ionization when decoupled from the ambient fluid.
+  * **The Five Observables Baseline**: Evaluates sightings against the formal criteria established by ODNI/AARO: instantaneous acceleration, hypersonic velocity without signatures, low observability/cloaking, transmedium travel, and positive lift without aerodynamic surfaces. Missing data must be recorded as unavailable, not assigned extraordinary capability.
 
 ---
 
@@ -50,24 +50,24 @@ Before proposing any vehicle hypothesis, the system audits raw physical observab
 1. **Morphology & Geometry**: Distinguishes aerodynamic fuselages with wings and empennages from geometric polygons (equilateral triangles, deltas, discs, spheres, cubes-in-spheres).
 2. **Lighting Configuration**: Cross-checks against FAA Title 14 CFR § 91.209 (port red, starboard green, tail white, 1.2 Hz anti-collision strobes) vs. anomalous configurations (equidistant white vertex lights, central pulsating cores, monochromatic clusters).
 3. **Kinematics & Attitude**: Detects axial planar yaw rotation without aerodynamic banking, stationary hover without rotor wash, and sudden vertical vector shifts.
-4. **Acoustic Signature**: Distinguishes jet turbofan rumble or propeller blade-pass frequency from near-field acoustic silence (<10 dBA) at low angular elevation.
+4. **Acoustic Assessment**: Distinguishes jet turbofan rumble or propeller blade-pass frequency from lack of detectable propulsion audio. (Note: Consumer phone and camera microphones have noise floors of 30–40 dBA; absence of recorded sound on a compressed video indicates absence of signal above microphone noise floor, not certified <10 dBA acoustic silence).
 
 ### Pillar 2: Mechanical Disqualification & Conventional Stress-Testing (Lens A Rigor)
-To eliminate premature classification, Lens A must execute a strict falsification checklist:
-* **Lighting Disqualification**: If an object lacks FAA-mandated position/strobe lights $\implies$ **Commercial airliner hypothesis is mechanically disqualified.**
-* **Acoustic Disqualification**: If an airborne craft is silent at close proximity ($<1,500\text{ ft AGL}$) $\implies$ **Turbofan / combustion propulsion is contradicted.**
-* **Aerodynamic Disqualification**: If a craft rotates 360° on its vertical axis while maintaining linear track without banking $\implies$ **Fixed-wing aerodynamics is contradicted.**
-* *Lens A Finding*: Formally states: *"Civilian airliner hypothesis disqualified due to non-compliant lighting and acoustic silence; terrestrial candidates are strictly confined to un-transponded military black-budget prototypes or synchronized drone arrays."*
+To eliminate premature classification, Lens A executes a disciplined falsification checklist:
+* **Lighting Disqualification**: If an object lacks FAA-mandated position/strobe lights $\implies$ **Civilian passenger transport hypothesis is disfavored or disqualified.**
+* **Acoustic Disqualification**: If an airborne craft produces no acoustic signature above microphone sensitivity at close proximity ($<1,500\text{ ft AGL}$) $\implies$ **High-thrust turbofan / un-muffled combustion propulsion is contradicted.**
+* **Aerodynamic Disqualification**: If a craft rotates on its vertical axis while maintaining linear track without banking $\implies$ **Standard fixed-wing aerodynamic transit is contradicted.**
+* *Lens A Finding*: Formally evaluates remaining conventional candidates: Disqualifying commercial airliners does not restrict terrestrial explanations solely to military prototypes; meteorological balloons, aerostats, lanterns, birds/fauna, satellites, celestial bodies (e.g. Venus), and optical/sensor artifacts must each be systematically audited.
 
-### Pillar 3: Human Experience & Affective Telemetry ("Witness as Sensor")
-Human testimony, vocal acoustics, and psychological reactions are treated as valuable qualitative telemetry:
+### Pillar 3: Human Experience & Experiential Context ("Witness as Qualitative Sensor")
+Human testimony, vocal acoustics, and psychological reactions provide valuable qualitative experiential context:
 * **Trained Aviators & Field Observers**: Incorporates the baseline established by commercial and military pilots (high situational awareness, acute understanding of standard airspace traffic, and significant reputational risk).
-* **Situational Shock & Distress**: Unscripted vocal panic, respiratory elevation, and sudden existential shock on audio recordings provide empirical corroboration of an extraordinary, non-routine physical stimulus.
+* **Situational Shock & Distress**: Unscripted vocal panic, respiratory elevation, and sudden existential shock on audio recordings provide qualitative contextual evidence of an extraordinary, non-routine encounter. (Emotional response is recorded as human context, not confused with calibrated physical sensor telemetry).
 * **Observational Dignity**: Avoids alien jokes, dismissive quips, or trivialization, validating the profound impact of the encounter with scientific empathy.
 
-### Pillar 4: Parallax Synthesis & Balanced Tension (Never Crushing the User)
-* Eliminates monolithic verdicts that assign artificial consensus (e.g., *"88% Commercial Aircraft"* on non-Newtonian footage).
-* Preserves active scientific tension (`ACTIVE_DEBATE` or `SPLIT_DECISION`), allowing Lens A (the empirical data void, transponder absence) and Lens B (field metric manipulation, fluid decoupling) to exist in balanced parallax.
+### Pillar 4: Parallax Synthesis & Balanced Tension (Empirical Pluralism)
+* Eliminates monolithic verdicts that assign artificial consensus (e.g., forced high-confidence labels on ambiguous footage).
+* Preserves active scientific tension (`ACTIVE_DEBATE` or `SPLIT_DECISION`), allowing Lens A (conventional aerospace deconfliction and data void recognition) and Lens B (theoretical metric manipulation models) to exist in balanced parallax. Insufficient data is recorded as an expected and valid empirical finding.
 
 ---
 

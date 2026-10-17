@@ -343,8 +343,8 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
           const newLock: TargetLockData = {
             id: `TGT-${Math.floor(1000 + Math.random() * 9000)}`,
-            name: data.targetName || (tapCoords ? 'Observer Tap-Locked Anomaly' : 'Luminous Metric Anomaly'),
-            type: data.classification || 'UAP',
+            name: data.targetName || (tapCoords ? 'Observer Tap-Locked Target' : 'Target Centroid'),
+            type: data.classification || 'ARTIFACT',
             lockState: 'LOCKED',
             screenX: finalXPct,
             screenY: finalYPct,
@@ -352,22 +352,22 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             elevationDeg: pitch,
             azimuthStr: `${azimuth.toFixed(1)}°`,
             elevationStr: `${pitch.toFixed(1)}°`,
-            distance: data.kinematics?.estimatedAltitude || '14,000 ft',
-            angularVelocityDegPerSec: 18.5,
-            estimatedSpeed: data.kinematics?.estimatedSpeed || 'Mach 5.8',
-            estimatedAltitude: data.kinematics?.estimatedAltitude || '14,000 ft',
-            kinematicGForce: data.kinematics?.kinematicGForce || '52 G',
-            deconflictionStatus: 'ANOMALOUS_UNIDENTIFIED',
-            details: data.analysisNotes || (tapCoords ? 'Observer manual tap target locked and evaluated.' : 'Gemini AI auto-locked target with synchronized iPhone IMU sensors.'),
-            confidencePct: data.confidencePct || 92,
+            distance: data.kinematics?.estimatedAltitude || 'Range unknown',
+            angularVelocityDegPerSec: 0,
+            estimatedSpeed: data.kinematics?.estimatedSpeed || 'Unknown',
+            estimatedAltitude: data.kinematics?.estimatedAltitude || 'Unknown',
+            kinematicGForce: data.kinematics?.kinematicGForce || 'Unknown',
+            deconflictionStatus: data.classification === 'UAP' ? 'ANOMALOUS_UNIDENTIFIED' : 'OPTICAL_CORRELATING',
+            details: data.analysisNotes || (tapCoords ? 'Observer manual tap target locked and evaluated.' : 'Optical target locked with sensor telemetry.'),
+            confidencePct: data.confidencePct || 50,
             timestamp: new Date().toISOString(),
             geminiLockDetails: {
               detected: true,
-              confidencePct: data.confidencePct || 92,
+              confidencePct: data.confidencePct || 50,
               classicalDeconfliction: data.dualLens?.classicalDeconfliction,
               metricSignature: data.dualLens?.metricSignature,
               analysisNotes: data.analysisNotes,
-              isGeminiAiLocked: true
+              isGeminiAiLocked: data.geminiPowered ?? true
             }
           };
 

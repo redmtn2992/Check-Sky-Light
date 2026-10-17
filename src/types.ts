@@ -327,6 +327,16 @@ export interface GeminiForensicAnalysis {
   };
   compilationScopeNotice?: CompilationScopeNotice;
   parallaxPanel?: ParallaxPanelReview;
+  data_provenance?: 'live' | 'live_with_simulated_fallback' | 'simulated' | 'user_entered' | 'model_generated' | 'not_integrated' | 'unavailable';
+  media_integrity?: 'no_manipulation_indicators' | 'manipulation_indicators' | 'cannot_assess';
+  explanation_status?: 'consistent_with_conventional_explanation' | 'multiple_explanations_not_excluded' | 'unexplained_features_present' | 'insufficient_data';
+  knownCaseMatch?: {
+    caseId: string;
+    title: string;
+    basis: 'media_hash' | 'canonical_url' | 'official_id_in_text';
+    identity: 'confirmed' | 'unconfirmed';
+    officialVerdict: string;
+  };
 }
 
 export interface CompilationScopeNotice {

@@ -6,11 +6,23 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import { MOCK_SIGHTINGS, MOCK_CHAT_MESSAGES, MOCK_ALERTS } from './src/data/mockData.ts';
 import type { FlightTrack, SightingReport, ChatMessage, WeatherBalloonTrack, SatelliteData } from './src/types.ts';
-import { buildAaroKnowledgeBasePrompt, matchAaroCase, AARO_CASE_RECORDS, AARO_INFORMATION_PAPERS } from './src/lib/aaroKnowledgeBase.ts';
+import { 
+  buildAaroKnowledgeBasePrompt, 
+  lookupKnownCase, 
+  buildReferenceCaseContext, 
+  SHARED_ANALYSIS_RULES, 
+  AARO_CASE_RECORDS, 
+  AARO_INFORMATION_PAPERS,
+  matchAaroCase 
+} from './src/lib/aaroKnowledgeBase.ts';
+import { unavailable } from './src/lib/provenance.ts';
 
 // In-memory data caches for server session
 let serverSightings: SightingReport[] = [...MOCK_SIGHTINGS];
 let serverChatMessages: ChatMessage[] = [...MOCK_CHAT_MESSAGES];
+
+// Centralized Gemini Model Configuration
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 
 // Lazy Gemini API initialization
 let aiClient: GoogleGenAI | null = null;
@@ -93,52 +105,43 @@ async function startServer() {
       if (response.ok) {
         const data = await response.json();
         if (data && Array.isArray(data.states) && data.states.length > 0) {
-          const flights: FlightTrack[] = data.states.slice(0, 35).map((s: any, idx: number) => {
-            const callsign = (s[1] || 'CIVILIAN').trim() || `SWR-${Math.floor(100 + Math.random() * 899)}`;
-            const fLat = s[6] || lat + (Math.random() - 0.5) * 0.4;
-            const fLng = s[5] || lng + (Math.random() - 0.5) * 0.4;
-            const dist = calcDistMiles(fLat, fLng);
-            const brg = calcBearing(fLat, fLng);
+          const flights: FlightTrack[] = data.states
+            .filter((s: any) => s[5] != null && s[6] != null)
+            .slice(0, 35)
+            .map((s: any, idx: number) => {
+              const callsign = (s[1] || 'CIVILIAN').trim() || `SWR-${s[0]?.slice(0, 4) || idx}`;
+              const fLat = s[6];
+              const fLng = s[5];
+              const dist = calcDistMiles(fLat, fLng);
+              const brg = calcBearing(fLat, fLng);
 
-            // Derive airline from prefix
-            let airline = 'Commercial / Civil Air';
-            let aircraftType = 'Narrowbody Transport';
-            if (callsign.startsWith('UAL')) { airline = 'United Airlines'; aircraftType = 'Boeing 737-900ER'; }
-            else if (callsign.startsWith('DAL')) { airline = 'Delta Air Lines'; aircraftType = 'Airbus A321neo'; }
-            else if (callsign.startsWith('AAL')) { airline = 'American Airlines'; aircraftType = 'Boeing 737 MAX 8'; }
-            else if (callsign.startsWith('SWA')) { airline = 'Southwest Airlines'; aircraftType = 'Boeing 737-700'; }
-            else if (callsign.startsWith('SKW')) { airline = 'SkyWest Airlines'; aircraftType = 'Embraer E175'; }
-            else if (callsign.startsWith('FDX')) { airline = 'FedEx Express'; aircraftType = 'Boeing 767-300F'; }
-            else if (callsign.startsWith('UPS')) { airline = 'UPS Airlines'; aircraftType = 'Airbus A300-600F'; }
-            else if (callsign.startsWith('N')) { airline = 'General Aviation / Private'; aircraftType = 'Cessna Citation / SR22'; }
-
-            return {
-              id: `flight-${s[0] || idx}`,
-              icao24: s[0] || `A${Math.floor(10000 + Math.random() * 89999)}`,
-              callsign,
-              originCountry: s[2] || 'United States',
-              longitude: fLng,
-              latitude: fLat,
-              altitudeFeet: Math.round((s[7] || 7500) * 3.28084),
-              velocityKnots: Math.round((s[9] || 180) * 1.94384),
-              heading: Math.round(s[10] || Math.random() * 360),
-              verticalRate: s[11] || 0,
-              squawk: s[14] || '1200',
-              lastContact: s[4] || Math.floor(Date.now() / 1000),
-              uncorrelatedUapProximity: idx === 0 && Math.random() > 0.6,
-              flightradarUrl: `https://www.flightradar24.com/${encodeURIComponent(callsign)}`,
-              flightradarLiveMapUrl: `https://www.flightradar24.com/${fLat.toFixed(4)},${fLng.toFixed(4)}/9`,
-              airline,
-              aircraftType,
-              distanceMiles: dist,
-              bearingDeg: brg
-            };
-          });
+              return {
+                id: `flight-${s[0] || idx}`,
+                icao24: s[0] || `A${idx}`,
+                callsign,
+                originCountry: s[2] || 'Unknown',
+                longitude: fLng,
+                latitude: fLat,
+                altitudeFeet: s[7] != null ? Math.round(s[7] * 3.28084) : 0,
+                velocityKnots: s[9] != null ? Math.round(s[9] * 1.94384) : 0,
+                heading: s[10] != null ? Math.round(s[10]) : 0,
+                verticalRate: s[11] || 0,
+                squawk: s[14] || '1200',
+                lastContact: s[4] || Math.floor(Date.now() / 1000),
+                uncorrelatedUapProximity: false,
+                flightradarUrl: `https://www.flightradar24.com/${encodeURIComponent(callsign)}`,
+                flightradarLiveMapUrl: `https://www.flightradar24.com/${fLat.toFixed(4)},${fLng.toFixed(4)}/9`,
+                airline: 'Commercial / General Aviation',
+                aircraftType: 'Standard Civil Airframe',
+                distanceMiles: dist,
+                bearingDeg: brg
+              };
+            });
           return res.json(flights);
         }
       }
     } catch {
-      // Graceful fallback to sector simulation
+      // OpenSky request failed
     }
 
     // High-fidelity active sector flights synchronized with Flightradar24 format
@@ -255,7 +258,17 @@ async function startServer() {
       }
     ];
 
-    res.json(syntheticFlights);
+    if (process.env.CSL_DEMO_MODE === '1') {
+      return res.json(syntheticFlights);
+    }
+
+    return res.status(502).json({
+      data_provenance: 'unavailable',
+      source: 'OpenSky Network',
+      deconfliction_valid: false,
+      reason: 'OpenSky Network telemetry unavailable; live radar deconfliction inactive',
+      items: []
+    });
   });
 
   // NOAA / NWS Atmospheric Sounding Weather Balloons & High-Altitude Research Balloons
@@ -326,7 +339,11 @@ async function startServer() {
       }
     ];
 
-    res.json(balloons);
+    if (process.env.CSL_DEMO_MODE === '1') {
+      return res.json(balloons);
+    }
+
+    res.json([]);
   });
 
   // Orbital Satellites & Space Debris (LEO Constellations, ISS, Tiangong, Spy Satellites)
@@ -404,7 +421,11 @@ async function startServer() {
       }
     ];
 
-    res.json(satellites);
+    if (process.env.CSL_DEMO_MODE === '1') {
+      return res.json(satellites);
+    }
+
+    res.json([]);
   });
 
   // Sighting Reports
@@ -458,7 +479,7 @@ async function startServer() {
       timestamp: new Date().toISOString(),
       encryptedText: Buffer.from(msgText).toString('base64'),
       decryptedText: msgText,
-      encryptionKey: '0x88F2A9...E71C',
+      encryptionKey: 'session-transport-b64',
       sightingAttachment
     };
     serverChatMessages = [...serverChatMessages, newMsg];
@@ -641,7 +662,7 @@ Analyze this image and return a JSON object with this exact structure:
 }`;
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [
             {
               role: 'user',
@@ -664,21 +685,20 @@ Analyze this image and return a JSON object with this exact structure:
         const textOutput = geminiRes.text;
         if (textOutput) {
           const parsed = JSON.parse(textOutput);
-          return res.json(parsed);
+          return res.json({
+            status: 'ok',
+            data_provenance: 'model_generated',
+            model: GEMINI_MODEL,
+            ...parsed
+          });
         }
       } catch (geminiError) {
-        console.warn('Gemini optical scan error, falling back to heuristic evaluation:', geminiError);
+        console.warn('Gemini optical scan error:', geminiError);
+        return res.status(502).json(unavailable('AI optical analysis call failed'));
       }
     }
 
-    // Heuristic fallback
-    res.json({
-      anomalyScore: 89,
-      isAnomaly: true,
-      confidenceScore: 92,
-      detectedObjects: ['Luminous Centroid', 'Unresolved Geometry', 'Zero Heat Plume'],
-      detailedAnalysis: 'Dual-lens optical inspection reveals high-contrast central luminance with no visible wings, empennage, or conventional engine exhaust plumes. Transponder correlation confirms no matching ADS-B civilian flights in the sector.'
-    });
+    return res.status(503).json(unavailable('AI model not configured or image data missing'));
   });
 
   // Pre-Report Check (Quick Video / Photo audit before filing)
@@ -703,10 +723,12 @@ Target lock: ${targetLock ? `${targetLock.name} (${targetLock.confidencePct}%)` 
 
 IMPORTANT: Keep all responses brief, direct, and plain human English. Use "less ink" — no verbose jargon.
 
+${SHARED_ANALYSIS_RULES}
+
 Provide a JSON response matching:
 {
-  "anomalyScore": number (10-98),
-  "confidence": number (50-99),
+  "anomalyScore": number,
+  "confidence": number,
   "quality": "Good" | "Fair" | "Poor",
   "qualityNote": "One short sentence about exposure and stability.",
   "aerospaceCheck": "One short sentence about aircraft/satellite deconfliction.",
@@ -730,7 +752,7 @@ Provide a JSON response matching:
         }
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [{ role: 'user', parts }],
           config: { responseMimeType: 'application/json' }
         });
@@ -740,28 +762,12 @@ Provide a JSON response matching:
           return res.json(JSON.parse(text));
         }
       } catch (err) {
-        console.warn('Pre-report check error, using fallback:', err);
+        console.warn('Pre-report check error:', err);
+        return res.status(502).json(unavailable('Pre-report check call failed'));
       }
     }
 
-    // Concise fallback
-    const score = targetLock ? Math.min(94, Math.max(72, targetLock.confidencePct + 5)) : 82;
-    res.json({
-      anomalyScore: score,
-      confidence: 88,
-      quality: "Good",
-      qualityNote: "Clear sky contrast with stable handheld tracking.",
-      aerospaceCheck: `No matching ADS-B flight transponders in sector at Azimuth ${azimuth}°.`,
-      metricCheck: "Positive lift observed with no visible wings or exhaust plume.",
-      suggestions: [
-        "Check for standard 1.2 Hz flashing aviation strobes",
-        "Cross-reference local radar for cloud or chaff clutter",
-        "Submit report to log timestamp and bearing"
-      ],
-      suggestedClassId: targetLock?.classification?.toLowerCase().includes('tic') ? "class-2-cylinder-tic-tac" : "class-1-orb-sphere",
-      suggestedClassName: targetLock?.classification?.toLowerCase().includes('tic') ? "Tic-Tac" : "Orb",
-      summary: `Uncorrelated ${mediaType} at AZ ${azimuth}°, EL ${pitch}°. Initial score: ${score}%.`
-    });
+    return res.status(503).json(unavailable('AI model not configured'));
   });
 
   // Deep Multi-Modal Telemetry & Sensor Correlator with Gemini AI
@@ -896,7 +902,7 @@ Return ONLY valid JSON matching this schema:
         }
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [{ role: 'user', parts }],
           config: { responseMimeType: 'application/json' }
         });
@@ -1167,7 +1173,7 @@ Return ONLY valid JSON matching this schema:
 }`;
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [
             {
               role: 'user',
@@ -2063,7 +2069,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           config: {
             responseMimeType: 'application/json'
@@ -2653,7 +2659,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
           config: { responseMimeType: 'application/json' }
         });
@@ -2788,7 +2794,7 @@ Return ONLY a valid JSON object matching this schema:
 }`;
 
         const geminiRes = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: GEMINI_MODEL,
           contents: [
             {
               role: 'user',
@@ -2822,41 +2828,36 @@ Return ONLY a valid JSON object matching this schema:
       }
     }
 
-    // Heuristic & optical target lock fallback (simulates intelligent sensor lock when offline or no API key)
-    const isUapLock = triggerMode === 'manual' || triggerMode === 'manual_tap' || Math.random() > 0.35;
+    // Honest fallback without fabricating extraordinary kinematics or simulated locks
     const hasTap = tapCoordinates && typeof tapCoordinates.xPct === 'number' && typeof tapCoordinates.yPct === 'number';
+    if (hasTap) {
+      return res.json({
+        targetDetected: true,
+        confidencePct: 70,
+        targetName: 'Observer-Designated Screen Reticle',
+        classification: 'ARTIFACT',
+        screenCoordinates: { xPct: tapCoordinates.xPct, yPct: tapCoordinates.yPct },
+        dualLens: {
+          classicalDeconfliction: `Observer manual reticle placement at (${tapCoordinates.xPct}%, ${tapCoordinates.yPct}%).`,
+          metricSignature: 'Manual reticle lock without AI optical inference.'
+        },
+        kinematics: {
+          estimatedSpeed: 'Unknown (Manual Reticle)',
+          estimatedAltitude: 'Unknown (Range unavailable)',
+          kinematicGForce: 'Unknown'
+        },
+        analysisNotes: `Manual screen reticle set at (${tapCoordinates.xPct}%, ${tapCoordinates.yPct}%). AI optical target lock was unavailable.`,
+        geminiPowered: false,
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    res.json({
-      targetDetected: isUapLock,
-      confidencePct: isUapLock ? (hasTap ? 94 : Math.floor(82 + Math.random() * 16)) : 45,
-      targetName: hasTap 
-        ? 'Observer-Designated Optical Target'
-        : isUapLock 
-        ? 'Luminous Optical Centroid Anomaly' 
-        : 'Airspace Deconflicted Track',
-      classification: isUapLock ? 'UAP' : 'COMMERCIAL_FLIGHT',
-      screenCoordinates: hasTap 
-        ? { xPct: tapCoordinates.xPct, yPct: tapCoordinates.yPct }
-        : {
-            xPct: 50 + (Math.random() - 0.5) * 12,
-            yPct: 45 + (Math.random() - 0.5) * 10
-          },
-      dualLens: {
-        classicalDeconfliction: hasTap 
-          ? `Observer manually designated screen vector (${tapCoordinates.xPct}%, ${tapCoordinates.yPct}%). Airspace cross-checked against ADS-B transponder corridor.`
-          : 'Optical contrast anomaly verified across 3 consecutive video frames; no FAA transponder reply on 1090 MHz.',
-        metricSignature: 'Apparent zero-drag boundary layer with localized optical refraction consistent with geodesic frame-dragging.'
-      },
-      kinematics: {
-        estimatedSpeed: isUapLock ? `Mach ${(3.5 + Math.random() * 4).toFixed(1)}` : '420 kts',
-        estimatedAltitude: `${(12000 + Math.floor(Math.random() * 8000)).toLocaleString()} ft`,
-        kinematicGForce: isUapLock ? `${Math.floor(45 + Math.random() * 50)} G` : '1.1 G'
-      },
-      analysisNotes: hasTap 
-        ? `Manual screen target lock confirmed at (${tapCoordinates.xPct}%, ${tapCoordinates.yPct}%). Dual-lens optical deconfliction synchronized.`
-        : isUapLock 
-        ? 'Gemini Dual-Lens Engine locked on anomalous optical centroid. iPhone IMU vector synchronized.'
-        : 'Ambient sky verified clear of unresolved anomalous targets.',
+    return res.json({
+      targetDetected: false,
+      confidencePct: 0,
+      targetName: 'Target lock AI unavailable',
+      classification: 'ARTIFACT',
+      analysisNotes: 'Target lock AI service is currently unavailable or frame data was missing.',
       geminiPowered: false,
       timestamp: new Date().toISOString()
     });
