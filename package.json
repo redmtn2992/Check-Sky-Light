@@ -9,7 +9,9 @@
     "start": "node server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "push": "git push origin main",
+    "publish:github": "git add -A && git commit -m 'chore: publish update to Check Sky Light' && git push origin main"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
