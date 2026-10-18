@@ -1,6 +1,6 @@
 {
   "name": "Check Sky Light",
-  "description": "Check Sky Light v3.6 is an empirical civilian sky diagnostics and aerospace deconfliction platform. Features real-time IMU optical tracking, live ADS-B & satellite deconfliction, 4-Pillar forensic review, Dual-Lens aerospace analysis, DTC P0312 Parallax Panel, and customizable Cockpit Archetypes (Black Project, Retro OBD-II, NVG/FLIR, Observatory).",
+  "description": "Check Sky Light v3.6 is an empirical civilian sky diagnostics and aerospace deconfliction platform built around 4 core modules: TARGET (optical AR tracking & IMU sensor HUD), RADAR (live ADS-B aircraft, weather balloon & satellite deconfliction), ANALYZE (forensic multi-lens intelligence with CGI screening & DTC P0312 Parallax consensus), and REPORT (standardized field dossiers & PDF export). The app's core strength is its unyielding empirical discipline—screening out conventional air traffic and sensor artifacts before evaluating non-conventional physics.",
   "requestFramePermissions": ["geolocation", "camera", "microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
