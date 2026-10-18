@@ -74,7 +74,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
       timestamp: new Date().toISOString(),
       location: resolvedLocation,
       locationName: resolvedLocationName,
-      description: `${analysis.verdictSummary}\n\n[DTC Code]: ${analysis.dtcCode || 'P1947'} - ${analysis.dtcTitle || ''}\n\n${analysis.parallaxPanel ? `[Multi-Lens Review]: ${analysis.parallaxPanel.consensusVerdict} (${analysis.parallaxPanel.consensusConfidence}% Conf. - ${analysis.parallaxPanel.agreementLevel})\nPrimary Suspect: ${analysis.parallaxPanel.primarySuspect}\nKey Question: ${analysis.parallaxPanel.unresolvedQuestion}\n\n` : ''}[Lens A Classical Baseline]: ${analysis.dualLens?.classicalDeconfliction || 'Screened against FAA airspace'}\n\n[Lens B Metric Signature]: ${analysis.dualLens?.metricSignature || 'Boundary-layer decoupling evaluated'}`,
+      description: `${analysis.verdictSummary}\n\n[DTC Code]: ${analysis.dtcCode || 'P0312'} - ${analysis.dtcTitle || ''}\n\n${analysis.parallaxPanel ? `[Multi-Lens Review]: ${analysis.parallaxPanel.consensusVerdict} (${analysis.parallaxPanel.consensusConfidence}% Conf. - ${analysis.parallaxPanel.agreementLevel})\nPrimary Suspect: ${analysis.parallaxPanel.primarySuspect}\nKey Question: ${analysis.parallaxPanel.unresolvedQuestion}\n\n` : ''}[Lens A Classical Baseline]: ${analysis.dualLens?.classicalDeconfliction || 'Screened against FAA airspace'}\n\n[Lens B Metric Signature]: ${analysis.dualLens?.metricSignature || 'Boundary-layer decoupling evaluated'}`,
       probabilityScore: analysis.authenticityScore,
       status: analysis.authenticityScore >= 70 ? 'AI_ANOMALY_CONFIRMED' : 'COMMUNITY_VERIFIED',
       upvotes: 1,
@@ -84,7 +84,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
       mediaType: analysis.sourceType === 'video' ? 'video' : 'image',
       tags: [
         `Score: ${analysis.authenticityScore}%`,
-        analysis.dtcCode || 'P1947',
+        analysis.dtcCode || 'P0312',
         analysis.parallaxPanel ? 'MultiLensReview' : 'Analyzed',
         analysis.verdict === 'AUTHENTIC_INCIDENT' ? 'Authentic Target' : 'Deconflicted',
         ...(analysis.detectedFeatures || []).slice(0, 2)
@@ -122,7 +122,7 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
       tags: [
         'Triangulation Fix',
         `${result.calculatedAltitudeFt.toLocaleString()} ft`,
-        'P1947',
+        'P0312',
         '2-Phone Corroboration'
       ]
     };

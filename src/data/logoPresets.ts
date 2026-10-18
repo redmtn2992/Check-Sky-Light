@@ -1,4 +1,4 @@
-import { LogoConfig, LogoVariantId, LogoColorTheme, DtcFaultCode } from '../types';
+import { LogoConfig, LogoVariantId, LogoColorTheme, DtcFaultCode, AppArchetypeTheme } from '../types';
 
 export interface LogoVariantMetadata {
   id: LogoVariantId;
@@ -21,7 +21,7 @@ export const LOGO_VARIANTS: LogoVariantMetadata[] = [
     recommendedTheme: 'amber',
     recommendedAnimation: 'pulse',
     iconConcept: 'Classic engine block silhouette with a glowing UFO cockpit dome on top, dual alien eyes in the intake, and a pulsating tractor beam from the oil pan.',
-    dtcCode: 'P1947',
+    dtcCode: 'P0312',
     supportsCowLift: true,
   },
   {
@@ -87,7 +87,7 @@ export const LOGO_VARIANTS: LogoVariantMetadata[] = [
     recommendedTheme: 'amber',
     recommendedAnimation: 'pulse',
     iconConcept: 'Rich photorealistic AI-generated concept artwork embedded with vector glow overlay.',
-    dtcCode: 'P1947',
+    dtcCode: 'P0312',
     supportsCowLift: true,
   },
 ];
@@ -101,11 +101,11 @@ export const DTC_FAULT_CODES: DtcFaultCode[] = [
     suggestedAction: 'Point optical binoculars at azimuth 284°, calibrate camera shutter to 1/2000s.',
   },
   {
-    code: 'DTC P1947',
-    title: 'Roswell Intake Manifold Pressure Exceeded',
+    code: 'DTC P0312',
+    title: 'Tri-Model Parallax Consensus Resolved (Gemini · Claude · Luna)',
     severity: 'CRITICAL',
-    description: 'Propulsion unit exhibiting zero combustion exhaust while maintaining Mach 6 cruise velocity.',
-    suggestedAction: 'Do not attempt to pull over. Ensure tinfoil hat is securely grounded to chassis.',
+    description: 'Three independent neural architectures and multi-sensor triangulation verify localized metric decoupling. Classical baseline hypotheses excluded; zero acoustic shockwave or barometric downwash.',
+    suggestedAction: 'Log encounter telemetry to open scientific repository and cross-reference with AARO/SUAPS archives.',
   },
   {
     code: 'DTC P2004',
@@ -209,12 +209,97 @@ export const COLOR_THEMES = [
   },
 ];
 
+export interface ArchetypeThemeMetadata {
+  id: AppArchetypeTheme;
+  name: string;
+  shortName: string;
+  tagline: string;
+  lore: string;
+  baseBgHex: string;
+  accentHex: string;
+  accentSecondaryHex: string;
+  hudTextColor: string;
+  badgeClass: string;
+  previewClass: string;
+  hudFontClass: string;
+  reticleStyle: 'military_bracket' | 'vfd_segmented' | 'nvg_rangefinder' | 'celestial_crosshair';
+  defaultDtcCode: string;
+}
+
+export const ARCHETYPE_THEMES: ArchetypeThemeMetadata[] = [
+  {
+    id: 'black_project',
+    name: 'Black Project Flight Deck',
+    shortName: 'Black Project',
+    tagline: 'Special Access Program (SAP) avionics and Master Caution telemetry.',
+    lore: 'Inspired by clandestine aerospace testbeds and interceptor annunciators. Deep obsidian chassis with incandescent amber warning indicators and mil-spec green radar locks.',
+    baseBgHex: '#08090C',
+    accentHex: '#FF9500',
+    accentSecondaryHex: '#30D158',
+    hudTextColor: 'text-amber-400',
+    badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+    previewClass: 'from-[#08090C] via-slate-950 to-black border-amber-500/50',
+    hudFontClass: 'font-mono tracking-tight',
+    reticleStyle: 'military_bracket',
+    defaultDtcCode: 'P0312',
+  },
+  {
+    id: 'retro_obd',
+    name: 'Retro OBD-II Diagnostic Dash',
+    shortName: 'Retro OBD-II',
+    tagline: '1980s Vacuum Fluorescent Display (VFD) & automotive fault codes.',
+    lore: 'A 1984 concept car digital cluster crossed with a Project Blue Book field terminal. Neon cyan VFD instrument graphics, digital segment counters, and glowing DTC diagnostic fault readouts.',
+    baseBgHex: '#0B0E14',
+    accentHex: '#00F2FE',
+    accentSecondaryHex: '#FF5722',
+    hudTextColor: 'text-cyan-300',
+    badgeClass: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+    previewClass: 'from-[#0B0E14] via-cyan-950/30 to-black border-cyan-400/50',
+    hudFontClass: 'font-mono tracking-widest',
+    reticleStyle: 'vfd_segmented',
+    defaultDtcCode: 'P0312',
+  },
+  {
+    id: 'nvg_flir',
+    name: 'Gen-3 NVG & FLIR Thermal',
+    shortName: 'NVG & FLIR',
+    tagline: '530nm Monochromatic Phosphor Green multi-spectral optics.',
+    lore: 'Replicates looking through PVS-14 Gen-3 night-vision goggles or an electro-optical turret. High-contrast monochromatic green sensor chain with thermal bloom markers and milliradian tick scales.',
+    baseBgHex: '#030B05',
+    accentHex: '#39FF14',
+    accentSecondaryHex: '#22C55E',
+    hudTextColor: 'text-emerald-400',
+    badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+    previewClass: 'from-[#030B05] via-emerald-950/40 to-black border-emerald-400/50',
+    hudFontClass: 'font-mono',
+    reticleStyle: 'nvg_rangefinder',
+    defaultDtcCode: 'P0312',
+  },
+  {
+    id: 'observatory',
+    name: 'Observatory Starlight Mode',
+    shortName: 'Observatory',
+    tagline: 'True OLED Black with Deep Astronomy Red for dark-adapted vision.',
+    lore: 'Engineered for night-sky fieldwork at high-altitude observatories. Pure ruby red illumination protects human rhodopsin and preserves night-adjusted vision while tracking anomalous satellites.',
+    baseBgHex: '#000000',
+    accentHex: '#FF3B30',
+    accentSecondaryHex: '#F5F5F7',
+    hudTextColor: 'text-rose-400',
+    badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+    previewClass: 'from-black via-rose-950/30 to-black border-rose-500/50',
+    hudFontClass: 'font-mono tracking-tight',
+    reticleStyle: 'celestial_crosshair',
+    defaultDtcCode: 'P0312',
+  },
+];
+
 export const DEFAULT_LOGO_CONFIG: LogoConfig = {
   variantId: 'piston_saucer',
   colorTheme: 'amber',
+  archetypeTheme: 'black_project',
   animationMode: 'pulse',
   showCowLift: true,
   showFaultCodeBadge: false,
   glowIntensity: 'high',
-  customFaultCode: 'P1947',
+  customFaultCode: 'P0312',
 };

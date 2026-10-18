@@ -17,10 +17,16 @@ import {
   AlertTriangle,
   RefreshCw,
   ExternalLink,
-  Compass
+  Compass,
+  Palette,
+  ShieldAlert,
+  Terminal,
+  Crosshair,
+  Flame
 } from 'lucide-react';
-import { LogoConfig, LogoVariantId, LogoColorTheme, DtcFaultCode } from '../types';
-import { LOGO_VARIANTS, DTC_FAULT_CODES, COLOR_THEMES, DEFAULT_LOGO_CONFIG } from '../data/logoPresets';
+import { LogoConfig, LogoVariantId, LogoColorTheme, DtcFaultCode, AppArchetypeTheme } from '../types';
+import { LOGO_VARIANTS, DTC_FAULT_CODES, COLOR_THEMES, DEFAULT_LOGO_CONFIG, ARCHETYPE_THEMES } from '../data/logoPresets';
+import { loadActiveArchetype, saveActiveArchetype } from '../lib/themeManager';
 import { CheckEngineLogo } from './CheckEngineLogo';
 import conceptOneImg from '../assets/images/concept_one_obd_1789670680785.jpg';
 import conceptFourImg from '../assets/images/concept_four_gauge_1789670692167.jpg';
@@ -41,6 +47,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
   currentConfig = DEFAULT_CONFIG,
   onSaveConfig = () => {},
 }) => {
+  const [activeArchetype, setActiveArchetype] = useState<AppArchetypeTheme>(() => loadActiveArchetype());
   const [selectedVariant, setSelectedVariant] = useState<LogoVariantId>(currentConfig.variantId);
   const [selectedColor, setSelectedColor] = useState<LogoColorTheme>(currentConfig.colorTheme);
   const [animationMode, setAnimationMode] = useState<'solid' | 'pulse' | 'strobe' | 'beam_scan'>(
@@ -51,8 +58,8 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
   const [glowIntensity, setGlowIntensity] = useState<'subtle' | 'high' | 'off'>(
     currentConfig.glowIntensity
   );
-  const [activeDtcCode, setActiveDtcCode] = useState<string>(currentConfig.customFaultCode || 'P1947');
-  const [activeTab, setActiveTab] = useState<'candidates' | 'showcase' | 'scanner' | 'export'>('candidates');
+  const [activeDtcCode, setActiveDtcCode] = useState<string>(currentConfig.customFaultCode || 'P0312');
+  const [activeTab, setActiveTab] = useState<'archetypes' | 'candidates' | 'showcase' | 'scanner' | 'export'>('archetypes');
   const [previewSize, setPreviewSize] = useState<'squircle' | 'compact' | 'homescreen'>('squircle');
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
   const [appliedSuccess, setAppliedSuccess] = useState<boolean>(false);
@@ -68,13 +75,34 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
     const newConfig: LogoConfig = {
       variantId: selectedVariant,
       colorTheme: selectedColor,
+      archetypeTheme: activeArchetype,
       animationMode,
       showCowLift,
       showFaultCodeBadge,
       glowIntensity,
       customFaultCode: activeDtcCode,
     };
+    saveActiveArchetype(activeArchetype);
     onSaveConfig(newConfig);
+    setAppliedSuccess(true);
+    setTimeout(() => {
+      setAppliedSuccess(false);
+    }, 2500);
+  };
+
+  const handleSelectArchetype = (themeId: AppArchetypeTheme) => {
+    setActiveArchetype(themeId);
+    saveActiveArchetype(themeId);
+    setActiveDtcCode('P0312');
+    if (themeId === 'black_project') {
+      setSelectedColor('amber');
+    } else if (themeId === 'retro_obd') {
+      setSelectedColor('cyan');
+    } else if (themeId === 'nvg_flir') {
+      setSelectedColor('roswell');
+    } else if (themeId === 'observatory') {
+      setSelectedColor('crimson');
+    }
     setAppliedSuccess(true);
     setTimeout(() => {
       setAppliedSuccess(false);
@@ -181,6 +209,20 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
 
         <div className="flex items-center space-x-1 px-4 sm:px-6 bg-slate-950 border-b border-slate-800 text-xs font-mono shrink-0 overflow-x-auto">
           <button
+            onClick={() => setActiveTab('archetypes')}
+            className={`py-3 px-3.5 border-b-2 font-bold flex items-center space-x-1.5 transition whitespace-nowrap cursor-pointer ${
+              activeTab === 'archetypes'
+                ? 'border-amber-400 text-amber-300 bg-amber-500/5'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Palette className="w-4 h-4 text-amber-400" />
+            <span>Cockpit Archetypes</span>
+            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold">
+              4 THEMES
+            </span>
+          </button>
+          <button
             onClick={() => setActiveTab('candidates')}
             className={`py-3 px-3.5 border-b-2 font-bold flex items-center space-x-1.5 transition whitespace-nowrap cursor-pointer ${
               activeTab === 'candidates'
@@ -230,6 +272,148 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
         </div>
 
         <div className="p-4 sm:p-6 overflow-y-auto space-y-6">
+          {activeTab === 'archetypes' && (
+            <div className="space-y-6">
+              {/* Header Context Banner */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-950/40 via-slate-950 to-slate-900 border border-amber-500/40 shadow-2xl relative overflow-hidden">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-amber-500 text-slate-950">
+                        DISPLAY ARCHETYPES
+                      </span>
+                      <span className="text-xs font-mono text-amber-300">
+                        4 COCKPIT INSTRUMENT MODES
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
+                      Select Cockpit Archetype
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                      Customizes your tactical instrument panel. Switches real-time color themes, HUD telemetry fonts, reticle optics, and sensor accents across Check Sky Light with instant zero-lag persistence.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-slate-900/90 border border-slate-800 p-2.5 rounded-2xl shrink-0">
+                    <span className="text-xs font-mono text-slate-400">Active Cockpit:</span>
+                    <span className="px-2.5 py-1 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      {ARCHETYPE_THEMES.find((t) => t.id === activeArchetype)?.name || 'Black Project Flight Deck'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Archetypes Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {ARCHETYPE_THEMES.map((theme) => {
+                  const isSelected = activeArchetype === theme.id;
+                  return (
+                    <div
+                      key={theme.id}
+                      className={`rounded-3xl bg-slate-950 border-2 overflow-hidden shadow-2xl flex flex-col justify-between transition-all duration-300 ${
+                        isSelected
+                          ? `${theme.previewClass} ring-2 ring-amber-400/50 shadow-[0_0_30px_rgba(245,158,11,0.2)]`
+                          : 'border-slate-800 hover:border-slate-700 bg-slate-950/80'
+                      }`}
+                    >
+                      {/* Top Card Bar */}
+                      <div className="p-4 bg-slate-900/70 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+                        <div className="flex items-center space-x-2">
+                          <span className={`w-2.5 h-2.5 rounded-full ${isSelected ? 'animate-pulse' : 'opacity-40'}`} style={{ backgroundColor: theme.accentHex }} />
+                          <span className="font-bold text-slate-200 uppercase tracking-wider">
+                            {theme.shortName}
+                          </span>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${theme.badgeClass}`}>
+                          {theme.id === 'black_project' ? 'SAP AVIONICS' : theme.id === 'retro_obd' ? '1984 VFD CLUSTER' : theme.id === 'nvg_flir' ? '530nm MULTI-SPECTRAL' : 'RHODOPSIN PRESERVING'}
+                        </span>
+                      </div>
+
+                      {/* Visual Archetype Preview Stage */}
+                      <div className="p-5 flex flex-col justify-center space-y-4">
+                        <div>
+                          <h4 className="text-base sm:text-lg font-black text-slate-100 flex items-center justify-between">
+                            <span>{theme.name}</span>
+                          </h4>
+                          <p className="text-xs text-amber-300/90 font-mono mt-0.5">
+                            {theme.tagline}
+                          </p>
+                          <p className="text-xs text-slate-300 leading-relaxed mt-2">
+                            {theme.lore}
+                          </p>
+                        </div>
+
+                        {/* Interactive Cockpit HUD Miniature */}
+                        <div
+                          className="p-3.5 rounded-2xl border flex flex-col space-y-2 font-mono"
+                          style={{
+                            backgroundColor: theme.baseBgHex,
+                            borderColor: isSelected ? theme.accentHex : '#334155'
+                          }}
+                        >
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span style={{ color: theme.accentHex }} className="font-bold">
+                              {theme.id === 'black_project' && '[ + ] AZ 180.0° · EL 35.0°'}
+                              {theme.id === 'retro_obd' && ':: 180° AZ · 35° EL [VFD] ::'}
+                              {theme.id === 'nvg_flir' && '( · ) 530nm AZ 180° · EL 35°'}
+                              {theme.id === 'observatory' && '⊕ 180°00\' AZ · +35°00\' EL'}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10" style={{ color: theme.accentSecondaryHex }}>
+                              {theme.reticleStyle.toUpperCase().replace('_', ' ')}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[10px]">
+                            <span className="text-slate-400">Parallax Tribunal:</span>
+                            <span className="font-bold text-amber-400">
+                              DTC P0312
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Color Swatch Badges */}
+                        <div className="flex items-center space-x-2 pt-1 text-[11px] font-mono">
+                          <span className="text-slate-400">Palette:</span>
+                          <div className="flex items-center space-x-1.5">
+                            <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm" style={{ backgroundColor: theme.accentHex }} title={`Primary Accent: ${theme.accentHex}`} />
+                            <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm" style={{ backgroundColor: theme.accentSecondaryHex }} title={`Secondary Accent: ${theme.accentSecondaryHex}`} />
+                            <span className="w-4 h-4 rounded-full border border-white/20 shadow-sm" style={{ backgroundColor: theme.baseBgHex }} title={`Base Chassis: ${theme.baseBgHex}`} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Action Footer */}
+                      <div className="p-4 bg-slate-900/60 border-t border-slate-800 flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-slate-400">
+                          {isSelected ? 'Current Active Cockpit' : 'Tap to switch theme'}
+                        </span>
+                        <button
+                          onClick={() => handleSelectArchetype(theme.id)}
+                          className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                            isSelected
+                              ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                          }`}
+                        >
+                          {isSelected ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-slate-950 stroke-[3]" />
+                              <span>ACTIVE COCKPIT</span>
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="w-3.5 h-3.5 text-amber-400" />
+                              <span>ACTIVATE THEME</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {activeTab === 'candidates' && (
             <div className="space-y-6">
               {/* Header Context Banner */}
@@ -291,7 +475,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
                       </span>
                     </span>
                     <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold border border-amber-500/40">
-                      DTC P1947
+                      DTC P0312
                     </span>
                   </div>
 
@@ -336,7 +520,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
                         <span className="text-xs font-mono text-amber-400 font-normal">MIL Class</span>
                       </h4>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        Features an amber engine block silhouette fused with an atmospheric radar disc. An illuminated OBD-II diagnostic connector streams sensor leads into a scanning reticle reading fault code <strong>P1947 (Anomalous Lift)</strong>.
+                        Features an amber engine block silhouette fused with an atmospheric radar disc. An illuminated OBD-II diagnostic connector streams sensor leads into a scanning reticle reading fault code <strong>P0312 (Parallax Tribunal)</strong>.
                       </p>
 
                       <div className="pt-2 border-t border-slate-800/80 space-y-1.5 text-[11px]">
@@ -364,7 +548,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
                         onClick={() => {
                           setSelectedVariant('piston_saucer');
                           setSelectedColor('amber');
-                          setActiveDtcCode('P1947');
+                          setActiveDtcCode('P0312');
                           setActiveTab('showcase');
                         }}
                         className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-mono text-[11px] font-bold transition cursor-pointer"

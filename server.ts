@@ -2095,8 +2095,8 @@ Return ONLY a valid JSON object matching this schema:
           if (isBlackTriangleUrl) {
             parsed.verdict = 'AUTHENTIC_INCIDENT';
             parsed.verdictTitle = 'Equilateral Tri-Vertex Platform: Authentic Acoustic & Kinematic Decoupling';
-            parsed.dtcCode = 'P1947';
-            parsed.dtcTitle = 'P1947: Anomalous Tri-Vertex Field Metric Decoupling';
+            parsed.dtcCode = 'P0312';
+            parsed.dtcTitle = 'P0312: Tri-Model Parallax Consensus Resolved (Gemini · Claude · Luna)';
             parsed.authenticityScore = Math.max(parsed.authenticityScore || 0, 91);
             parsed.fakeProbability = Math.min(parsed.fakeProbability || 10, 5);
             parsed.confidenceScore = Math.max(parsed.confidenceScore || 0, 88);
@@ -2351,13 +2351,13 @@ Return ONLY a valid JSON object matching this schema:
       : isAaroResolvedBirds
       ? 'P0006'
       : isPursueOrWarGov
-      ? 'P1947'
+      ? 'P0312'
       : isCostaRicaRazr
-      ? 'P1947'
+      ? 'P0312'
       : isBlackTriangle
-      ? 'P1947'
+      ? 'P0312'
       : (isNimitz || isGimbal)
-      ? 'P1947'
+      ? 'P0312'
       : isStarlink
       ? 'P0505'
       : isCgi
@@ -2369,13 +2369,13 @@ Return ONLY a valid JSON object matching this schema:
       : isAaroResolvedBirds
       ? 'P0006: Biological Avian Fauna / Wind-Drift Kinematics (Birds)'
       : isPursueOrWarGov
-      ? 'P1947: Confirmed Metric Decoupling & Positive Hydrodynamic Lift'
+      ? 'P0312: Confirmed Metric Decoupling & Positive Hydrodynamic Lift'
       : isCostaRicaRazr
-      ? 'P1947: Non-Aerodynamic Sideways Kinematic Metric Distortion'
+      ? 'P0312: Non-Aerodynamic Sideways Kinematic Metric Distortion'
       : isBlackTriangle
-      ? 'P1947: Anomalous Tri-Vertex Field Metric Decoupling'
+      ? 'P0312: Tri-Model Parallax Consensus Resolved (Gemini · Claude · Luna)'
       : (isNimitz || isGimbal)
-      ? 'P1947: Transmedium Kinematic Decoupling & Instantaneous Velocity'
+      ? 'P0312: Transmedium Kinematic Decoupling & Instantaneous Velocity'
       : isStarlink
       ? 'P0505: Deconflicted Low-Earth Orbit Satellite Constellation'
       : isCgi

@@ -26,7 +26,7 @@ export const CheckEngineLogo: React.FC<CheckEngineLogoProps> = ({
   showCowLift = true,
   showFaultCodeBadge = false,
   glowIntensity: explicitGlow,
-  customFaultCode = 'P1947',
+  customFaultCode = 'P0312',
   className = '',
   onClick,
   interactiveHover = false,
@@ -510,7 +510,7 @@ export const CheckEngineLogo: React.FC<CheckEngineLogoProps> = ({
         <div
           className={`absolute -bottom-2 font-mono font-black uppercase px-1.5 py-0.5 rounded-md border shadow-md whitespace-nowrap leading-none ${sizeConfig[size].badgeText} ${theme.bgClass} ${theme.borderClass} ${theme.textClass} bg-slate-950/95`}
         >
-          {customFaultCode || 'P1947'}
+          {customFaultCode || 'P0312'}
         </div>
       )}
     </div>

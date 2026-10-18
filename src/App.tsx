@@ -54,10 +54,13 @@ import { EulaPrivacyModal } from './components/EulaPrivacyModal';
 import { PreReportCheckModal, PreReportCapture } from './components/PreReportCheckModal';
 import { unlockAudioContext } from './components/ar/ArAudioSynthesizer';
 import { loadSoundSettings, subscribeSoundSettings, SoundSettings } from './lib/soundSettings';
+import { loadActiveArchetype, subscribeArchetype, applyArchetypeToDocument, AppArchetypeTheme } from './lib/themeManager';
 
 type MainTab = 'target' | 'radar' | 'analyze' | 'report';
 
 export default function App() {
+  // Cockpit Archetype Theme State
+  const [activeArchetype, setActiveArchetype] = useState<AppArchetypeTheme>(() => loadActiveArchetype());
   // Navigation
   const [activeTab, setActiveTab] = useState<MainTab>('target');
   const [isTargetFullView, setIsTargetFullView] = useState<boolean>(false);
@@ -143,6 +146,15 @@ export default function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Synchronize Cockpit Archetype Theme across the application
+  useEffect(() => {
+    applyArchetypeToDocument(activeArchetype);
+    const unsubscribe = subscribeArchetype((newArchetype) => {
+      setActiveArchetype(newArchetype);
+    });
+    return () => unsubscribe();
+  }, [activeArchetype]);
 
   // Status bar time
   const [currentTime, setCurrentTime] = useState<string>('9:41');
@@ -351,7 +363,7 @@ export default function App() {
                     CHECK SKY<span className="hidden min-[360px]:inline text-slate-200"> LIGHT</span>
                   </span>
                   <span className="inline-flex items-center px-1 sm:px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
-                    v3.5
+                    v3.6
                   </span>
                 </div>
               </button>

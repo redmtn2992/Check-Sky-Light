@@ -63,3 +63,35 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
+
+/* Check Sky Light Cockpit Archetype CSS Tokens */
+:root {
+  --csl-accent: #FF9500;
+  --csl-accent-sec: #30D158;
+  --csl-bg-base: #08090C;
+}
+
+[data-archetype="black_project"] {
+  --csl-accent: #FF9500;
+  --csl-accent-sec: #30D158;
+  --csl-bg-base: #08090C;
+}
+
+[data-archetype="retro_obd"] {
+  --csl-accent: #00F2FE;
+  --csl-accent-sec: #FF5722;
+  --csl-bg-base: #0B0E14;
+}
+
+[data-archetype="nvg_flir"] {
+  --csl-accent: #39FF14;
+  --csl-accent-sec: #22C55E;
+  --csl-bg-base: #030B05;
+}
+
+[data-archetype="observatory"] {
+  --csl-accent: #FF3B30;
+  --csl-accent-sec: #F5F5F7;
+  --csl-bg-base: #000000;
+}
+

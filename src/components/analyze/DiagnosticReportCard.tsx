@@ -36,7 +36,7 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   const isBirdDeconflicted = analysis.dtcCode === 'P0006' || 
     (analysis.verdictTitle && (analysis.verdictTitle.toLowerCase().includes('avian') || analysis.verdictTitle.toLowerCase().includes('bird') || analysis.verdictTitle.toLowerCase().includes('pr-016')));
 
-  const dtcCode = analysis.dtcCode || (isAuthentic ? 'P1947' : isSynthetic ? 'P0420' : isConventional ? 'P0505' : 'P0100');
+  const dtcCode = analysis.dtcCode || (isAuthentic ? 'P0312' : isSynthetic ? 'P0420' : isConventional ? 'P0505' : 'P0100');
 
   const handleShareReport = () => {
     const text = `Check Sky Light Forensic Diagnostic Report\n` +
