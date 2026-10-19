@@ -54,13 +54,22 @@ import { EulaPrivacyModal } from './components/EulaPrivacyModal';
 import { PreReportCheckModal, PreReportCapture } from './components/PreReportCheckModal';
 import { unlockAudioContext } from './components/ar/ArAudioSynthesizer';
 import { loadSoundSettings, subscribeSoundSettings, SoundSettings } from './lib/soundSettings';
-import { loadActiveArchetype, subscribeArchetype, applyArchetypeToDocument, AppArchetypeTheme } from './lib/themeManager';
+import { 
+  loadActiveArchetype, 
+  subscribeArchetype, 
+  applyArchetypeToDocument, 
+  getArchetypeIcon, 
+  getArchetypeMetadata, 
+  AppArchetypeTheme 
+} from './lib/themeManager';
 
 type MainTab = 'target' | 'radar' | 'analyze' | 'report';
 
 export default function App() {
   // Cockpit Archetype Theme State
   const [activeArchetype, setActiveArchetype] = useState<AppArchetypeTheme>(() => loadActiveArchetype());
+  const activeThemeMeta = getArchetypeMetadata(activeArchetype);
+
   // Navigation
   const [activeTab, setActiveTab] = useState<MainTab>('target');
   const [isTargetFullView, setIsTargetFullView] = useState<boolean>(false);
@@ -335,35 +344,67 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+      <div 
+        className="min-h-screen text-slate-100 font-sans flex flex-col selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300"
+        style={{
+          backgroundColor: 'var(--csl-bg-base)',
+        }}
+      >
         <OfflineIndicator />
 
         {/* iOS Dynamic Island & Tactical Status Bar (Mobile-first with safe-area padding) */}
         {/* iOS Dynamic Island & Tactical Status Bar (Mobile-first with safe-area padding) */}
         {!isTargetFullView && (
-          <header className="sticky top-0 z-40 bg-slate-950/98 border-b border-slate-800/80 px-2 sm:px-4 pt-safe-top pb-2 select-none crisp-hud">
+          <header 
+            className="sticky top-0 z-40 px-2 sm:px-4 pt-safe-top pb-2 select-none crisp-hud transition-colors duration-300 border-b"
+            style={{
+              backgroundColor: 'var(--csl-bg-base)',
+              borderBottomColor: 'var(--csl-border)'
+            }}
+          >
             <div className="w-full max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-2">
               {/* Left: Check Engine Logo & DTC code badge */}
               <button
                 onClick={() => setIsLogoStudioOpen(true)}
                 className="flex items-center space-x-1.5 sm:space-x-2 text-left group cursor-pointer focus:outline-none min-h-[36px] sm:min-h-[42px] py-0.5 shrink-0"
-                title="Tap to customize Check Sky Light branding & DTC fault codes"
+                title="Tap to select Theme"
               >
-                <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden border-2 border-amber-500/80 shadow-[0_0_10px_rgba(245,158,11,0.25)] shrink-0 group-hover:scale-105 transition-transform bg-slate-900">
+                <div 
+                  className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden border-2 shrink-0 group-hover:scale-105 transition-all bg-slate-900"
+                  style={{
+                    borderColor: 'var(--csl-accent)',
+                    boxShadow: 'var(--csl-glow)'
+                  }}
+                >
                   <img
-                    src={conceptOneImg}
-                    alt="Check Sky Light Icon - Candidate 1"
-                    className="w-full h-full object-cover"
+                    src={getArchetypeIcon(activeArchetype)}
+                    alt="Check Sky Light Icon"
+                    className={`w-full h-full object-cover transition-all ${
+                      activeArchetype === 'observatory' ? 'hue-rotate-[320deg] saturate-150' : ''
+                    }`}
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 ring-1 ring-inset ring-amber-400/40 rounded-xl pointer-events-none" />
+                  <div 
+                    className="absolute inset-0 ring-1 ring-inset pointer-events-none rounded-xl"
+                    style={{ borderColor: 'var(--csl-accent)' }} 
+                  />
                 </div>
                 <div className="flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap">
-                  <span className="text-[12px] sm:text-sm font-black tracking-tight text-slate-100 uppercase group-hover:text-amber-400 transition-colors">
+                  <span 
+                    className="text-[12px] sm:text-sm font-black tracking-tight uppercase transition-colors"
+                    style={{ color: 'var(--csl-accent)' }}
+                  >
                     CHECK SKY<span className="hidden min-[360px]:inline text-slate-200"> LIGHT</span>
                   </span>
-                  <span className="inline-flex items-center px-1 sm:px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
-                    v3.6
+                  <span 
+                    className="inline-flex items-center px-1 sm:px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold border shrink-0 transition-colors"
+                    style={{
+                      backgroundColor: 'rgba(var(--csl-accent-rgb), 0.15)',
+                      color: 'var(--csl-accent)',
+                      borderColor: 'rgba(var(--csl-accent-rgb), 0.4)'
+                    }}
+                  >
+                    {activeThemeMeta.shortName}
                   </span>
                 </div>
               </button>
@@ -590,67 +631,55 @@ export default function App() {
 
         {/* Bottom iPhone Tactical Navigation Bar (Hidden when in Target Full View) */}
         {!isTargetFullView && (
-          <nav className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 pt-1.5 px-2 sm:px-4 select-none safe-area-pb pb-safe shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
+          <nav 
+            className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t pt-1.5 px-2 sm:px-4 select-none safe-area-pb pb-safe shadow-[0_-10px_25px_rgba(0,0,0,0.5)] transition-colors duration-300"
+            style={{
+              backgroundColor: 'var(--csl-bg-base)',
+              borderTopColor: 'var(--csl-border)'
+            }}
+          >
             <div className="max-w-md mx-auto flex items-center justify-around">
-              <button
-                onClick={() => {
-                  unlockAudioContext();
-                  setActiveTab('target');
-                }}
-                className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
-                  activeTab === 'target' ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className={`p-1 rounded-xl ${activeTab === 'target' ? 'bg-cyan-500/20 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]' : ''}`}>
-                  <Crosshair className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono tracking-wider uppercase">Target</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  unlockAudioContext();
-                  setActiveTab('radar');
-                }}
-                className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
-                  activeTab === 'radar' ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className={`p-1 rounded-xl ${activeTab === 'radar' ? 'bg-cyan-500/20 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]' : ''}`}>
-                  <Radar className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono tracking-wider uppercase">Radar</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  unlockAudioContext();
-                  setActiveTab('analyze');
-                }}
-                className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
-                  activeTab === 'analyze' ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className={`p-1 rounded-xl ${activeTab === 'analyze' ? 'bg-cyan-500/20 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]' : ''}`}>
-                  <ScanSearch className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono tracking-wider uppercase">Analyze</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  unlockAudioContext();
-                  setActiveTab('report');
-                }}
-                className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
-                  activeTab === 'report' ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <div className={`p-1 rounded-xl ${activeTab === 'report' ? 'bg-cyan-500/20 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]' : ''}`}>
-                  <FileText className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono tracking-wider uppercase">Report</span>
-              </button>
+              {[
+                { id: 'target' as MainTab, label: 'Target', icon: Crosshair },
+                { id: 'radar' as MainTab, label: 'Radar', icon: Radar },
+                { id: 'analyze' as MainTab, label: 'Analyze', icon: ScanSearch },
+                { id: 'report' as MainTab, label: 'Report', icon: FileText }
+              ].map(({ id, label, icon: TabIcon }) => {
+                const isActive = activeTab === id;
+                return (
+                  <button
+                    key={id}
+                    onClick={() => {
+                      unlockAudioContext();
+                      setActiveTab(id);
+                    }}
+                    className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
+                      isActive ? 'font-bold' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                    style={{
+                      color: isActive ? 'var(--csl-accent)' : undefined
+                    }}
+                  >
+                    <div
+                      className={`p-1 rounded-xl transition-all ${
+                        isActive ? 'border' : ''
+                      }`}
+                      style={
+                        isActive
+                          ? {
+                              backgroundColor: 'rgba(var(--csl-accent-rgb), 0.2)',
+                              borderColor: 'rgba(var(--csl-accent-rgb), 0.45)',
+                              boxShadow: 'var(--csl-glow)'
+                            }
+                          : undefined
+                      }
+                    >
+                      <TabIcon className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-mono tracking-wider uppercase">{label}</span>
+                  </button>
+                );
+              })}
             </div>
           </nav>
         )}
@@ -777,6 +806,8 @@ export default function App() {
         <LogoStudioModal
           isOpen={isLogoStudioOpen}
           onClose={() => setIsLogoStudioOpen(false)}
+          activeArchetype={activeArchetype}
+          onSelectArchetype={(themeId) => setActiveArchetype(themeId)}
         />
 
         <GpsPermissionModal
