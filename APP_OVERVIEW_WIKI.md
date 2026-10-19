@@ -4,6 +4,25 @@
 
 ---
 
+## Table of Contents
+1. [1. Executive Summary & Purpose](#1-executive-summary--purpose)
+2. [2. The Four Operational Pillars](#2-the-four-operational-pillars)
+   - [Pillar 1: TARGET (Optical AR Tracking HUD)](#pillar-1-target-optical-ar-tracking-hud)
+   - [Pillar 2: RADAR (Live Airspace Deconfliction)](#pillar-2-radar-live-airspace-deconfliction)
+   - [Pillar 3: ANALYZE (Multi-Lens Forensic Intelligence Lab)](#pillar-3-analyze-multi-lens-forensic-intelligence-lab)
+   - [Pillar 4: REPORT (Diagnostic Dossiers & Open Field Archival)](#pillar-4-report-diagnostic-dossiers--open-field-archival)
+3. [3. The Power of Collaborative AI: The Parallax Panel](#3-the-power-of-collaborative-ai-the-parallax-panel)
+   - [The "Secret" Diagnostic Code DTC P0312](#the-secret-diagnostic-code-dtc-p0312)
+4. [4. Competitive Analysis: Check Sky Light vs. The UAP App Ecosystem](#4-competitive-analysis-check-sky-light-vs-the-uap-app-ecosystem)
+   - [Ecosystem Comparison Matrix (1 – 10 Scale)](#ecosystem-comparison-matrix)
+   - [Detailed Application Critiques](#detailed-ecosystem-breakdown--honest-critique)
+5. [5. The Evolving 5-Tier Empirical Knowledge Base](#5-the-evolving-5-tier-empirical-knowledge-base)
+   - [Internal Documentation & Peer-Review Cross-References](#internal-documentation--peer-review-cross-references)
+6. [6. Cockpit Archetypes & DTC Diagnostic System](#6-cockpit-archetypes--dtc-diagnostic-system)
+7. [7. Summary: Why Check Sky Light Sets a New Benchmark](#7-summary-why-check-sky-light-sets-a-new-benchmark)
+
+---
+
 ## 1. Executive Summary & Purpose
 
 **Check Sky Light** is an open, empirical civilian sky diagnostics and aerospace deconfliction platform. It bridges the divide between naive skepticism and uncritical credulity by providing citizen scientists, field researchers, and observers with a calibrated, real-time sensor instrument in their pocket.

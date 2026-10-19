@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Sky Light (v3.6) — Platform Overview & Ecosystem Wiki</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-sub: #1f2937;
+      --border: #374151;
+      --border-accent: #f59e0b;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --amber: #f59e0b;
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --red: #ef4444;
+      --code-bg: #030712;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111827 !important;
+        font-size: 11pt;
+      }
+      .no-print { display: none !important; }
+      .card { border: 1px solid #d1d5db !important; background: #ffffff !important; color: #111827 !important; box-shadow: none !important; }
+      a { color: #1d4ed8 !important; text-decoration: underline !important; }
+      pre, code { background: #f3f4f6 !important; color: #111827 !important; border: 1px solid #e5e7eb !important; }
+      table { border-collapse: collapse !important; width: 100% !important; }
+      th, td { border: 1px solid #d1d5db !important; color: #111827 !important; }
+      th { background-color: #f3f4f6 !important; }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px 20px;
+    }
+
+    header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      background-color: rgba(245, 158, 11, 0.15);
+      color: var(--amber);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin: 0 0 12px 0;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .quote-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+      border-left: 4px solid var(--amber);
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-style: italic;
+      color: #e5e7eb;
+      margin: 20px 0 30px 0;
+    }
+
+    /* Action Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--amber);
+      color: #030712;
+    }
+    .btn-primary:hover { background-color: #fbbf24; }
+
+    .btn-secondary {
+      background-color: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background-color: var(--card-sub); border-color: #4b5563; }
+
+    /* Table of Contents */
+    .toc-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .toc-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 0 16px 0;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .toc-list {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .toc-list li a {
+      display: flex;
+      align-items: center;
+      color: #d1d5db;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .toc-list li a:hover {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      transform: translateX(4px);
+    }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 30px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-top: 0;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .back-to-top {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .back-to-top:hover { color: var(--amber); }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin: 24px 0 12px 0;
+    }
+
+    p, ul, ol {
+      color: #d1d5db;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    @media (min-width: 768px) {
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h4 {
+      margin: 0 0 8px 0;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    /* Matrix Table */
+    .table-container {
+      overflow-x: auto;
+      margin: 24px 0;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background-color: var(--card-bg);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background-color: rgba(0, 0, 0, 0.4);
+      color: #ffffff;
+      padding: 12px 14px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: #e5e7eb;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+
+    .score-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: ui-monospace, monospace;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .score-high { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .score-mid { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .score-low { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #38bdf8;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background-color: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #f59e0b;
+    }
+
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <span class="header-badge">Official Architecture Wiki • Version 3.6.0</span>
+    <h1>Check Sky Light: Platform Overview & Ecosystem Wiki</h1>
+    <div class="quote-banner">
+      "When your car dashboard illuminates the 'Check Engine' light, you don't panic or invent folklore—you plug in an OBD-II scanner, read the diagnostic trouble code, and triage the mechanical reality. When the sky exhibits an anomaly, you Check Sky Light."
+    </div>
+
+    <!-- Interactive Toolbar -->
+    <div class="toolbar no-print">
+      <button class="btn btn-primary" onclick="window.print()">
+        🖨️ Print / Save as PDF
+      </button>
+      <a class="btn btn-secondary" href="/APP_OVERVIEW_WIKI.doc" download="Check_Sky_Light_Wiki_v3.6.doc">
+        📄 Download Word Document (.doc)
+      </a>
+      <a class="btn btn-secondary" href="/APP_OVERVIEW_WIKI.md" target="_blank">
+        📝 View Markdown (.md)
+      </a>
+    </div>
+  </header>
+
+  <!-- Interactive Table of Contents -->
+  <nav class="toc-card" id="table-of-contents">
+    <div class="toc-title">📑 Interactive Table of Contents</div>
+    <ul class="toc-list">
+      <li><a href="#section-1">1. Executive Summary & Purpose</a></li>
+      <li><a href="#section-2">2. The Four Operational Pillars</a></li>
+      <li><a href="#section-2-1" style="padding-left: 24px;">↳ Pillar 1: TARGET (Optical AR HUD)</a></li>
+      <li><a href="#section-2-2" style="padding-left: 24px;">↳ Pillar 2: RADAR (Live Deconfliction)</a></li>
+      <li><a href="#section-2-3" style="padding-left: 24px;">↳ Pillar 3: ANALYZE (Forensic AI Lab)</a></li>
+      <li><a href="#section-2-4" style="padding-left: 24px;">↳ Pillar 4: REPORT (Diagnostic Dossiers)</a></li>
+      <li><a href="#section-3">3. The Power of Collaborative AI: Parallax Panel</a></li>
+      <li><a href="#section-3-1" style="padding-left: 24px;">↳ Secret Code DTC P0312</a></li>
+      <li><a href="#section-4">4. Competitive Analysis: Check Sky Light vs. Ecosystem</a></li>
+      <li><a href="#section-4-1" style="padding-left: 24px;">↳ 1 – 10 Rating Matrix</a></li>
+      <li><a href="#section-4-2" style="padding-left: 24px;">↳ Detailed Application Critiques</a></li>
+      <li><a href="#section-5">5. The Evolving 5-Tier Empirical Knowledge Base</a></li>
+      <li><a href="#section-6">6. Cockpit Archetypes & DTC Diagnostic System</a></li>
+      <li><a href="#section-7">7. Summary: Setting the Empirical Benchmark</a></li>
+    </ul>
+  </nav>
+
+  <!-- Section 1 -->
+  <section id="section-1">
+    <h2>
+      <span>1. Executive Summary & Purpose</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      <strong>Check Sky Light</strong> is an open, empirical civilian sky diagnostics and aerospace deconfliction platform. It bridges the divide between naive skepticism and uncritical credulity by providing citizen scientists, field researchers, and observers with a calibrated, real-time sensor instrument in their pocket.
+    </p>
+    <p>
+      Traditional sky observation apps either function as passive crowdsourced reporting forms or closed proprietary black boxes. Check Sky Light transforms a standard modern smartphone into an active aerospace diagnostic station by fusing:
+    </p>
+    <ul>
+      <li><strong>Device Sensor Fusion:</strong> Hardware-calibrated IMU orientation (pitch, azimuth, roll, angular velocity), high-frame-rate optical capture, and acoustic microphone preservation.</li>
+      <li><strong>Multi-Domain Airspace Telemetry:</strong> Real-time cross-referencing against live ADS-B civilian/military transponders, NOAA weather balloon soundings, and NORAD Low Earth Orbit (LEO) satellite trajectories.</li>
+      <li><strong>The Parallax Panel (Tri-Model AI Architecture):</strong> Collaborative cross-examination between three independent frontier AI engines (<strong>Gemini</strong>, <strong>Claude</strong>, and <strong>Luna</strong>) enforcing strict empirical falsifiability.</li>
+      <li><strong>The Dual-Lens Analytical Framework:</strong> Simultaneous evaluation under <strong>Lens A (Classical Fluid Dynamics & Aerospace Baseline)</strong> and <strong>Lens B (Theoretical Spacetime Metric Manipulation)</strong>.</li>
+    </ul>
+  </section>
+
+  <!-- Section 2 -->
+  <section id="section-2">
+    <h2>
+      <span>2. The Four Operational Pillars</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      Check Sky Light is architected around four distinct operational modules, accessible via the bottom tactical navigation dock:
+    </p>
+
+    <div class="card-grid">
+      <div class="card" id="section-2-1">
+        <h4>🎯 1. TARGET (Optical AR Tracking HUD)</h4>
+        <ul>
+          <li><strong>Real-Time Reticle HUD:</strong> Overlays high-contrast, subpixel-stabilized azimuth (0°–360°), elevation pitch (-90° to +90°), roll, and angular tracking rates (°/sec) directly onto the live camera stream.</li>
+          <li><strong>Telephoto & Optical Filtration:</strong> Digital/optical crop-zoom controls (1x, 2x, 3x, 5x) combined with Day-HDR, Night-Starlight, and High-Contrast optical filters for acquiring high-altitude targets.</li>
+          <li><strong>Acoustic Silence Tenet:</strong> Operates completely silent by default (synthesizers and shutter sounds muted) so the microphone records clean, uncontaminated ambient acoustic signatures.</li>
+        </ul>
+      </div>
+
+      <div class="card" id="section-2-2">
+        <h4>📡 2. RADAR (Live Airspace Deconfliction)</h4>
+        <ul>
+          <li><strong>ADS-B Transponder Integration:</strong> Live tracking of commercial airliners, private aviation, and unblocked transponders within the observer's visual radius.</li>
+          <li><strong>NOAA Weather Balloon Tracking:</strong> Live telemetry from national weather service radiosonde launches (frequency, ascent rate, altitude MSL).</li>
+          <li><strong>LEO Satellite Ephemeris:</strong> Orbital trajectory vectors for Starlink trains, the International Space Station (ISS), and prominent orbital debris.</li>
+          <li><strong>Deconfliction-First Principle:</strong> Automatically weeds out known conventional flights before any anomaly claim is considered.</li>
+        </ul>
+      </div>
+
+      <div class="card" id="section-2-3">
+        <h4>🔬 3. ANALYZE (Multi-Lens Forensic AI Lab)</h4>
+        <ul>
+          <li><strong>Digital Media & CGI Forensics:</strong> Screens uploaded images and video frames for synthetic diffusion noise, edge matting splines, 3D camera tracking drift, and post-production keyframing.</li>
+          <li><strong>Dual-Lens Analytical Engine:</strong> Tests footage against both <strong>Lens A</strong> (FAA anti-collision strobes, aerodynamic surfaces, Newtonian drag) and <strong>Lens B</strong> (Metric manipulation, vacuum shearing, absence of sonic booms).</li>
+          <li><strong>Tri-Model Consensus:</strong> Multi-agent validation across Gemini, Claude, and Luna to eliminate single-model hallucinations.</li>
+        </ul>
+      </div>
+
+      <div class="card" id="section-2-4">
+        <h4>📋 4. REPORT (Diagnostic Dossiers & Archival)</h4>
+        <ul>
+          <li><strong>Automotive Diagnostic Trouble Codes (DTC):</strong> Assigns standardized fault codes (e.g., <code>DTC P0312</code>, <code>DTC P0420</code>) to communicate encounter severity and category instantly.</li>
+          <li><strong>Multi-Observer Triangulation:</strong> Calculates true 3D geometric altitude (ft MSL) and slant range (mi) using simultaneous two-point witness sightline intersections.</li>
+          <li><strong>Audit-Ready Export:</strong> Generates tamper-evident, publication-grade PDF dossiers complete with sensor provenance stamps ready for submission to academic and governmental repositories (AARO, SUAPS, SCU).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3 -->
+  <section id="section-3">
+    <h2>
+      <span>3. The Power of Collaborative AI: The Parallax Panel</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      A cornerstone strength of Check Sky Light is its rejection of single-model "black box" AI. Instead, it utilizes the <strong>Parallax Panel</strong>—a collaborative tri-model review methodology:
+    </p>
+
+    <pre>
+┌────────────────────────────────────────────────────────────────────────┐
+│                        THE PARALLAX PANEL                              │
+│                      [DTC P0312 Consensus]                             │
+├──────────────────┬───────────────────────┬─────────────────────────────┤
+│      GEMINI      │        CLAUDE         │            LUNA             │
+│ Vision & Sensor  │ Epistemology & Logic  │ Telemetry & Deconfliction   │
+├──────────────────┼───────────────────────┼─────────────────────────────┤
+│ Real-time mobile │ Methodological rigor, │ Adversarial stress-testing, │
+│ IMU parsing,     │ peer-review audit,    │ synthetic media elimination,│
+│ optical tracking │ logic validation &    │ conventional hypothesis     │
+│ & live vision    │ citation verification │ boundary enforcement        │
+└──────────────────┴───────────────────────┴─────────────────────────────┘
+    </pre>
+
+    <h3 id="section-3-1">The "Secret" Diagnostic Code: DTC P0312</h3>
+    <ul>
+      <li><strong>3:</strong> Three independent neural architectures (Gemini, Claude, Luna)</li>
+      <li><strong>1:</strong> One unified empirical consensus</li>
+      <li><strong>2:</strong> Two simultaneous analytical lenses (Classical Aerospace vs. Metric Manipulation)</li>
+      <li><strong>Status Readout:</strong> <code>DTC P0312: DUAL-LENS PARALLAX RESOLVED</code>. When an encounter receives DTC P0312, it signifies that all conventional mundane candidates have been systematically eliminated and the data meets the threshold of a genuine anomaly.</li>
+    </ul>
+  </section>
+
+  <!-- Section 4 -->
+  <section id="section-4">
+    <h2>
+      <span>4. Competitive Analysis: Check Sky Light vs. The UAP App Ecosystem</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      To maintain intellectual honesty, Check Sky Light is evaluated transparently against all major existing applications, networks, and tools in the aerial observation domain on an objective 1 to 10 scale.
+    </p>
+
+    <div class="table-container" id="section-4-1">
+      <table>
+        <thead>
+          <tr>
+            <th>Application / Network</th>
+            <th>Platform Type</th>
+            <th>AR Optical HUD</th>
+            <th>Live Deconfliction</th>
+            <th>CGI Forensics</th>
+            <th>Multi-Model AI</th>
+            <th>Empirical Provenance</th>
+            <th>Open Access (No Paywall)</th>
+            <th>Overall Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Check Sky Light (v3.6)</strong></td>
+            <td>Mobile Web (PWA)</td>
+            <td><span class="score-badge score-high">9.5</span></td>
+            <td><span class="score-badge score-high">9.0</span></td>
+            <td><span class="score-badge score-high">9.2</span></td>
+            <td><span class="score-badge score-high">9.8</span></td>
+            <td><span class="score-badge score-high">9.6</span></td>
+            <td><span class="score-badge score-high">10.0</span></td>
+            <td><span class="score-badge score-high">9.5 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>Enigma Labs</strong></td>
+            <td>Native Mobile App</td>
+            <td><span class="score-badge score-low">4.0</span></td>
+            <td><span class="score-badge score-mid">6.5</span></td>
+            <td><span class="score-badge score-mid">5.0</span></td>
+            <td><span class="score-badge score-low">4.5</span></td>
+            <td><span class="score-badge score-mid">6.0</span></td>
+            <td><span class="score-badge score-mid">7.0</span></td>
+            <td><span class="score-badge score-mid">5.5 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>Sky360 Network</strong></td>
+            <td>Stationary Hardware</td>
+            <td><span class="score-badge score-high">8.5</span></td>
+            <td><span class="score-badge score-mid">7.0</span></td>
+            <td><span class="score-badge score-mid">6.0</span></td>
+            <td><span class="score-badge score-mid">5.5</span></td>
+            <td><span class="score-badge score-high">8.5</span></td>
+            <td><span class="score-badge score-low">4.0</span></td>
+            <td><span class="score-badge score-mid">6.6 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>UFODAP</strong></td>
+            <td>Optical Field Station</td>
+            <td><span class="score-badge score-high">8.0</span></td>
+            <td><span class="score-badge score-mid">5.0</span></td>
+            <td><span class="score-badge score-mid">5.0</span></td>
+            <td><span class="score-badge score-low">3.0</span></td>
+            <td><span class="score-badge score-high">9.0</span></td>
+            <td><span class="score-badge score-low">3.0</span></td>
+            <td><span class="score-badge score-mid">5.5 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>Skywatcher.ai</strong></td>
+            <td>Autonomous Network</td>
+            <td><span class="score-badge score-high">9.0</span></td>
+            <td><span class="score-badge score-mid">7.5</span></td>
+            <td><span class="score-badge score-mid">7.0</span></td>
+            <td><span class="score-badge score-mid">6.0</span></td>
+            <td><span class="score-badge score-high">8.0</span></td>
+            <td><span class="score-badge score-low">3.5</span></td>
+            <td><span class="score-badge score-mid">6.8 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>MUFON CMS Mobile</strong></td>
+            <td>Web / Mobile Form</td>
+            <td><span class="score-badge score-low">1.0</span></td>
+            <td><span class="score-badge score-low">1.0</span></td>
+            <td><span class="score-badge score-low">2.0</span></td>
+            <td><span class="score-badge score-low">1.0</span></td>
+            <td><span class="score-badge score-mid">5.0</span></td>
+            <td><span class="score-badge score-mid">6.0</span></td>
+            <td><span class="score-badge score-low">2.7 / 10</span></td>
+          </tr>
+          <tr>
+            <td><strong>Flightradar24 / ADS-B</strong></td>
+            <td>Flight Tracker</td>
+            <td><span class="score-badge score-low">3.0</span></td>
+            <td><span class="score-badge score-high">9.5</span></td>
+            <td><span class="score-badge score-low">N/A</span></td>
+            <td><span class="score-badge score-low">N/A</span></td>
+            <td><span class="score-badge score-high">9.5</span></td>
+            <td><span class="score-badge score-high">8.0</span></td>
+            <td><span class="score-badge score-mid">6.0 / 10</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="section-4-2">Detailed Application Critiques</h3>
+    <ul>
+      <li><strong>Check Sky Light (v3.6) — 9.5/10:</strong> Total convergence. Fuses live AR tracking, immediate multi-source airspace deconfliction, multi-model AI forensic evaluation, and formal PDF dossiers into an accessible, zero-install mobile application. (Limitation: Handheld tool; does not provide 24/7 all-sky stationary camera surveillance).</li>
+      <li><strong>Enigma Labs — 5.5/10:</strong> High social polish and strong funding, but functions as a closed "black box". Scoring relies on opaque proprietary algorithms without peer review. Lacks a live optical AR telemetry HUD, multi-model AI consensus, and downloadable raw mathematical triangulation dossiers.</li>
+      <li><strong>Sky360 Network — 6.6/10:</strong> Exceptional open-source citizen science community with continuous 24/7 all-sky coverage. However, the high financial and technical barrier to entry (specialized rooftop camera rigs) makes it inaccessible for everyday mobile field use.</li>
+      <li><strong>UFODAP — 5.5/10:</strong> Outstanding multi-spectral scientific hardware (optical, RF, magnetic), but dated software interface, zero mobile utility, and costs thousands of dollars.</li>
+      <li><strong>Skywatcher.ai — 6.8/10:</strong> Leading autonomous CV tracking algorithms, but tailored for enterprise/research installations rather than spontaneous civilian field encounters.</li>
+      <li><strong>MUFON CMS Mobile — 2.7/10:</strong> Form-based questionnaire backlog. No live camera sensor integration, no live ADS-B deconfliction, and investigations take months to process manually.</li>
+    </ul>
+  </section>
+
+  <!-- Section 5 -->
+  <section id="section-5">
+    <h2>
+      <span>5. The Evolving 5-Tier Empirical Knowledge Base</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      To maintain scientific rigor and prevent contamination from internet folklore, Check Sky Light anchors its diagnostics against five authoritative scientific tiers:
+    </p>
+
+    <ul>
+      <li><strong>Tier I: Official Government & Defense Declassification:</strong> AARO (aaro.mil), NASA UAP Independent Study, CNES/GEIPAN (France), ODNI threat assessments.</li>
+      <li><strong>Tier II: Academic & Institutional Scientific Bodies:</strong> Society for UAP Studies (SUAPS) / Limina Journal, Scientific Coalition for UAP Studies (SCU), The Galileo Project (Harvard), AIAA UAPIOC.</li>
+      <li><strong>Tier III: Autonomous Sky Observation Networks:</strong> Skywatcher.ai, Sky360 Network, UFODAP, Project Hessdalen (Norway, recording since 1983).</li>
+      <li><strong>Tier IV: Spaceflight, Telemetry & Ephemeris Deconfliction:</strong> Space-Track / Celestrak (NORAD 18th Space Defense Squadron), ADS-B Exchange, NOAA NEXRAD dual-pol radar.</li>
+      <li><strong>Tier V: Theoretical Metric & Decoupled Physics:</strong> Alcubierre (1994) warp metric, Lentz (2021) positive-energy solitons, Bobrick & Martire (2021), boundary-layer vacuum shearing models.</li>
+    </ul>
+  </section>
+
+  <!-- Section 6 -->
+  <section id="section-6">
+    <h2>
+      <span>6. Cockpit Archetypes & DTC Diagnostic System</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      Tapping the top-left <strong>Check Engine icon</strong> allows observers to switch between four customizable cockpit instrument displays:
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>🛩️ Black Project Flight Deck (Default)</h4>
+        <p>Obsidian Base (<code>#08090C</code>) with Master Caution Amber (<code>#FF9500</code>) and Mil-Spec Green (<code>#30D158</code>). Inspired by Special Access Program (SAP) aerospace testbeds and fighter annunciator tiles.</p>
+      </div>
+      <div class="card">
+        <h4>🕹️ Retro OBD-II Diagnostic Dash</h4>
+        <p>CRT Gunmetal (<code>#0B0E14</code>) with Vacuum Fluorescent Display (VFD) Neon Cyan (<code>#00F2FE</code>) and Halogen Orange (<code>#FF5722</code>). 1984 concept car digital cluster with diagnostic trouble screens.</p>
+      </div>
+      <div class="card">
+        <h4>🪖 Gen-3 NVG & FLIR Thermal</h4>
+        <p>Night Forest Base (<code>#030B05</code>) with 530nm Monochromatic Phosphor Green (<code>#39FF14</code>). Replicates looking through PVS-14 night vision goggles or an electro-optical turret with milliradian tick scales.</p>
+      </div>
+      <div class="card">
+        <h4>🔭 Observatory Starlight Mode</h4>
+        <p>True OLED Black (<code>#000000</code>) with Deep Celestial Ruby Red (<code>#FF3B30</code>). Pure astronomy red lighting that completely preserves human rhodopsin (dark-adapted night vision) during outdoor fieldwork.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7 -->
+  <section id="section-7">
+    <h2>
+      <span>7. Summary: Setting the Empirical Benchmark</span>
+      <a href="#table-of-contents" class="back-to-top no-print">↑ Back to TOC</a>
+    </h2>
+    <p>
+      Check Sky Light represents a fundamental paradigm shift in civilian aerospace investigation:
+    </p>
+    <ul>
+      <li><strong>Scientific Integrity Over Sensationalism:</strong> False positives and conventional deconflictions are celebrated as successes, not disappointments.</li>
+      <li><strong>No Proprietary Black Boxes:</strong> Every sensor calculation, trigonometric triangulation vector, and AI consensus check is transparent, inspectable, and exportable.</li>
+      <li><strong>Zero Barrier to Entry:</strong> Operates instantly on modern smartphone browsers without requiring expensive proprietary hardware rigs.</li>
+      <li><strong>Collaborative AI Governance:</strong> Continually cross-examined by the tri-model peer review of Gemini, Claude, and Luna to ensure technology remains an uncompromising servant of truth.</li>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    <p>Check Sky Light v3.6.0 • Open Civilian Aerospace Diagnostics & Deconfliction</p>
+    <p>Peer-Reviewed Collaborative Architecture: Gemini • Claude • Luna</p>
+  </footer>
+</div>
+
+</body>
+</html>
