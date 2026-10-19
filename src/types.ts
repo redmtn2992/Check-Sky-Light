@@ -528,7 +528,7 @@ export type LogoColorTheme =
 
 export type AppArchetypeTheme =
   | 'black_project'    // Black Project Flight Deck (Obsidian + Master Caution Amber)
-  | 'retro_obd'        // Retro OBD-II Diagnostic Dash (CRT Gunmetal + VFD Cyan + Fault Codes)
+  | 'retro_obd'        // Retro OBD-III Diagnostic Dash (CRT Gunmetal + VFD Cyan + Fault Codes)
   | 'nvg_flir'         // Gen-3 NVG & FLIR Thermal (530nm Monochromatic Phosphor Green)
   | 'observatory';     // Observatory Starlight Mode (True OLED Black + Deep Astronomy Red)
 

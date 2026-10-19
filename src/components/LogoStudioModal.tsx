@@ -15,7 +15,8 @@ import {
   loadActiveArchetype,
   saveActiveArchetype,
   applyArchetypeToDocument,
-  getArchetypeIcon
+  getArchetypeIcon,
+  getThemeLogoFilter
 } from '../lib/themeManager';
 
 interface LogoStudioModalProps {
@@ -94,9 +95,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
               <img
                 src={getArchetypeIcon(selectedTheme)}
                 alt="Theme Icon"
-                className={`w-full h-full object-cover ${
-                  selectedTheme === 'observatory' ? 'hue-rotate-[320deg] saturate-150' : ''
-                }`}
+                className={`w-full h-full object-cover transition-all ${getThemeLogoFilter(selectedTheme)}`}
               />
             </div>
             <div>
@@ -179,9 +178,7 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
                         <img
                           src={iconImg}
                           alt={theme.name}
-                          className={`w-full h-full object-cover ${
-                            theme.id === 'observatory' ? 'hue-rotate-[320deg] saturate-150' : ''
-                          }`}
+                          className={`w-full h-full object-cover transition-all ${getThemeLogoFilter(theme.id)}`}
                         />
                       </div>
                       <span className="font-mono font-bold text-xs uppercase tracking-wider text-slate-200">

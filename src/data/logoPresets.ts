@@ -245,8 +245,8 @@ export const ARCHETYPE_THEMES: ArchetypeThemeMetadata[] = [
   },
   {
     id: 'retro_obd',
-    name: 'Retro OBD-II Diagnostic Dash',
-    shortName: 'Retro OBD-II',
+    name: 'Retro OBD-III Diagnostic Dash',
+    shortName: 'Retro OBD-III',
     tagline: '1980s Vacuum Fluorescent Display (VFD) & automotive fault codes.',
     lore: 'A 1984 concept car digital cluster crossed with a Project Blue Book field terminal. Neon cyan VFD instrument graphics, digital segment counters, and glowing DTC diagnostic fault readouts.',
     baseBgHex: '#0B0E14',

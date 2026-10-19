@@ -59,6 +59,7 @@ import {
   subscribeArchetype, 
   applyArchetypeToDocument, 
   getArchetypeIcon, 
+  getThemeLogoFilter,
   getArchetypeMetadata, 
   AppArchetypeTheme 
 } from './lib/themeManager';
@@ -378,10 +379,8 @@ export default function App() {
                 >
                   <img
                     src={getArchetypeIcon(activeArchetype)}
-                    alt="Check Sky Light Icon"
-                    className={`w-full h-full object-cover transition-all ${
-                      activeArchetype === 'observatory' ? 'hue-rotate-[320deg] saturate-150' : ''
-                    }`}
+                    alt="Check Sky Light Icon - OBD-III P0312"
+                    className={`w-full h-full object-cover transition-all ${getThemeLogoFilter(activeArchetype)}`}
                     referrerPolicy="no-referrer"
                   />
                   <div 

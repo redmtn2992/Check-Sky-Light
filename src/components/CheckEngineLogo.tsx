@@ -444,7 +444,7 @@ export const CheckEngineLogo: React.FC<CheckEngineLogoProps> = ({
               fontWeight="900"
               fontFamily="monospace"
             >
-              DTC: {customFaultCode || 'P0404'}
+              DTC: {customFaultCode || 'P0312'}
             </text>
             <text
               x="50"

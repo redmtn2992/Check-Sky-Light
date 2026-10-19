@@ -1,9 +1,7 @@
 export type { AppArchetypeTheme } from '../types';
 import { AppArchetypeTheme } from '../types';
 import { ARCHETYPE_THEMES, ArchetypeThemeMetadata } from '../data/logoPresets';
-import conceptOneImg from '../assets/images/concept_one_obd_1789670680785.jpg';
-import conceptFourImg from '../assets/images/concept_four_gauge_1789670692167.jpg';
-import conceptFiveImg from '../assets/images/concept_five_bubble_1789670701994.jpg';
+import checkSkyLogoImg from '../assets/images/check_sky_icon_obd3_1792430211713.jpg';
 
 export const THEME_STORAGE_KEY = 'checkskylight_active_archetype_v1';
 export const DEFAULT_ARCHETYPE: AppArchetypeTheme = 'black_project';
@@ -89,16 +87,27 @@ export function getArchetypeMetadata(archetypeId: AppArchetypeTheme): ArchetypeT
   return ARCHETYPE_THEMES.find((t) => t.id === archetypeId) || ARCHETYPE_THEMES[0];
 }
 
-export function getArchetypeIcon(archetypeId: AppArchetypeTheme): string {
+/**
+ * Returns the unified Check Sky Light main logo/icon (OBD-III & P0312).
+ * Remains identical across all themes as requested.
+ */
+export function getArchetypeIcon(_archetypeId?: AppArchetypeTheme): string {
+  return checkSkyLogoImg;
+}
+
+/**
+ * Dynamically shifts the glowing neon hue of the main logo/icon to match the active theme.
+ */
+export function getThemeLogoFilter(archetypeId: AppArchetypeTheme): string {
   switch (archetypeId) {
     case 'retro_obd':
-      return conceptFourImg;
+      return 'hue-rotate-[160deg] saturate-150 contrast-105';
     case 'nvg_flir':
-      return conceptFiveImg;
+      return 'hue-rotate-[85deg] saturate-150 contrast-105';
     case 'observatory':
-      return conceptOneImg;
+      return 'hue-rotate-[330deg] saturate-200 contrast-110';
     case 'black_project':
     default:
-      return conceptOneImg;
+      return '';
   }
 }
