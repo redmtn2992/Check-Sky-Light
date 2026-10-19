@@ -1,7 +1,7 @@
 export type { AppArchetypeTheme } from '../types';
 import { AppArchetypeTheme } from '../types';
 import { ARCHETYPE_THEMES, ArchetypeThemeMetadata } from '../data/logoPresets';
-import checkSkyLogoImg from '../assets/images/check_sky_icon_obd3_1792430211713.jpg';
+import checkSkyLogoImg from '../assets/images/check_sky_icon_obd3_p3012_clean_1792430770040.jpg';
 
 export const THEME_STORAGE_KEY = 'checkskylight_active_archetype_v1';
 export const DEFAULT_ARCHETYPE: AppArchetypeTheme = 'black_project';

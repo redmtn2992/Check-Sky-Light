@@ -101,6 +101,25 @@
   --csl-glow: 0 0 16px rgba(0, 242, 254, 0.25);
 }
 
+/* Retro OBD-III Theme overrides */
+[data-archetype="retro_obd"] .text-amber-400,
+[data-archetype="retro_obd"] .text-amber-300,
+[data-archetype="retro_obd"] .text-amber-500 {
+  color: #00F2FE !important;
+}
+[data-archetype="retro_obd"] .border-amber-500,
+[data-archetype="retro_obd"] .border-amber-400 {
+  border-color: rgba(0, 242, 254, 0.5) !important;
+}
+[data-archetype="retro_obd"] .bg-amber-500\/20,
+[data-archetype="retro_obd"] .bg-amber-500\/10 {
+  background-color: rgba(0, 242, 254, 0.15) !important;
+}
+[data-archetype="retro_obd"] .bg-amber-500 {
+  background-color: #00F2FE !important;
+  color: #070B12 !important;
+}
+
 [data-archetype="nvg_flir"] {
   --csl-accent: #39FF14;
   --csl-accent-rgb: 57, 255, 20;
@@ -111,6 +130,33 @@
   --csl-border: rgba(57, 255, 20, 0.4);
   --csl-border-subtle: rgba(57, 255, 20, 0.15);
   --csl-glow: 0 0 16px rgba(57, 255, 20, 0.25);
+}
+
+/* Gen-3 NVG & FLIR Theme overrides (530nm Monochromatic Phosphor Green) */
+[data-archetype="nvg_flir"] .text-cyan-400,
+[data-archetype="nvg_flir"] .text-cyan-300,
+[data-archetype="nvg_flir"] .text-cyan-500,
+[data-archetype="nvg_flir"] .text-amber-400,
+[data-archetype="nvg_flir"] .text-amber-300,
+[data-archetype="nvg_flir"] .text-amber-500 {
+  color: #39FF14 !important;
+}
+[data-archetype="nvg_flir"] .border-cyan-500,
+[data-archetype="nvg_flir"] .border-cyan-400,
+[data-archetype="nvg_flir"] .border-amber-500,
+[data-archetype="nvg_flir"] .border-amber-400 {
+  border-color: rgba(57, 255, 20, 0.5) !important;
+}
+[data-archetype="nvg_flir"] .bg-cyan-500\/20,
+[data-archetype="nvg_flir"] .bg-cyan-500\/10,
+[data-archetype="nvg_flir"] .bg-amber-500\/20,
+[data-archetype="nvg_flir"] .bg-amber-500\/10 {
+  background-color: rgba(57, 255, 20, 0.15) !important;
+}
+[data-archetype="nvg_flir"] .bg-cyan-500,
+[data-archetype="nvg_flir"] .bg-amber-500 {
+  background-color: #39FF14 !important;
+  color: #030B05 !important;
 }
 
 [data-archetype="observatory"] {
@@ -124,4 +170,32 @@
   --csl-border-subtle: rgba(255, 59, 48, 0.15);
   --csl-glow: 0 0 16px rgba(255, 59, 48, 0.25);
 }
+
+/* Observatory Starlight Theme overrides (Astronomy Rhodopsin Deep Red) */
+[data-archetype="observatory"] .text-cyan-400,
+[data-archetype="observatory"] .text-cyan-300,
+[data-archetype="observatory"] .text-cyan-500,
+[data-archetype="observatory"] .text-amber-400,
+[data-archetype="observatory"] .text-amber-300,
+[data-archetype="observatory"] .text-amber-500 {
+  color: #FF3B30 !important;
+}
+[data-archetype="observatory"] .border-cyan-500,
+[data-archetype="observatory"] .border-cyan-400,
+[data-archetype="observatory"] .border-amber-500,
+[data-archetype="observatory"] .border-amber-400 {
+  border-color: rgba(255, 59, 48, 0.5) !important;
+}
+[data-archetype="observatory"] .bg-cyan-500\/20,
+[data-archetype="observatory"] .bg-cyan-500\/10,
+[data-archetype="observatory"] .bg-amber-500\/20,
+[data-archetype="observatory"] .bg-amber-500\/10 {
+  background-color: rgba(255, 59, 48, 0.15) !important;
+}
+[data-archetype="observatory"] .bg-cyan-500,
+[data-archetype="observatory"] .bg-amber-500 {
+  background-color: #FF3B30 !important;
+  color: #FFFFFF !important;
+}
+
 

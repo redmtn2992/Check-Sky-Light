@@ -403,7 +403,7 @@ export default function App() {
                       borderColor: 'rgba(var(--csl-accent-rgb), 0.4)'
                     }}
                   >
-                    {activeThemeMeta.shortName}
+                    v3.6
                   </span>
                 </div>
               </button>

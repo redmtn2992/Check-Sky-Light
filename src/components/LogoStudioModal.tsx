@@ -63,7 +63,8 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
     setAppliedToast(`Theme activated: ${meta?.name || themeId}`);
     setTimeout(() => {
       setAppliedToast(null);
-    }, 2200);
+      onClose();
+    }, 450);
   };
 
   return (
@@ -121,6 +122,18 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
           </div>
 
           <div className="flex items-center space-x-2">
+            <button
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition cursor-pointer flex items-center space-x-1 border"
+              style={{
+                backgroundColor: `${activeThemeMeta.accentHex}20`,
+                borderColor: `${activeThemeMeta.accentHex}60`,
+                color: activeThemeMeta.accentHex
+              }}
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>DONE</span>
+            </button>
             <button
               onClick={onClose}
               className="p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-white/10 transition cursor-pointer"
