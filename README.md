@@ -14,7 +14,7 @@
 
 **Check Sky Light** is an empirical civilian sky diagnostics and aerospace deconfliction platform. Taking inspiration from the universal automotive **"Check Engine" light**, Check Sky Light acts as an instrument panel warning light for the sky—monitoring anomalies with structured **Diagnostic Trouble Codes (DTCs)** and eliminating false alarms before evaluating non-conventional aerospace physics.
 
-The platform's paramount strength is its **unyielding empirical discipline**: systematically eliminating 100% of conventional air traffic, meteorological balloons, low-Earth-orbit satellites, astronomical mirages, camera lens artifacts, and synthetic AI/CGI hoaxes before admitting genuine anomalous signatures.
+The platform's paramount strength is its **unyielding empirical discipline**: systematically eliminating conventional air traffic, meteorological balloons, low-Earth-orbit satellites, astronomical mirages, camera lens artifacts, and synthetic AI/CGI hoaxes before admitting genuine anomalous signatures.
 
 ---
 
