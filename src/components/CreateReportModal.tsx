@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Send, MapPin, Tag, Image as ImageIcon, Sparkles, AlertTriangle, Landmark, ExternalLink, ShieldCheck, Upload, Cpu, Eye, CheckCircle2, Play, Video } from 'lucide-react';
+import { X, Send, MapPin, Tag, Image as ImageIcon, Sparkles, AlertTriangle, Landmark, ExternalLink, ShieldCheck, Upload, Cpu, Eye, CheckCircle2, Play, Video, ShieldAlert } from 'lucide-react';
 import { LocationCoords, SightingReport, PhotoAnalysisResult } from '../types';
 import { THE_NINE_UAP_CLASSES, UapClassDefinition } from '../data/uapClassesData';
+import { evaluateContentSafety, checkUserBlockStatus, recordSafetyStrike, UserBlockStatus } from '../lib/safetyGuardrails';
 
 interface CreateReportModalProps {
   isOpen: boolean;
@@ -69,6 +70,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
   const [aiAnalysisResult, setAiAnalysisResult] = useState<PhotoAnalysisResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [blockStatus, setBlockStatus] = useState<UserBlockStatus>(() => checkUserBlockStatus());
 
   const isVideoMedia = Boolean(
     (mediaUrl && (
@@ -85,6 +87,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      setBlockStatus(checkUserBlockStatus());
       const activeMedia = initialMediaUrl || prefilledPhotoUrl || null;
       if (activeMedia) {
         setMediaUrl(activeMedia);
@@ -191,8 +194,22 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
   };
 
   const handleRunInstantAiPhotoScan = async () => {
+    if (blockStatus.isBlocked) {
+      setErrorMsg(`Device submission locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
     const imgToAnalyze = posterThumbnail || uploadedBase64 || mediaUrl;
     if (!imgToAnalyze) return;
+
+    // Safety pre-flight
+    const safety = evaluateContentSafety(description, mediaUrl);
+    if (!safety.isSafe) {
+      const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+      setBlockStatus(updated);
+      setErrorMsg(`[SUBMISSION BLOCKED]: ${safety.reason}`);
+      return;
+    }
+
     setIsAnalyzingPhoto(true);
     setErrorMsg(null);
     try {
@@ -218,7 +235,16 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
           locationNotes: `Captured at ${locationName}`
         })
       });
-      if (!res.ok) throw new Error('AI Optical analysis failed.');
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+          const updated = recordSafetyStrike(errJson.reason || 'Content rejected', true);
+          setBlockStatus(updated);
+          setErrorMsg(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+          return;
+        }
+        throw new Error('AI Optical analysis failed.');
+      }
       const data: PhotoAnalysisResult = await res.json();
       setAiAnalysisResult(data);
       if (data.detailedAnalysis) {
@@ -229,7 +255,7 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
       }
     } catch (err: any) {
       console.error('AI photo scan error:', err);
-      setErrorMsg('Could not run instant optical scan on photo.');
+      setErrorMsg(err.message || 'Could not run instant optical scan on photo.');
     } finally {
       setIsAnalyzingPhoto(false);
     }
@@ -247,10 +273,24 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (blockStatus.isBlocked) {
+      setErrorMsg(`Device submission locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
     if (!title.trim() || !description.trim()) {
       setErrorMsg('Please fill in title and description.');
       return;
     }
+
+    // Zero-tolerance pre-flight check
+    const safety = evaluateContentSafety(`${title} ${description}`, mediaUrl);
+    if (!safety.isSafe) {
+      const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+      setBlockStatus(updated);
+      setErrorMsg(`[SUBMISSION BLOCKED]: ${safety.reason}`);
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
     try {
@@ -290,9 +330,20 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
         if (postRes.ok) {
           created = await postRes.json();
         } else {
+          const errJson = await postRes.json().catch(() => ({}));
+          if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+            const updated = recordSafetyStrike(errJson.reason || 'Policy violation', true);
+            setBlockStatus(updated);
+            setErrorMsg(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+            setIsSubmitting(false);
+            return;
+          }
           throw new Error('API server returned error');
         }
-      } catch {
+      } catch (err: any) {
+        if (err.message && err.message.includes('QUARANTINE')) {
+          return;
+        }
         created = {
           id: `sighting-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           ...payload,
@@ -349,6 +400,20 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
             <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
           </a>
         </div>
+
+        {blockStatus.isBlocked && (
+          <div className="p-3.5 rounded-2xl bg-rose-950/60 border border-rose-500/60 text-rose-200 text-xs sm:text-sm flex items-start space-x-3 font-sans">
+            <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div className="font-bold uppercase tracking-wide font-mono text-rose-300 text-xs">
+                Client Access Quarantined ({blockStatus.remainingMinutes || 0}m Remaining)
+              </div>
+              <p className="text-slate-300 font-sans text-xs">
+                {blockStatus.reason || 'Repeated acceptable use violations. Explicit material, pornography, and animal/human harm are strictly prohibited on Check Sky Light.'}
+              </p>
+            </div>
+          </div>
+        )}
 
         {errorMsg && (
           <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs sm:text-sm flex items-center space-x-2.5">
@@ -538,11 +603,11 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 rounded-2xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold font-sans text-xs sm:text-sm transition flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] disabled:opacity-50 cursor-pointer min-h-[46px] active:scale-98"
+              disabled={isSubmitting || blockStatus.isBlocked}
+              className="px-6 py-3 rounded-2xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold font-sans text-xs sm:text-sm transition flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.3)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer min-h-[46px] active:scale-98"
             >
               <Send className="w-4 h-4" />
-              <span>{isSubmitting ? 'Verifying & Submitting...' : 'Submit Report'}</span>
+              <span>{blockStatus.isBlocked ? 'Submission Quarantined' : isSubmitting ? 'Verifying & Submitting...' : 'Submit Report'}</span>
             </button>
           </div>
         </form>

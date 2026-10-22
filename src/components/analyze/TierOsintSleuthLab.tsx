@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Link as LinkIcon, Upload, Sparkles, CheckCircle2, 
   FileText, RefreshCw, AlertTriangle, ExternalLink, 
-  Volume2, Film, Image as ImageIcon, Check, Info, X
+  Volume2, Film, Image as ImageIcon, Check, Info, X, ShieldAlert, ShieldCheck
 } from 'lucide-react';
 import { LocationCoords, GeminiForensicAnalysis } from '../../types';
 import { DiagnosticReportCard } from './DiagnosticReportCard';
 import { AaroRecordsModal } from './AaroRecordsModal';
 import { matchAaroCase, AaroCaseRecord } from '../../data/aaroRecordsData';
+import { evaluateContentSafety, checkUserBlockStatus, recordSafetyStrike, UserBlockStatus } from '../../lib/safetyGuardrails';
 
 interface TierOsintSleuthLabProps {
   userLocation: LocationCoords;
@@ -37,6 +38,11 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
   const [isPublished, setIsPublished] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isAaroModalOpen, setIsAaroModalOpen] = useState<boolean>(false);
+  const [blockStatus, setBlockStatus] = useState<UserBlockStatus>(() => checkUserBlockStatus());
+
+  useEffect(() => {
+    setBlockStatus(checkUserBlockStatus());
+  }, []);
 
   // 3 Presets: Positive Control (DoD AARO PR-013), Negative Control (AARO PR-016 Birds), and Puppy Control
   const handleLoadPreset = (type: 'positive' | 'negative' | 'puppy') => {
@@ -209,15 +215,36 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
   const handleRunOsintAnalysis = async () => {
     setErrorMsg(null);
 
+    if (blockStatus.isBlocked) {
+      setErrorMsg(`[CLIENT QUARANTINED]: Analysis locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
+
     // Validation
     if (intakeTab === 'url') {
       if (!targetUrl.trim()) {
         setErrorMsg('Please enter a target URL or select a preset above.');
         return;
       }
+      // Safety pre-flight
+      const safety = evaluateContentSafety(incidentNotes, targetUrl);
+      if (!safety.isSafe) {
+        const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+        setBlockStatus(updated);
+        setErrorMsg(`[SUBMISSION BLOCKED]: ${safety.reason}`);
+        return;
+      }
     } else {
       if (!mediaFile && !mediaPreviewUrl) {
         setErrorMsg('Please upload an evidence file (photo, video, or audio) or select a preset above.');
+        return;
+      }
+      // Safety pre-flight
+      const safety = evaluateContentSafety(`${incidentNotes} ${mediaFile?.name || ''}`, mediaPreviewUrl || undefined);
+      if (!safety.isSafe) {
+        const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+        setBlockStatus(updated);
+        setErrorMsg(`[SUBMISSION BLOCKED]: ${safety.reason}`);
         return;
       }
     }
@@ -240,7 +267,14 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
         });
 
         if (!res.ok) {
-          throw new Error(`Server returned HTTP ${res.status}`);
+          const errJson = await res.json().catch(() => ({}));
+          if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+            const updated = recordSafetyStrike(errJson.reason || 'Content rejected', true);
+            setBlockStatus(updated);
+            setErrorMsg(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+            return;
+          }
+          throw new Error(errJson.message || `Server returned HTTP ${res.status}`);
         }
 
         const data: GeminiForensicAnalysis = await res.json();
@@ -281,7 +315,14 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
         });
 
         if (!res.ok) {
-          throw new Error(`Server returned HTTP ${res.status}`);
+          const errJson = await res.json().catch(() => ({}));
+          if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+            const updated = recordSafetyStrike(errJson.reason || 'Content rejected', true);
+            setBlockStatus(updated);
+            setErrorMsg(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+            return;
+          }
+          throw new Error(errJson.message || `Server returned HTTP ${res.status}`);
         }
 
         const data: GeminiForensicAnalysis = await res.json();
@@ -491,6 +532,21 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
           </div>
         )}
 
+        {/* Quarantine banner */}
+        {blockStatus.isBlocked && (
+          <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/60 text-rose-200 text-xs font-sans flex items-start space-x-2.5">
+            <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold uppercase tracking-wide font-mono text-rose-300 text-xs">
+                Device Quarantined ({blockStatus.remainingMinutes || 0}m Remaining)
+              </div>
+              <p className="text-slate-300 text-[11px] mt-0.5">
+                {blockStatus.reason || 'Repeated safety policy violations. Adult content and harm are prohibited.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Error message */}
         {errorMsg && (
           <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center space-x-2">
@@ -502,14 +558,21 @@ export const TierOsintSleuthLab: React.FC<TierOsintSleuthLabProps> = ({
         {/* Trigger Button */}
         <button
           onClick={handleRunOsintAnalysis}
-          disabled={isAnalyzing}
+          disabled={isAnalyzing || blockStatus.isBlocked}
           className={`w-full py-3 rounded-xl font-bold font-mono text-xs sm:text-sm transition flex items-center justify-center space-x-2 cursor-pointer shadow-lg ${
-            isAnalyzing
+            blockStatus.isBlocked
+              ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-60'
+              : isAnalyzing
               ? 'bg-slate-800 text-slate-500 cursor-wait'
               : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)]'
           }`}
         >
-          {isAnalyzing ? (
+          {blockStatus.isBlocked ? (
+            <>
+              <ShieldAlert className="w-4 h-4 text-rose-400" />
+              <span>Analysis Intake Quarantined</span>
+            </>
+          ) : isAnalyzing ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin text-amber-400" />
               <span>{progressMsg || 'Running Forensic Engine...'}</span>

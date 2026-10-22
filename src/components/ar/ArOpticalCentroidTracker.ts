@@ -84,9 +84,10 @@ export function sampleOpticalCentroid(
 
     const meanLum = sumLum / pixelCount;
     const contrastRange = maxLum - minLum;
-    const brightThreshold = Math.max(meanLum + 22, meanLum + contrastRange * 0.45);
-    const isDarkTargetMode = meanLum > 175 && (meanLum - minLum) > 35;
-    const darkThreshold = meanLum - contrastRange * 0.45;
+    // Enhanced daytime sensitivity: skies have meanLum > 120; aircraft are dark silhouettes or bright specular glints
+    const isDarkTargetMode = meanLum > 115 && (meanLum - minLum) > 16;
+    const brightThreshold = Math.max(meanLum + 18, meanLum + contrastRange * 0.4);
+    const darkThreshold = Math.min(meanLum - 16, meanLum - contrastRange * 0.35);
 
     for (let y = 0; y < boxSizePx; y++) {
       for (let x = 0; x < boxSizePx; x++) {
@@ -113,14 +114,14 @@ export function sampleOpticalCentroid(
       }
     }
 
-    if (totalWeight > 4 && contrastRange > 24) {
+    if (totalWeight > 3 && contrastRange > 16) {
       const centroidX = sumX / totalWeight;
       const centroidY = sumY / totalWeight;
       const deltaPxX = centroidX - (boxSizePx / 2);
       const deltaPxY = centroidY - (boxSizePx / 2);
       const deltaScreenX = (deltaPxX / vWidth) * 100;
       const deltaScreenY = (deltaPxY / vHeight) * 100;
-      const confidence = Math.min(99, Math.round(35 + (contrastRange / 255) * 45 + Math.min(20, totalWeight / 3)));
+      const confidence = Math.min(99, Math.round(40 + (contrastRange / 255) * 50 + Math.min(20, totalWeight / 2.5)));
       return {
         detected: true,
         deltaScreenX,

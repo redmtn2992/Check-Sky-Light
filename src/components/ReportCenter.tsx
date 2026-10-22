@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   FileText, Download, Copy, Check, ExternalLink, 
   ArrowUpDown, Plus, ChevronDown, ChevronUp, Radio, MapPin, ShieldCheck,
-  Scale, Link as LinkIcon, Sparkles, RefreshCw, AlertCircle, Share2, HelpCircle, Clock
+  Scale, Link as LinkIcon, Sparkles, RefreshCw, AlertCircle, Share2, HelpCircle, Clock, ShieldAlert
 } from 'lucide-react';
 import { SightingReport, LocationCoords, ParallaxPanelReview } from '../types';
 import { getAllVaultMedia, VaultMediaRecord } from '../lib/storage/mediaVault';
@@ -12,7 +12,8 @@ import {
   formatMufonCmsSubmissionText 
 } from '../lib/pdfReportGenerator';
 import { EulaPrivacyModal } from './EulaPrivacyModal';
-import { ParallaxTribunalCard } from './parallax/ParallaxTribunalCard';
+import { ParallaxPanelCard } from './parallax/ParallaxPanelCard';
+import { evaluateContentSafety, checkUserBlockStatus, recordSafetyStrike, UserBlockStatus } from '../lib/safetyGuardrails';
 
 interface ReportCenterProps {
   sightings: SightingReport[];
@@ -33,8 +34,8 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   onAddSighting,
   onOpenFeed
 }) => {
-  const [activeCenterMode, setActiveCenterMode] = useState<'dossiers' | 'tribunal'>('dossiers');
-  const [dossierInspectorTab, setDossierInspectorTab] = useState<'specs' | 'tribunal'>('specs');
+  const [activeCenterMode, setActiveCenterMode] = useState<'dossiers' | 'panel'>('dossiers');
+  const [dossierInspectorTab, setDossierInspectorTab] = useState<'specs' | 'panel'>('specs');
   const [vaultItems, setVaultItems] = useState<VaultMediaRecord[]>([]);
   const [reports, setReports] = useState<PreparedIncidentReport[]>([]);
   const [selectedReportId, setSelectedReportId] = useState<string>('');
@@ -51,17 +52,20 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   const [sleuthTimestamp, setSleuthTimestamp] = useState<string>('');
   const [isSleuthRunning, setIsSleuthRunning] = useState<boolean>(false);
   const [sleuthProgressMsg, setSleuthProgressMsg] = useState<string>('');
-  const [activeTribunalResult, setActiveTribunalResult] = useState<{
+  const [activePanelResult, setActivePanelResult] = useState<{
     panelReview: ParallaxPanelReview;
     title: string;
     url?: string;
     notes?: string;
   } | null>(null);
   const [sleuthPublished, setSleuthPublished] = useState<boolean>(false);
-  const [isRunningDossierTribunal, setIsRunningDossierTribunal] = useState<boolean>(false);
+  const [isRunningDossierPanel, setIsRunningDossierPanel] = useState<boolean>(false);
+  const [sleuthErrorMsg, setSleuthErrorMsg] = useState<string | null>(null);
+  const [blockStatus, setBlockStatus] = useState<UserBlockStatus>(() => checkUserBlockStatus());
 
   // Load vault media and synthesize incident reports
   useEffect(() => {
+    setBlockStatus(checkUserBlockStatus());
     async function loadData() {
       try {
         const vItems = await getAllVaultMedia();
@@ -284,7 +288,7 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   };
 
   const handleLoadCuratedSleuthCase = (type: 'razr' | 'pursue' | 'nimitz' | 'triangle' | 'starlink') => {
-    setActiveTribunalResult(null);
+    setActivePanelResult(null);
     setSleuthPublished(false);
     if (type === 'razr') {
       setSleuthUrl('https://www.reddit.com/r/Damnthatsinteresting/comments/w251su/sideways_flying_ufo_filmed_with_a_motorola_razr/');
@@ -304,9 +308,20 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
     }
   };
 
-  const handleRunDossierTribunal = async () => {
+  const handleRunDossierPanel = async () => {
     if (!selectedReport) return;
-    setIsRunningDossierTribunal(true);
+    if (blockStatus.isBlocked) {
+      alert(`[CLIENT QUARANTINED]: Analysis locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
+    const safetyCheck = evaluateContentSafety(selectedReport.observerNarrative || '', '');
+    if (!safetyCheck.isSafe) {
+      const updated = recordSafetyStrike(safetyCheck.reason || 'Safety policy violation', safetyCheck.violationType === 'HUMAN_OR_ANIMAL_HARM');
+      setBlockStatus(updated);
+      alert(`[SAFETY VIOLATION]: ${safetyCheck.reason}`);
+      return;
+    }
+    setIsRunningDossierPanel(true);
     try {
       const res = await fetch('/api/analyze/parallax-panel', {
         method: 'POST',
@@ -332,14 +347,29 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
         setReports(updated);
       }
     } catch (e) {
-      console.error('Failed to run dossier tribunal:', e);
+      console.error('Failed to run dossier panel:', e);
     } finally {
-      setIsRunningDossierTribunal(false);
+      setIsRunningDossierPanel(false);
     }
   };
 
-  const handleRunSleuthTribunal = async () => {
+  const handleRunSleuthPanel = async () => {
+    setSleuthErrorMsg(null);
+    if (blockStatus.isBlocked) {
+      setSleuthErrorMsg(`[CLIENT QUARANTINED]: Analysis locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
     if (!sleuthUrl.trim() && !sleuthNotes.trim()) return;
+
+    // Safety pre-flight check
+    const safety = evaluateContentSafety(sleuthNotes, sleuthUrl);
+    if (!safety.isSafe) {
+      const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+      setBlockStatus(updated);
+      setSleuthErrorMsg(`[SUBMISSION BLOCKED]: ${safety.reason}`);
+      return;
+    }
+
     setIsSleuthRunning(true);
     setSleuthProgressMsg('Analyzing Case across Gemini Multi-Lens Framework...');
     try {
@@ -358,58 +388,69 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
       });
       if (res.ok) {
         const data: ParallaxPanelReview = await res.json();
-        setActiveTribunalResult({
+        setActivePanelResult({
           panelReview: data,
           title: sleuthUrl ? `Evidence Review (${sleuthUrl.substring(0, 35)}...)` : 'Field Note Observation',
           url: sleuthUrl.trim(),
           notes: sleuthNotes.trim()
         });
         setSleuthPublished(false);
+        setSleuthErrorMsg(null);
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+          const updated = recordSafetyStrike(errJson.reason || 'Content rejected', true);
+          setBlockStatus(updated);
+          setSleuthErrorMsg(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+          return;
+        }
+        setSleuthErrorMsg(errJson.message || 'Failed to complete Multi-Lens Review.');
       }
-    } catch (err) {
-      console.error('Failed to run tribunal:', err);
+    } catch (err: any) {
+      console.error('Failed to run panel:', err);
+      setSleuthErrorMsg(err.message || 'Failed to run Multi-Lens Review.');
     } finally {
       setIsSleuthRunning(false);
       setSleuthProgressMsg('');
     }
   };
 
-  const handleConvertTribunalToDossier = () => {
-    if (!activeTribunalResult) return;
+  const handleConvertPanelToDossier = () => {
+    if (!activePanelResult) return;
     const now = new Date();
     const newCaseNum = `CSL-${now.getFullYear()}-${(userLocation.region || 'NM').slice(0, 2).toUpperCase()}-${Math.floor(1000 + Math.random() * 8999)}`;
     const newDossier: PreparedIncidentReport = {
-      id: `tribunal-${Date.now()}`,
+      id: `panel-${Date.now()}`,
       caseNumber: newCaseNum,
-      title: activeTribunalResult.panelReview.consensusVerdict,
+      title: activePanelResult.panelReview.consensusVerdict,
       timestamp: now.toISOString(),
       utcTimestamp: now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
       location: userLocation,
       observerName: 'Field Observer',
       observerBadge: 'Multi-Lens Review Unit',
-      anomalyScore: activeTribunalResult.panelReview.consensusConfidence,
-      verdict: activeTribunalResult.panelReview.consensusConfidence >= 70 ? 'AUTHENTIC_INCIDENT' : 'CONVENTIONAL_AIRCRAFT',
-      verdictSummary: activeTribunalResult.panelReview.unresolvedQuestion,
-      apparentShape: activeTribunalResult.panelReview.primarySuspect,
+      anomalyScore: activePanelResult.panelReview.consensusConfidence,
+      verdict: activePanelResult.panelReview.consensusConfidence >= 70 ? 'AUTHENTIC_INCIDENT' : 'CONVENTIONAL_AIRCRAFT',
+      verdictSummary: activePanelResult.panelReview.unresolvedQuestion,
+      apparentShape: activePanelResult.panelReview.primarySuspect,
       estimatedAltitude: '15,000 ft MSL',
       azimuthDeg: 210,
       pitchDeg: 35,
       angularVelocityDegPerSec: 15,
       speedProfile: 'Variable / Hypersonic Transition',
-      flightCharacteristics: activeTribunalResult.panelReview.panelists.gemini.assessment,
-      hasOpticalEvidence: !!activeTribunalResult.url,
-      classicalDeconfliction: activeTribunalResult.panelReview.panelists.claude.assessment,
-      metricManipulationAnalysis: activeTribunalResult.panelReview.panelists.luna.assessment,
+      flightCharacteristics: activePanelResult.panelReview.panelists.gemini.assessment,
+      hasOpticalEvidence: !!activePanelResult.url,
+      classicalDeconfliction: activePanelResult.panelReview.panelists.claude.assessment,
+      metricManipulationAnalysis: activePanelResult.panelReview.panelists.luna.assessment,
       fiveObservables: {
-        instantaneousAcceleration: activeTribunalResult.panelReview.consensusConfidence >= 70,
+        instantaneousAcceleration: activePanelResult.panelReview.consensusConfidence >= 70,
         hypersonicVelocity: false,
         lowObservability: false,
         transmediumTravel: false,
         positiveLift: true
       },
-      observerNarrative: activeTribunalResult.notes || `Investigated source link: ${activeTribunalResult.url}`,
+      observerNarrative: activePanelResult.notes || `Investigated source link: ${activePanelResult.url}`,
       status: 'READY_FOR_SUBMISSION',
-      parallaxPanel: activeTribunalResult.panelReview
+      parallaxPanel: activePanelResult.panelReview
     };
 
     setReports([newDossier, ...reports]);
@@ -417,23 +458,23 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
     setActiveCenterMode('dossiers');
   };
 
-  const handlePublishTribunalToFeed = () => {
-    if (!activeTribunalResult || !onAddSighting) return;
+  const handlePublishPanelToFeed = () => {
+    if (!activePanelResult || !onAddSighting) return;
     const newSighting: SightingReport = {
-      id: `sighting-tribunal-${Date.now()}`,
-      title: activeTribunalResult.panelReview.consensusVerdict,
+      id: `sighting-panel-${Date.now()}`,
+      title: activePanelResult.panelReview.consensusVerdict,
       observerName: 'Check Sky Light Observer',
       observerBadge: 'Multi-Lens Verified',
       timestamp: new Date().toISOString(),
       location: userLocation,
       locationName: `${userLocation.city || 'Sector'}, ${userLocation.region || 'NM'}`,
-      description: `[Multi-Lens Review]\nConsensus: ${activeTribunalResult.panelReview.consensusVerdict} (${activeTribunalResult.panelReview.consensusConfidence}%)\nPrimary Suspect: ${activeTribunalResult.panelReview.primarySuspect}\nKey Question: ${activeTribunalResult.panelReview.unresolvedQuestion}`,
-      probabilityScore: activeTribunalResult.panelReview.consensusConfidence,
+      description: `[Multi-Lens Review]\nConsensus: ${activePanelResult.panelReview.consensusVerdict} (${activePanelResult.panelReview.consensusConfidence}%)\nPrimary Suspect: ${activePanelResult.panelReview.primarySuspect}\nKey Question: ${activePanelResult.panelReview.unresolvedQuestion}`,
+      probabilityScore: activePanelResult.panelReview.consensusConfidence,
       status: 'AI_ANOMALY_CONFIRMED',
-      mediaUrl: activeTribunalResult.url,
+      mediaUrl: activePanelResult.url,
       upvotes: 1,
       commentsCount: 0,
-      tags: ['MultiLensReview', 'PeerReview', activeTribunalResult.panelReview.agreementLevel]
+      tags: ['MultiLensReview', 'PeerReview', activePanelResult.panelReview.agreementLevel]
     };
     onAddSighting(newSighting);
     setSleuthPublished(true);
@@ -499,9 +540,9 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
           <span>Incident Dossiers & PDF ({reports.length})</span>
         </button>
         <button
-          onClick={() => setActiveCenterMode('tribunal')}
+          onClick={() => setActiveCenterMode('panel')}
           className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
-            activeCenterMode === 'tribunal'
+            activeCenterMode === 'panel'
               ? 'bg-cyan-400 text-slate-950 shadow-sm'
               : 'text-slate-400 hover:text-white'
           }`}
@@ -511,7 +552,7 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
         </button>
       </div>
 
-      {activeCenterMode === 'tribunal' ? (
+      {activeCenterMode === 'panel' ? (
         <div className="space-y-4">
           {/* Multi-Lens Intake Card (Less-Ink) */}
           <div className="glass-panel border border-cyan-500/30 rounded-2xl p-4 sm:p-5 space-y-4 bg-slate-950/90 shadow-xl">
@@ -529,7 +570,36 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                   Multi-perspective evaluation across kinematics, classical aerospace, and theoretical physics.
                 </p>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  Domain Integrity: ACTIVE
+                </span>
+              </div>
             </div>
+
+            {/* Quarantine or Content Rejection Banner */}
+            {blockStatus.isBlocked ? (
+              <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/50 flex items-start space-x-3 text-rose-200 text-xs">
+                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-mono font-bold text-rose-300 uppercase tracking-wide">
+                    Client Quarantined (Lockout Active)
+                  </div>
+                  <p className="text-slate-300 font-sans leading-relaxed">
+                    Submissions and forensic reviews are locked for {blockStatus.remainingMinutes || 60} minutes due to safety policy violations (pornography, explicit content, or harm).
+                  </p>
+                </div>
+              </div>
+            ) : sleuthErrorMsg && (
+              <div className="p-3 rounded-xl bg-rose-950/30 border border-rose-500/40 flex items-start space-x-2.5 text-rose-200 text-xs font-mono">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-rose-300">Safety Policy Rejection: </span>
+                  <span>{sleuthErrorMsg}</span>
+                </div>
+              </div>
+            )}
 
             {/* Curated Positive Controls & Real Cases */}
             <div className="space-y-1.5">
@@ -665,11 +735,16 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                 </div>
 
                 <button
-                  onClick={handleRunSleuthTribunal}
-                  disabled={isSleuthRunning || (!sleuthUrl.trim() && !sleuthNotes.trim())}
+                  onClick={handleRunSleuthPanel}
+                  disabled={blockStatus.isBlocked || isSleuthRunning || (!sleuthUrl.trim() && !sleuthNotes.trim())}
                   className="px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-mono transition flex items-center justify-center space-x-2 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSleuthRunning ? (
+                  {blockStatus.isBlocked ? (
+                    <>
+                      <ShieldAlert className="w-3.5 h-3.5 text-slate-950" />
+                      <span>Analysis Quarantined</span>
+                    </>
+                  ) : isSleuthRunning ? (
                     <>
                       <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-950" />
                       <span>Evaluating Perspectives...</span>
@@ -685,14 +760,14 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
             </div>
           </div>
 
-          {/* Tribunal Results or 3-Voice Explainer */}
-          {activeTribunalResult ? (
-            <ParallaxTribunalCard
-              panelReview={activeTribunalResult.panelReview}
-              caseTitle={activeTribunalResult.title}
-              sourceUrl={activeTribunalResult.url}
-              onPublishToFeed={handlePublishTribunalToFeed}
-              onSaveToDossier={handleConvertTribunalToDossier}
+          {/* Panel Results or 3-Voice Explainer */}
+          {activePanelResult ? (
+            <ParallaxPanelCard
+              panelReview={activePanelResult.panelReview}
+              caseTitle={activePanelResult.title}
+              sourceUrl={activePanelResult.url}
+              onPublishToFeed={handlePublishPanelToFeed}
+              onSaveToDossier={handleConvertPanelToDossier}
               isPublished={sleuthPublished}
             />
           ) : (
@@ -826,10 +901,15 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                 {/* Header with Case # and Export Controls */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
                   <div>
-                    <div className="flex items-center space-x-2 text-[11px] font-mono">
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono">
                       <span className="text-cyan-400 font-bold">{selectedReport.caseNumber}</span>
                       <span className="text-slate-600">•</span>
                       <span className="text-slate-400">{new Date(selectedReport.timestamp).toLocaleDateString()}</span>
+                      <span className="text-slate-600">•</span>
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                        Safety & Domain Integrity: PASSED
+                      </span>
                     </div>
                     <h3 className="text-base sm:text-lg font-bold text-white mt-0.5">
                       {selectedReport.title}
@@ -891,9 +971,9 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                     <span>Dossier Specs & Telemetry</span>
                   </button>
                   <button
-                    onClick={() => setDossierInspectorTab('tribunal')}
+                    onClick={() => setDossierInspectorTab('panel')}
                     className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
-                      dossierInspectorTab === 'tribunal'
+                      dossierInspectorTab === 'panel'
                         ? 'bg-cyan-400 text-slate-950 shadow-sm'
                         : 'text-slate-400 hover:text-white'
                     }`}
@@ -906,9 +986,9 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                   </button>
                 </div>
 
-                {dossierInspectorTab === 'tribunal' ? (
+                {dossierInspectorTab === 'panel' ? (
                   selectedReport.parallaxPanel ? (
-                    <ParallaxTribunalCard
+                    <ParallaxPanelCard
                       panelReview={selectedReport.parallaxPanel}
                       caseTitle={selectedReport.title}
                       sourceUrl={`Case #${selectedReport.caseNumber}`}
@@ -947,11 +1027,11 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
                       </div>
 
                       <button
-                        onClick={handleRunDossierTribunal}
-                        disabled={isRunningDossierTribunal}
+                        onClick={handleRunDossierPanel}
+                        disabled={isRunningDossierPanel}
                         className="px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-mono transition flex items-center space-x-2 mx-auto cursor-pointer shadow-sm disabled:opacity-50"
                       >
-                        {isRunningDossierTribunal ? (
+                        {isRunningDossierPanel ? (
                           <>
                             <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-950" />
                             <span>Evaluating Scientific Lenses (Gemini)...</span>

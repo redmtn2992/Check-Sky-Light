@@ -1,11 +1,12 @@
-# Check Sky Light (v3.6)
+# Check Sky Light (v3.7)
 > **Empirical Civilian Aerospace Diagnostics & Multi-Sensor Sky Deconfliction Platform**  
 > *Modeled after the automotive Check Engine Light with OBD-III diagnostic protocols.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-3.6.0-amber.svg)](https://github.com/redmtn2992/Check-Sky-Light)
+[![Version](https://img.shields.io/badge/version-3.7.0-amber.svg)](https://github.com/redmtn2992/Check-Sky-Light)
 [![Deconfliction Feeds](https://img.shields.io/badge/ADS--B%20%7C%20NOAA%20%7C%20NORAD-Active-cyan.svg)](https://github.com/redmtn2992/Check-Sky-Light)
-[![Parallax Tribunal](https://img.shields.io/badge/Tribunal-Gemini%20%C2%B7%20Claude%20%C2%B7%20Luna-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
+[![Parallax Panel](https://img.shields.io/badge/Panel-Gemini%20%C2%B7%20Claude%20%C2%B7%20Luna-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
+[![Domain Integrity](https://img.shields.io/badge/Domain%20Integrity-Zero%20Tolerance%20Active-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
 
 ---
 
@@ -46,7 +47,8 @@ The platform's paramount strength is its **unyielding empirical discipline**: sy
   * **Lens B (Theoretical Metric Manipulation)**: Evaluates authentic physical decoupling, absence of barometric downwash/rotor wash, cavitation-free transmedium travel, and instantaneous acceleration without acoustic shockwaves.
 * **The Five Observables Baseline (ODNI / AARO)**: Instantaneous acceleration, hypersonic velocity without signatures, low observability, transmedium travel, and positive lift without aerodynamic surfaces.
 * **Synthetic Media & CGI Discrimination**: Identifies neural diffusion artifacts, motion-blur inconsistencies, and digital VFX to prevent synthetic fakes.
-* **Parallax Tribunal Consensus (DTC P3012)**: Multi-model verification integrating Gemini, Claude, and Luna to prevent single-model hallucinations and enforce rigorous cross-examination.
+* **Zero-Tolerance Safety Guardrails & Domain Integrity**: Automated pre-flight regex and multimodal semantic audits preventing pornographic, sexually explicit, or harm-related media, dropping violating payloads in-flight with zero storage.
+* **Parallax Panel Consensus (DTC P3012)**: Multi-model verification integrating Gemini, Claude, and Luna to prevent single-model hallucinations and enforce rigorous cross-examination.
 
 ### 4. REPORT: Standardized Field Dossiers
 * **Vetted Field Records**: Generates cryptographically verifiable, timestamped investigation dossiers.

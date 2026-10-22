@@ -160,7 +160,7 @@ export interface CaseEntry {
     stated_confidence?: string;    // "HIGH", "MODERATE", "INCONCLUSIVE"
   };
   independent_analysis: {
-    body: string;                  // "SCU", "CSL Parallax Tribunal", etc.
+    body: string;                  // "SCU", "CSL Parallax Panel", etc.
     summary: string;
     competing_hypotheses: string[];
   };
@@ -392,7 +392,7 @@ All existing resource identifiers from `resourcesdb.md` are preserved and reclas
   "approved_functions": [
     "Real-time video and image multi-modal forensic analysis",
     "Automated mathematical kinematics and angular triangulation",
-    "Dual-Lens Parallax Tribunal synthesis"
+    "Dual-Lens Parallax Panel synthesis"
   ],
   "epistemic_safeguards": [
     "Model consensus is not experimental replication.",
@@ -415,7 +415,7 @@ A comprehensive code inspection reveals four specific touchpoints where the curr
 * **Luna Guardrail / Conflict**:
   * An unresolved official case simply means data was insufficient to reach resolution; it is not scientific proof of exotic propulsion.
 * **Compatibility Solution**:
-  * Preserve `matchAaroCase()` and `buildAaroKnowledgeBasePrompt()` interfaces, but update the generated prompt text to present the official DoD finding alongside competing hypotheses (un-transponded military prototype, low-observable aerostat, or metric anomaly). The model is instructed to maintain tension in the Parallax Tribunal rather than assigning a hardcoded 88% conclusion.
+  * Preserve `matchAaroCase()` and `buildAaroKnowledgeBasePrompt()` interfaces, but update the generated prompt text to present the official DoD finding alongside competing hypotheses (un-transponded military prototype, low-observable aerostat, or metric anomaly). The model is instructed to maintain tension in the Parallax Panel rather than assigning a hardcoded 88% conclusion.
 
 ### Touchpoint 2: Frontend Explorer Modal (`AaroRecordsModal.tsx`)
 * **Current Code**:

@@ -16,6 +16,24 @@ import {
   matchAaroCase 
 } from './src/lib/aaroKnowledgeBase.ts';
 import { unavailable } from './src/lib/provenance.ts';
+import { evaluateContentSafety } from './src/lib/safetyGuardrails.ts';
+
+// Reusable server-side safety policy checker
+function checkRequestSafety(text: string, url?: string) {
+  const result = evaluateContentSafety(text, url);
+  if (!result.isSafe) {
+    return {
+      violates: true,
+      errorResponse: {
+        error: 'CONTENT_POLICY_VIOLATION',
+        violationType: result.violationType,
+        reason: result.reason,
+        message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies (explicit adult material or cruelty prohibited). This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+      }
+    };
+  }
+  return { violates: false };
+}
 
 // In-memory data caches for server session
 let serverSightings: SightingReport[] = [...MOCK_SIGHTINGS];
@@ -434,6 +452,11 @@ async function startServer() {
   });
 
   app.post('/api/sightings', (req, res) => {
+    const safety = checkRequestSafety(`${req.body.title || ''} ${req.body.description || ''}`, req.body.mediaUrl);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const newReport: SightingReport = {
       id: `sighting-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       title: req.body.title || 'Observed Aerial Anomaly',
@@ -470,6 +493,11 @@ async function startServer() {
   app.post('/api/chat/messages', (req, res) => {
     const { channelId, text, sender, sightingAttachment } = req.body;
     const msgText = text || '';
+    const safety = checkRequestSafety(msgText, sightingAttachment?.mediaUrl);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       channelId: channelId || 'norcal-pacific',
@@ -642,6 +670,11 @@ async function startServer() {
   app.post('/api/analyze-photo', async (req, res) => {
     const { imageBase64, locationNotes } = req.body;
 
+    const safety = checkRequestSafety(locationNotes || '');
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const ai = getGeminiClient();
     if (ai && imageBase64 && imageBase64.includes(';base64,')) {
       try {
@@ -652,13 +685,27 @@ async function startServer() {
 1. Classical Aerospace Baseline: Deconflict against conventional aircraft, drones, satellites, lens flares, camera sensor artifacts, or balloons.
 2. Theoretical Metric Manipulation: Evaluate for unusual geometric symmetry, lack of aerodynamic control surfaces or thermal exhaust, and potential warp-metric kinematics.
 
+CRITICAL SAFETY & DOMAIN INTEGRITY CHECK:
+- If this image depicts sexually explicit content, pornography, human harm/violence, animal cruelty, or gore:
+  Immediately return:
+  {
+    "isViolatingSafety": true,
+    "violationReason": "Explicit sexual material or harm/cruelty detected",
+    "anomalyScore": 0,
+    "isAnomaly": false,
+    "confidenceScore": 99,
+    "detectedObjects": ["Prohibited Content"],
+    "detailedAnalysis": "Rejected: Content violates scientific use policy."
+  }
+
 Analyze this image and return a JSON object with this exact structure:
 {
   "anomalyScore": (number between 10 and 98),
   "isAnomaly": (boolean, true if score >= 60),
   "confidenceScore": (number between 50 and 99),
   "detectedObjects": [(string array of 2 to 4 key detected features)],
-  "detailedAnalysis": "(2 to 3 sentences detailing optical features, contrast, and dual-lens assessment)"
+  "detailedAnalysis": "(2 to 3 sentences detailing optical features, contrast, and dual-lens assessment)",
+  "isViolatingSafety": (optional boolean)
 }`;
 
         const geminiRes = await ai.models.generateContent({
@@ -685,6 +732,14 @@ Analyze this image and return a JSON object with this exact structure:
         const textOutput = geminiRes.text;
         if (textOutput) {
           const parsed = JSON.parse(textOutput);
+          if (parsed.isViolatingSafety) {
+            return res.status(400).json({
+              error: 'CONTENT_POLICY_VIOLATION',
+              violationType: 'PORNOGRAPHY_OR_EXPLICIT',
+              reason: parsed.violationReason || 'Explicit or harmful imagery detected',
+              message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies. This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+            });
+          }
           return res.json({
             status: 'ok',
             data_provenance: 'model_generated',
@@ -711,6 +766,11 @@ Analyze this image and return a JSON object with this exact structure:
       targetLock = null
     } = req.body;
 
+    const safety = checkRequestSafety(`${targetLock?.name || ''} ${telemetry.city || ''}`);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const azimuth = typeof telemetry.azimuth === 'number' ? Math.round(telemetry.azimuth) : 0;
     const pitch = typeof telemetry.pitch === 'number' ? Math.round(telemetry.pitch) : 0;
     const city = telemetry.city || 'Local Sector';
@@ -720,6 +780,9 @@ Analyze this image and return a JSON object with this exact structure:
       try {
         const prompt = `You are the analyst for Check Sky Light. Perform a fast Pre-Report Check on a newly recorded ${mediaType} (${durationSeconds > 0 ? `${durationSeconds.toFixed(1)}s` : 'photo'}) at Azimuth ${azimuth}°, Elevation ${pitch}° in ${city}.
 Target lock: ${targetLock ? `${targetLock.name} (${targetLock.confidencePct}%)` : 'None'}.
+
+SAFETY CHECK:
+If the visual frame depicts explicit sexual content, pornography, human harm, or animal cruelty, set "isViolatingSafety": true.
 
 IMPORTANT: Keep all responses brief, direct, and plain human English. Use "less ink" — no verbose jargon.
 
@@ -736,7 +799,8 @@ Provide a JSON response matching:
   "suggestions": ["Short next step 1", "Short next step 2", "Short next step 3"],
   "suggestedClassId": "class-1-orb-sphere" | "class-2-cylinder-tic-tac" | "class-3-disc-saucer" | "class-4-triangle-delta",
   "suggestedClassName": "Orb" | "Tic-Tac" | "Disc" | "Triangle",
-  "summary": "One sentence summary."
+  "summary": "One sentence summary.",
+  "isViolatingSafety": boolean
 }`;
 
         const parts: any[] = [{ text: prompt }];
@@ -759,7 +823,16 @@ Provide a JSON response matching:
 
         const text = geminiRes.text;
         if (text) {
-          return res.json(JSON.parse(text));
+          const parsed = JSON.parse(text);
+          if (parsed.isViolatingSafety) {
+            return res.status(400).json({
+              error: 'CONTENT_POLICY_VIOLATION',
+              violationType: 'PORNOGRAPHY_OR_EXPLICIT',
+              reason: 'Visual content rejected by automated safety filter.',
+              message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies. This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+            });
+          }
+          return res.json(parsed);
         }
       } catch (err) {
         console.warn('Pre-report check error:', err);
@@ -1044,6 +1117,11 @@ Return ONLY valid JSON matching this schema:
       ? req.body.mediaUrl 
       : (mediaBase64 && mediaBase64.startsWith('data:image') ? mediaBase64 : undefined);
 
+    const safety = checkRequestSafety(`${sourceTitle} ${notes}`, req.body.mediaUrl);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const ai = getGeminiClient();
     const locationStr = location?.city ? `${location.city}, ${location.region || ''}` : 'Unknown Sector';
 
@@ -1090,6 +1168,12 @@ Source Evidence Title / Filename: "${sourceTitle}"
 ${aaroMatchPrompt}
 
 ${aaroDatabaseSection}
+
+0. ZERO-TOLERANCE SAFETY & INTEGRITY AUDIT:
+   - Carefully inspect this image/frame for any sexually explicit content, pornography, adult nudity, human gore, self-harm, or animal cruelty (abuse, crushing, fighting, deliberate killing).
+   - If ANY prohibited content is detected:
+     * Set safetyViolation: { "isViolating": true, "violationType": "PORNOGRAPHY_OR_EXPLICIT" | "HUMAN_OR_ANIMAL_HARM", "reason": "Explicit or harmful imagery detected" }
+     * NOTE: Healthy, non-harmful domestic companion animals (e.g. household dogs or cats playing, walking, resting) are legitimate mundane tests (mundaneObjectDetected: true, mundaneCategory: "pet"), NOT harm! Only actual cruelty, injury, abuse, or violence is a violation.
 
 1. Mundane Object & Terrestrial Subject Detection:
    - Anticipate that users may test this app by capturing everyday terrestrial objects: pets (dogs, cats), vehicles (cars, trucks), furniture (couches, chairs), household items (fans, lamps), or human portraits.
@@ -1169,7 +1253,12 @@ Return ONLY valid JSON matching this schema:
     "kinematicGForce": string
   },
   "detectedFeatures": string[],
-  "audioAcousticNotes": string
+  "audioAcousticNotes": string,
+  "safetyViolation": {
+    "isViolating": boolean,
+    "violationType": string,
+    "reason": string
+  }
 }`;
 
         const geminiRes = await ai.models.generateContent({
@@ -1196,6 +1285,16 @@ Return ONLY valid JSON matching this schema:
         const textOutput = geminiRes.text;
         if (textOutput) {
           const parsed = JSON.parse(textOutput);
+
+          // Zero-tolerance policy check from Gemini multimodal vision audit
+          if (parsed.safetyViolation?.isViolating) {
+            return res.status(400).json({
+              error: 'CONTENT_POLICY_VIOLATION',
+              violationType: parsed.safetyViolation.violationType || 'PORNOGRAPHY_OR_EXPLICIT',
+              reason: parsed.safetyViolation.reason || 'Content rejected: explicit or harmful material detected.',
+              message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies. This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+            });
+          }
 
           // Guard for official AARO Unresolved UAP targets (PR-013, 992262, PR-012, PR-018, PR-003, etc.)
           const isAaroUnresolvedTarget = matchedAaro?.isUnresolved ||
@@ -1794,6 +1893,11 @@ This case brief is provided strictly as empirical facts without evaluation score
       return res.status(400).json({ error: 'URL is required for analysis' });
     }
 
+    const safety = checkRequestSafety(incidentNotes, url);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     // NOTE: For third-party URL investigations, the incident's geographic location is determined
     // by the URL or incident notes (e.g. Nimitz off San Diego, Belgian Wave, etc.), NOT the local observer's GPS.
     // We only provide the observer's location as context for local airspace deconfliction if relevant.
@@ -2065,7 +2169,12 @@ Return ONLY a valid JSON object matching this schema:
     "targetedTimestamp": string,
     "guidanceNote": string
   },
-  "corroborationSources": string[]
+  "corroborationSources": string[],
+  "safetyViolation": {
+    "isViolating": boolean,
+    "violationType": string,
+    "reason": string
+  }
 }`;
 
         const geminiRes = await ai.models.generateContent({
@@ -2079,6 +2188,17 @@ Return ONLY a valid JSON object matching this schema:
         const textOutput = geminiRes.text;
         if (textOutput) {
           const parsed = JSON.parse(textOutput);
+
+          // Zero-tolerance policy check from Gemini
+          if (parsed.safetyViolation?.isViolating) {
+            return res.status(400).json({
+              error: 'CONTENT_POLICY_VIOLATION',
+              violationType: parsed.safetyViolation.violationType || 'PORNOGRAPHY_OR_EXPLICIT',
+              reason: parsed.safetyViolation.reason || 'Content rejected: explicit or harmful material detected.',
+              message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies. This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+            });
+          }
+
           const isAaroUnresolvedUrl = matchedAaroUrl?.isUnresolved ||
             lowerCombinedContext.includes('pr-013') ||
             lowerCombinedContext.includes('992262') ||
@@ -2538,6 +2658,12 @@ Return ONLY a valid JSON object matching this schema:
   // Multi-Lens Review: Multi-lens scientific peer review powered by Gemini
   app.post('/api/analyze/parallax-panel', async (req, res) => {
     const { url, title, notes, location, telemetry, fiveObservables, anomalyScore, verdict } = req.body;
+
+    const safety = checkRequestSafety(`${title || ''} ${notes || ''}`, url);
+    if (safety.violates) {
+      return res.status(400).json(safety.errorResponse);
+    }
+
     const ai = getGeminiClient();
 
     const targetTitle = title || (url ? `Web Investigation (${url.substring(0, 40)})` : 'Field Incident Dossier');
@@ -2655,7 +2781,8 @@ Return ONLY a valid JSON object matching this schema:
   },
   "unbiasedCaseFactsPrompt": string,
   "externalDebatePrompt": string,
-  "readingLevelNote": "Grade 12 max • Tool-001 Less-Ink standard"
+  "readingLevelNote": "Grade 12 max • Tool-001 Less-Ink standard",
+  "isViolatingSafety": boolean
 }`;
 
         const geminiRes = await ai.models.generateContent({
@@ -2667,6 +2794,16 @@ Return ONLY a valid JSON object matching this schema:
         const textOutput = geminiRes.text;
         if (textOutput) {
           const parsed = JSON.parse(textOutput);
+
+          if (parsed.isViolatingSafety) {
+            return res.status(400).json({
+              error: 'CONTENT_POLICY_VIOLATION',
+              violationType: 'PORNOGRAPHY_OR_EXPLICIT',
+              reason: 'Case content rejected by automated safety filter.',
+              message: 'Submission blocked: Content violates Check Sky Light safety & domain integrity policies. This platform is strictly dedicated to scientific atmospheric and aerospace investigation.'
+            });
+          }
+
           const isWeb = !!url && (url.includes('http') || url.includes('youtube') || url.includes('reddit') || url.includes('tiktok') || url.includes('twitter') || url.includes('x.com') || url.includes('war.gov'));
           if (!parsed.mediaMetadataWarning && isWeb) {
             parsed.mediaMetadataWarning = {

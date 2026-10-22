@@ -117,7 +117,7 @@ When an analysis is triggered (via AR Sky Target, URL Investigation, or Media Fi
 [5. Mathematical Triangulation & Kinematics] ──► POCA vector intersection, Chi-Square, g-force
             │
             ▼
-[6. Parallax Tribunal Synthesis] ──► Balanced Lens A vs. Lens B card generation
+[6. Parallax Panel Synthesis] ──► Balanced Lens A vs. Lens B card generation
 ```
 
 1. **Media Forensics & Synthetic Artifact Screening**: Evaluates the asset for generative AI diffusion artifacts (temporal frame jitter, unnatural pixel warping) and CGI compositing drift versus authentic camera sensor noise (rolling shutter, compression macroblocking, natural optical bloom).
@@ -125,7 +125,7 @@ When an analysis is triggered (via AR Sky Target, URL Investigation, or Media Fi
 3. **Orbital & Airspace Deconfliction**: Compares timestamps and look-angles against Two-Line Element (TLE) satellite orbits and unfiltered ADS-B flight corridors.
 4. **4-Pillar Observable Audit**: Executes the observable inventory and mechanical disqualification tests under Lens A before evaluating metric propulsion hypotheses under Lens B.
 5. **Kinematic & Mathematical Triangulation**: Calculates Point of Closest Approach (POCA), Miss Distance ($d_{\text{miss}}$), and $\chi^2$ goodness-of-fit across multi-station lines-of-sight.
-6. **Parallax Tribunal Card Generation**: Synthesizes the dual-lens report, diagnostic DTC code, and un-primed dossier facts.
+6. **Parallax Panel Card Generation**: Synthesizes the dual-lens report, diagnostic DTC code, and un-primed dossier facts.
 
 ---
 
@@ -197,7 +197,7 @@ CSL references vetted primary sources across five scientific tiers:
 
 ---
 
-## PART 7: Blinded Multi-AI Tribunal & Neutral Dossier Export
+## PART 7: Blinded Multi-AI Panel & Neutral Dossier Export
 
 To honor the equal collaborative partnership charter without third-party vendor lock-in or privacy breaches:
 * **In-App Neutral Analysis Engine**: Powered live by Google Gemini 3.8 Flash, evaluating data across the pre-registered lenses with mathematical impartiality.
@@ -227,7 +227,7 @@ The user interface adheres to strict data-ink ratio principles:
 | **POCA Spatial Triangulation** | `Check_Sky_Light_Validation_Protocol_v1.0_CANDIDATE_rev5.md` | `src/lib/triangulationMath.ts` (`calculatePOCA`, `runMonteCarloT0Gate`) |
 | **Five Observables Scoring** | ODNI / AARO Reporting Standards | `DiagnosticReportCard.tsx` Anomaly Score calculation |
 | **Astronomical Deconfliction** | JPL Horizons Ephemeris Consensus | Venus/Jupiter/Sirius coordinates screening |
-| **Blinded Dossier Export** | Tripartite Agreement (`CROSS_AI_DOSSIER.md`) | `ParallaxTribunalCard.tsx` "Copy Case Facts" action |
+| **Blinded Dossier Export** | Tripartite Agreement (`CROSS_AI_DOSSIER.md`) | `ParallaxPanelCard.tsx` "Copy Case Facts" action |
 | **Tool-001 Visual Theme** | Edward Tufte Data-Ink Ratio | Minimal ink layout across Target, Radar, and Analyze pages |
 
 *Document compiled, updated, and archived: October 2026 • Check Sky Light Scientific Core.*

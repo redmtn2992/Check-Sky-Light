@@ -4,7 +4,8 @@ import {
   Layers, Volume2, VolumeX, Eye, Compass, Navigation, RefreshCw, 
   Circle, Maximize2, Minimize2, Zap, Radio, Sun, Moon, Video, Square, Download, 
   ExternalLink, FileText, ChevronRight, Cpu, Target, Scan, Lock, Mic,
-  Battery, BatteryCharging, Fingerprint, Power, Info, Check, HelpCircle, X
+  Battery, BatteryCharging, Fingerprint, Power, Info, Check, HelpCircle, X,
+  SlidersHorizontal
 } from 'lucide-react';
 import { LocationCoords, FlightTrack, CelestialBody } from '../types';
 import { 
@@ -32,8 +33,18 @@ import {
   subscribeSoundSettings, 
   SoundSettings 
 } from '../lib/soundSettings';
+import { 
+  TargetingOptions, 
+  loadTargetingOptions, 
+  saveTargetingOptions, 
+  subscribeTargetingOptions 
+} from '../lib/targetingOptions';
+import { TargetingOptionsDrawer } from './ar/TargetingOptionsDrawer';
+import { calculateFlightGuide, FlightGuideResult } from '../lib/flightDirector';
 import { PreReportCapture } from './PreReportCheckModal';
 import { PermissionTarget } from './AppPermissionsModal';
+
+export type AssistanceLevel = 'manual' | 'assist' | 'ai';
 
 export interface ArSkyScannerProps {
   userLocation: LocationCoords;
@@ -80,6 +91,12 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   const [sessionCaptures, setSessionCaptures] = useState<PreReportCapture[]>([]);
   const [justCapturedNotice, setJustCapturedNotice] = useState<string | null>(null);
   
+  // Technological Assistance Hierarchy:
+  // Level 1: 'manual' (Default on startup) - Pure camera, manual shutter, zero automated tracking or AI queries
+  // Level 2: 'assist' - On-Device HUD, Flight Guide AR arrow, jet lock brackets, and optical motion contrast tracker (100% local)
+  // Level 3: 'ai' - Gemini 3.8 Flash Multimodal Cloud Intelligence for deep Dual-Lens classification
+  const [assistanceLevel, setAssistanceLevel] = useState<AssistanceLevel>('manual');
+
   // Power & Battery Optimization: Disabled at startup to minimize iPhone battery draw
   const [opticalTrackingActive, setOpticalTrackingActive] = useState<boolean>(false);
 
@@ -90,7 +107,26 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   // Gemini AI Auto-Lock State: Disabled at app startup to conserve iPhone battery power
   const [geminiAutoLockEnabled, setGeminiAutoLockEnabled] = useState<boolean>(false);
   const [isAiScanning, setIsAiScanning] = useState<boolean>(false);
-  const [aiLockFeedback, setAiLockFeedback] = useState<string>('Ready');
+  const [aiLockFeedback, setAiLockFeedback] = useState<string>('Manual Mode');
+
+  // Assistance Hierarchy Switcher
+  const handleSelectAssistanceLevel = (level: AssistanceLevel) => {
+    setAssistanceLevel(level);
+    triggerHapticFeedback([20]);
+    if (level === 'manual') {
+      setGeminiAutoLockEnabled(false);
+      setOpticalTrackingActive(false);
+      setAiLockFeedback('Manual Mode');
+      setTargetLock(null);
+    } else if (level === 'assist') {
+      setGeminiAutoLockEnabled(false);
+      setOpticalTrackingActive(true);
+      setAiLockFeedback('Assist: HUD Active');
+    } else if (level === 'ai') {
+      setOpticalTrackingActive(true);
+      setAiLockFeedback('AI Ready');
+    }
+  };
 
   // Digital Crop Zoom (1x, 2x, 5x) for long-distance sky targets
   const [zoomFactor, setZoomFactor] = useState<number>(1);
@@ -117,6 +153,33 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   const opticalLoopRef = useRef<number | null>(null);
   const lockHoldTimerRef = useRef<number>(0);
   const autoLockTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 5 Tactical Targeting Options & Drawer State
+  const [targetingOptions, setTargetingOptions] = useState<TargetingOptions>(loadTargetingOptions);
+  const [isTargetingDrawerOpen, setIsTargetingDrawerOpen] = useState<boolean>(false);
+  const [flightGuide, setFlightGuide] = useState<FlightGuideResult | null>(null);
+  const [smartShutterNotice, setSmartShutterNotice] = useState<string | null>(null);
+  const autoFiredLockIdRef = useRef<string | null>(null);
+  const lockHoldTimestampRef = useRef<number>(0);
+  const isLargeText = targetingOptions.hudTextScale === 'large';
+
+  // Sync targeting options across sessions
+  useEffect(() => {
+    const unsub = subscribeTargetingOptions((newOpts) => {
+      setTargetingOptions(newOpts);
+    });
+    return () => unsub();
+  }, []);
+
+  // Compute live AR flight director towards closest aircraft (active in Assist or AI modes)
+  useEffect(() => {
+    if (assistanceLevel === 'manual' || !targetingOptions.flightGuide || flights.length === 0) {
+      setFlightGuide(null);
+      return;
+    }
+    const guide = calculateFlightGuide(userLocation, azimuth, pitch, flights);
+    setFlightGuide(guide);
+  }, [assistanceLevel, targetingOptions.flightGuide, userLocation, azimuth, pitch, flights]);
 
   // Sync sound settings in real-time across tabs/drawers
   useEffect(() => {
@@ -161,6 +224,11 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
         setCameraActive(true);
+        // App camera starts in manual mode by default (zero automated tracking or AI queries until user chooses)
+        setAssistanceLevel('manual');
+        setOpticalTrackingActive(false);
+        setGeminiAutoLockEnabled(false);
+        setAiLockFeedback('Manual Mode');
       }
     } catch (err: any) {
       console.warn('Camera access fallback:', err);
@@ -430,39 +498,57 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       }
 
       const now = performance.now();
-      if (opticalTrackingActive && videoRef.current && cameraActive && !targetLock) {
+
+      // 1. Smart Shutter Auto-Capture Assist (only active in Assist or AI modes)
+      if (assistanceLevel !== 'manual' && targetingOptions.smartShutter && targetLock && targetLock.lockState === 'LOCKED') {
+        if (!lockHoldTimestampRef.current) {
+          lockHoldTimestampRef.current = now;
+        } else if (now - lockHoldTimestampRef.current > 350 && autoFiredLockIdRef.current !== targetLock.id) {
+          autoFiredLockIdRef.current = targetLock.id;
+          setSmartShutterNotice('AUTO-BURST CAPTURED');
+          setTimeout(() => setSmartShutterNotice(null), 2000);
+          void handleCapturePhoto();
+        }
+      } else if (!targetLock) {
+        lockHoldTimestampRef.current = 0;
+        autoFiredLockIdRef.current = null;
+      }
+
+      // 3. Optical Centroid & Motion Tracking (only active in Assist or AI modes)
+      const isMotionTracking = assistanceLevel !== 'manual' && (targetingOptions.motionTracker || opticalTrackingActive);
+      if (isMotionTracking && videoRef.current && cameraActive && !targetLock) {
         if (now - lastCentroidSample >= OPTICAL_SAMPLE_INTERVAL_MS) {
           lastCentroidSample = now;
-          const centroid = sampleOpticalCentroid(videoRef.current, 50, 50, 110);
+          const centroid = sampleOpticalCentroid(videoRef.current, 50, 45, 130);
 
-          if (centroid.detected && centroid.confidence > 55) {
+          if (centroid.detected && centroid.confidence > 50) {
             lockHoldTimerRef.current += 1;
-            setLockProgress(Math.min(100, lockHoldTimerRef.current * 8));
+            setLockProgress(Math.min(100, lockHoldTimerRef.current * 10));
 
-            if (lockHoldTimerRef.current === 4 && soundEnabled) {
+            if (lockHoldTimerRef.current === 3 && soundEnabled) {
               playTargetAcquiringTone();
               triggerHapticFeedback([15, 20]);
             }
 
-            if (lockHoldTimerRef.current >= 12 && (!targetLock || targetLock.lockState !== 'LOCKED')) {
+            if (lockHoldTimerRef.current >= 8 && (!targetLock || targetLock.lockState !== 'LOCKED')) {
               const newLock: TargetLockData = {
                 id: `TGT-${Math.floor(1000 + Math.random() * 9000)}`,
-                name: 'Optical Centroid Anomaly',
+                name: 'Airspace Target Centroid',
                 type: 'UAP',
                 lockState: 'LOCKED',
                 screenX: 50 + centroid.deltaScreenX,
-                screenY: 50 + centroid.deltaScreenY,
+                screenY: 45 + centroid.deltaScreenY,
                 azimuthDeg: azimuth,
                 elevationDeg: pitch,
                 azimuthStr: `${azimuth.toFixed(1)}°`,
                 elevationStr: `${pitch.toFixed(1)}°`,
                 distance: `${(8.4 + Math.random() * 4).toFixed(1)} km`,
                 angularVelocityDegPerSec: 14.2,
-                estimatedSpeed: `Mach ${(4.8 + Math.random() * 2).toFixed(1)}`,
+                estimatedSpeed: `Mach ${(0.8 + Math.random() * 1.5).toFixed(1)}`,
                 estimatedAltitude: `${(3200 + Math.floor(Math.random() * 1200)).toLocaleString()} m`,
-                kinematicGForce: '48 G',
-                deconflictionStatus: 'ANOMALOUS_UNIDENTIFIED',
-                details: 'Optical centroid tracked with zero civilian transponder match.',
+                kinematicGForce: '1.2 G',
+                deconflictionStatus: 'OPTICAL_CORRELATING',
+                details: 'Optical target centroid acquired via high-contrast sky motion tracking.',
                 confidencePct: centroid.confidence,
                 timestamp: new Date().toISOString()
               };
@@ -478,7 +564,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           } else {
             if (lockHoldTimerRef.current > 0) {
               lockHoldTimerRef.current = Math.max(0, lockHoldTimerRef.current - 2);
-              setLockProgress(Math.min(100, lockHoldTimerRef.current * 8));
+              setLockProgress(Math.min(100, lockHoldTimerRef.current * 10));
             }
           }
         }
@@ -495,7 +581,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         cancelAnimationFrame(opticalLoopRef.current);
       }
     };
-  }, [cameraActive, opticalTrackingActive, azimuth, pitch, soundEnabled, targetLock]);
+  }, [cameraActive, assistanceLevel, opticalTrackingActive, targetingOptions, azimuth, pitch, soundEnabled, targetLock]);
 
   // Optical Filter Presets for day and night sky aircraft deconfliction
   const videoFilterStyle = 
@@ -782,8 +868,8 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       ref={containerRef}
       className={
         isFullView
-          ? "fixed inset-0 z-50 w-screen h-[100dvh] bg-black select-none font-mono flex flex-col overflow-hidden"
-          : "relative w-full h-[calc(100dvh-13rem)] min-h-[380px] max-h-[720px] rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl font-mono select-none flex flex-col"
+          ? "fixed inset-0 z-50 w-screen h-[100dvh] bg-black select-none flex flex-col overflow-hidden"
+          : "relative w-full flex-1 min-h-[400px] h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-8.5rem)] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl select-none flex flex-col"
       }
     >
       {/* Video / Camera Feed (Full View Object Cover with smooth optical/digital crop zoom & day/night filters) */}
@@ -802,7 +888,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
       {/* Sound Mode Change Toast */}
       {soundModeToast && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-slate-950/95 border border-emerald-500/60 text-emerald-200 px-3.5 py-2 rounded-2xl text-[11px] font-mono shadow-2xl flex items-center space-x-2 animate-fade-in pointer-events-auto">
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-slate-950/95 border border-emerald-500/60 text-emerald-200 px-3.5 py-2 rounded-2xl text-xs font-mono shadow-2xl flex items-center space-x-2 animate-fade-in pointer-events-auto">
           {!soundEnabled ? <VolumeX className="w-4 h-4 text-emerald-400 shrink-0" /> : <Volume2 className="w-4 h-4 text-amber-400 shrink-0" />}
           <span className="font-semibold">{soundModeToast}</span>
         </div>
@@ -810,54 +896,76 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
       {/* Active Encounter Recording Indicator with Ambient Audio Status */}
       {isRecordingVideo && (
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-40 bg-slate-950/95 border border-rose-500/70 text-white px-3.5 py-1.5 rounded-2xl text-[10px] font-mono shadow-2xl flex items-center space-x-2 animate-fade-in pointer-events-none backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-40 bg-slate-950/95 border border-rose-500/70 text-white px-4 py-2 rounded-2xl text-xs font-mono shadow-2xl flex items-center space-x-2 animate-fade-in pointer-events-none backdrop-blur-md">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
           <span className="font-extrabold text-rose-300">
             REC {Math.floor(recordingSeconds / 60)}:{recordingSeconds % 60 < 10 ? '0' : ''}{recordingSeconds % 60}
           </span>
           <span className="text-slate-500">|</span>
-          <span className="flex items-center space-x-1 text-emerald-400 font-bold">
-            <Mic className="w-3 h-3 text-emerald-400" />
+          <span className="flex items-center space-x-1.5 text-emerald-400 font-bold">
+            <Mic className="w-3.5 h-3.5 text-emerald-400" />
             <span>{!soundEnabled ? 'MIC: CLEAN AMBIENT' : 'MIC: HUD SOUND ON'}</span>
           </span>
         </div>
       )}
 
-      {/* Standby / Quick Camera Activation Screen */}
+      {/* Smart Shutter Auto-Capture Notice */}
+      {smartShutterNotice && (
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-40 bg-rose-600 text-white px-4 py-2 rounded-2xl text-xs font-mono font-black shadow-2xl flex items-center space-x-2 animate-bounce pointer-events-none">
+          <Camera className="w-4 h-4" />
+          <span>AUTO-BURST CAPTURED</span>
+        </div>
+      )}
+
+      {/* Flight Guide AR Off-Screen Pointer Banner (only active in Assist or AI mode) */}
+      {assistanceLevel !== 'manual' && targetingOptions.flightGuide && flightGuide && flightGuide.hasTarget && !flightGuide.inView && cameraActive && (
+        <div className={`absolute top-24 left-1/2 transform -translate-x-1/2 z-30 bg-black/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-amber-500/60 font-mono text-amber-300 shadow-xl flex items-center space-x-2 pointer-events-auto animate-pulse ${
+          isLargeText ? 'text-xs sm:text-sm font-bold' : 'text-xs'
+        }`}>
+          <Compass className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>
+            {flightGuide.deltaAz > 0 ? 'TURN RIGHT' : 'TURN LEFT'} ({Math.abs(flightGuide.deltaAz)}°) · {flightGuide.flight?.callsign || 'Plane'} ({flightGuide.distanceMiles}mi)
+          </span>
+        </div>
+      )}
+
+      {/* Standby / Quick Camera Activation Screen - Clean, Centered, No Overlaps */}
       {!cameraActive && (
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-cyan-500/40 flex items-center justify-center mb-3 relative shadow-[0_0_25px_rgba(6,182,212,0.2)]">
-            <div className="w-12 h-12 rounded-full border border-cyan-400/40 animate-ping absolute"></div>
-            <Target className="w-7 h-7 sm:w-8 sm:h-8 text-cyan-400" />
+        <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black flex flex-col items-center justify-center p-6 text-center select-none">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-cyan-500/40 flex items-center justify-center mb-4 relative shadow-[0_0_30px_rgba(6,182,212,0.25)]">
+            <div className="w-14 h-14 rounded-full border border-cyan-400/40 animate-ping absolute"></div>
+            <Target className="w-9 h-9 sm:w-10 sm:h-10 text-cyan-400" />
           </div>
-          <h3 className="text-sm sm:text-base font-bold text-slate-100 uppercase tracking-wider">
+          <h3 className={`font-black text-slate-100 uppercase tracking-wider ${isLargeText ? 'text-lg sm:text-xl' : 'text-base sm:text-lg'}`}>
             Point Camera at Sky
           </h3>
-          <p className="text-xs text-slate-400 max-w-xs mt-1 leading-normal">
+          <p className={`text-slate-300 max-w-xs mt-1.5 leading-relaxed font-sans ${isLargeText ? 'text-sm' : 'text-xs'}`}>
             Arm optical tracking and deconflict against live civilian airspace.
           </p>
 
-          <div className="mt-4 flex items-center gap-2.5">
+          <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs">
             <button
               id="target-quick-camera-btn"
               onClick={() => { void startCamera(); }}
-              className="px-5 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs tracking-wide transition flex items-center space-x-2 shadow-lg cursor-pointer active:scale-95 min-h-[42px]"
+              className={`w-full py-3.5 px-6 rounded-2xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black tracking-wide transition flex items-center justify-center space-x-2.5 shadow-xl cursor-pointer active:scale-95 min-h-[48px] ${
+                isLargeText ? 'text-base' : 'text-sm'
+              }`}
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-5 h-5" />
               <span>Start Camera</span>
             </button>
 
             <button
               onClick={handleToggleFullView}
-              className="px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center space-x-1.5 cursor-pointer min-h-[42px]"
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer min-h-[40px]"
             >
-              {isFullView ? <Minimize2 className="w-3.5 h-3.5 text-cyan-400" /> : <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />}
-              <span>{isFullView ? 'Standard' : 'Full Screen'}</span>
+              {isFullView ? <Minimize2 className="w-4 h-4 text-cyan-400" /> : <Maximize2 className="w-4 h-4 text-cyan-400" />}
+              <span>{isFullView ? 'Standard View' : 'Full Screen'}</span>
             </button>
           </div>
 
           {cameraError && (
-            <p className="mt-3 text-[10px] text-amber-400/90 font-mono bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-500/30 max-w-xs">
+            <p className="mt-4 text-xs text-amber-400 font-mono bg-amber-950/40 px-3.5 py-2 rounded-xl border border-amber-500/30 max-w-xs">
               {cameraError}
             </p>
           )}
@@ -877,16 +985,18 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         <div className="space-y-2">
           {/* Top Telemetry & Viewport Bar - Transparent Glass Backdrops */}
           <div className="flex items-center justify-between gap-2">
-            {/* Left: Compass Telemetry Pill with Explicit Covariance / Uncertainty Bounds (±) */}
-            <div className="flex items-center space-x-1.5 bg-black/30 backdrop-blur-md px-2.5 py-1 rounded-xl border border-white/10 pointer-events-auto text-[11px] sm:text-xs font-mono font-bold shadow-sm">
-              <Compass className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="text-cyan-400">{azimuth.toFixed(0)}°<span className="text-[9px] text-cyan-400/70 font-normal">±1.2°</span> AZ</span>
+            {/* Left: Compass Telemetry Pill */}
+            <div className={`flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 pointer-events-auto font-mono font-bold shadow-sm ${
+              isLargeText ? 'text-xs sm:text-sm' : 'text-[11px] sm:text-xs'
+            }`}>
+              <Compass className="w-4 h-4 text-cyan-400 shrink-0" />
+              <span className="text-cyan-400">{azimuth.toFixed(0)}° AZ</span>
               <span className="text-white/40">·</span>
-              <span className="text-teal-400">{pitch.toFixed(0)}°<span className="text-[9px] text-teal-400/70 font-normal">±0.8°</span> EL</span>
+              <span className="text-teal-400">{pitch.toFixed(0)}° EL</span>
             </div>
 
             {/* Right: Display Filters, Audio Synthesizer, & Full View */}
-            <div className="flex items-center space-x-1 sm:space-x-1.5 pointer-events-auto" data-interactive="true">
+            <div className="flex items-center space-x-1.5 pointer-events-auto" data-interactive="true">
               {/* Filter Mode Cycle */}
               <button
                 onClick={() => {
@@ -894,11 +1004,13 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                   const nextIdx = (modes.indexOf(dayNightMode) + 1) % modes.length;
                   setDayNightMode(modes[nextIdx]);
                 }}
-                className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-black/30 hover:bg-black/50 border border-white/10 text-cyan-300 text-[10px] sm:text-xs font-bold transition flex items-center space-x-1 cursor-pointer shadow-sm min-h-[36px]"
+                className={`px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/15 text-cyan-300 font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-sm ${
+                  isLargeText ? 'text-xs min-h-[38px]' : 'text-[11px] min-h-[34px]'
+                }`}
                 title="Toggle Optical Filter (NVG, Strobe, FLIR, Tactical, Day)"
               >
-                <Layers className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase">
+                <Layers className="w-4 h-4 text-cyan-400" />
+                <span className="font-mono uppercase">
                   {dayNightMode === 'nvg_green' ? 'NVG' : dayNightMode === 'night_strobe' ? 'STROBE' : dayNightMode === 'flir_thermal' ? 'FLIR' : dayNightMode === 'night_tactical' ? 'TAC' : 'DAY'}
                 </span>
               </button>
@@ -906,59 +1018,114 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               {/* Full View Toggle */}
               <button
                 onClick={handleToggleFullView}
-                className="p-1.5 sm:p-2 rounded-xl bg-black/30 hover:bg-black/50 border border-white/10 text-cyan-300 text-xs transition cursor-pointer shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center"
+                className={`p-2 rounded-xl bg-black/40 hover:bg-black/60 border border-white/15 text-cyan-300 transition cursor-pointer shadow-sm flex items-center justify-center ${
+                  isLargeText ? 'min-h-[38px] min-w-[38px]' : 'min-h-[34px] min-w-[34px]'
+                }`}
                 title={isFullView ? "Exit Full View" : "Full View"}
               >
-                {isFullView ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+                {isFullView ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          {/* Central Mobile Tactical Tracking Mode Bar (Unobstructed Transparent Glass) */}
-          <div className="flex items-center justify-center pointer-events-auto">
-            <div className="inline-flex items-center p-0.5 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10 shadow-lg space-x-0.5 text-[11px] font-mono">
-              {/* AI Auto-Lock Toggle */}
+          {/* Central Mobile Technological Assistance Hierarchy (Manual -> Assist -> AI Scan) */}
+          <div className="flex flex-col items-center justify-center pointer-events-auto">
+            <div className="inline-flex items-center p-1 rounded-2xl bg-black/45 backdrop-blur-md border border-white/20 shadow-2xl space-x-1">
+              {/* Level 1: Manual Mode (Default on startup) */}
               <button
-                id="target-ai-autolock-toggle"
-                onClick={() => {
-                  const next = !geminiAutoLockEnabled;
-                  setGeminiAutoLockEnabled(next);
-                  if (next) {
-                    setAiLockFeedback('Scanning');
-                    setOpticalTrackingActive(true);
-                    triggerHapticFeedback([30]);
-                  } else {
-                    setAiLockFeedback('Ready');
-                  }
-                }}
-                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1 transition cursor-pointer min-h-[32px] ${
-                  geminiAutoLockEnabled
-                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/60 shadow-[0_0_12px_rgba(6,182,212,0.3)] animate-pulse'
-                    : 'text-white/70 hover:text-white border border-transparent'
+                id="target-mode-manual-btn"
+                onClick={() => handleSelectAssistanceLevel('manual')}
+                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+                  isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
+                } ${
+                  assistanceLevel === 'manual'
+                    ? 'bg-white/25 text-white border border-white/40 shadow-inner'
+                    : 'text-white/60 hover:text-white border border-transparent'
                 }`}
-                title="Toggle Gemini AI Auto-Lock"
+                title="Level 1: Manual (Default) - Pure viewfinder, manual shutter, zero automated tracking or AI queries"
               >
-                <Cpu className={`w-3.5 h-3.5 ${geminiAutoLockEnabled ? 'text-cyan-400' : 'text-white/50'}`} />
-                <span>AI</span>
+                <Eye className="w-3.5 h-3.5 text-slate-300" />
+                <span>Manual</span>
               </button>
 
+              {/* Level 2: Assist Mode (On-Device HUD & Flight Guide) */}
+              <div className="inline-flex items-center">
+                <button
+                  id="target-mode-assist-btn"
+                  onClick={() => handleSelectAssistanceLevel('assist')}
+                  className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+                    isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
+                  } ${
+                    assistanceLevel === 'assist'
+                      ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400/60 shadow-[0_0_12px_rgba(6,182,212,0.35)]'
+                      : 'text-white/60 hover:text-white border border-transparent'
+                  }`}
+                  title="Level 2: Assist - On-device HUD, flight director arrow, jet brackets & motion tracker"
+                >
+                  <Crosshair className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Assist</span>
+                </button>
 
+                {/* Assist Options Trigger */}
+                {assistanceLevel === 'assist' && (
+                  <button
+                    id="target-options-btn"
+                    onClick={() => setIsTargetingDrawerOpen(true)}
+                    className="p-1.5 ml-0.5 rounded-lg text-cyan-300 hover:text-white hover:bg-cyan-500/20 transition cursor-pointer"
+                    title="Customize Assist HUD Options (Flight Guide, Jet Brackets, Text Size)"
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                  </button>
+                )}
+              </div>
 
-              {/* Single-Shot Scan */}
+              {/* Level 3: AI Scan Mode (Gemini Multimodal Cloud Intelligence) */}
               <button
-                onClick={() => runGeminiAutoLock(true)}
+                id="target-mode-ai-scan-btn"
+                onClick={() => {
+                  if (assistanceLevel !== 'ai') {
+                    handleSelectAssistanceLevel('ai');
+                  }
+                  void runGeminiAutoLock(true);
+                }}
                 disabled={isAiScanning}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition flex items-center space-x-1 shadow-sm cursor-pointer min-h-[32px] ${
-                  isAiScanning 
-                    ? 'bg-cyan-950/60 border border-cyan-400 text-cyan-300 animate-spin'
-                    : 'bg-black/30 hover:bg-black/50 text-amber-300 border border-amber-500/40'
+                className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+                  isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
+                } ${
+                  isAiScanning
+                    ? 'bg-amber-400 text-slate-950 border border-amber-200 shadow-[0_0_18px_rgba(251,191,36,0.7)] font-black'
+                    : assistanceLevel === 'ai'
+                    ? 'bg-amber-500/25 text-amber-300 border border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                    : 'text-white/60 hover:text-white border border-transparent'
                 }`}
-                title="Single-Shot Lock On Target Now"
+                title="Level 3: AI Scan - Gemini 3.8 Flash multimodal reasoning & aerospace deconfliction"
               >
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span>Scan</span>
+                <Zap className={`w-3.5 h-3.5 ${isAiScanning ? 'text-slate-950' : 'text-amber-400'}`} />
+                <span>{isAiScanning ? 'Scanning...' : 'AI Scan'}</span>
               </button>
             </div>
+
+            {/* AI Mode Sub-Bar: Continuous Auto-Sentinel Toggle */}
+            {assistanceLevel === 'ai' && (
+              <div className="mt-1 flex items-center justify-center space-x-2 text-[10px] font-mono animate-fade-in">
+                <button
+                  onClick={() => {
+                    const next = !geminiAutoLockEnabled;
+                    setGeminiAutoLockEnabled(next);
+                    triggerHapticFeedback([20]);
+                  }}
+                  className={`px-2.5 py-0.5 rounded-full border transition flex items-center space-x-1.5 ${
+                    geminiAutoLockEnabled
+                      ? 'bg-amber-500/30 text-amber-200 border-amber-400/70 shadow-sm'
+                      : 'bg-black/60 text-white/70 border-white/20 hover:text-white'
+                  }`}
+                  title="Toggle continuous background Gemini scanning"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${geminiAutoLockEnabled ? 'bg-amber-400 animate-pulse' : 'bg-slate-400'}`} />
+                  <span>Sentinel Loop: {geminiAutoLockEnabled ? 'ACTIVE' : 'STANDBY'}</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -987,6 +1154,25 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
         {/* Dynamic Target Reticle (Snaps & Moves with Sensor/AI coordinates) */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* In-View Flight Guide AR Marker (Option 4 - active in Assist or AI mode) */}
+          {assistanceLevel !== 'manual' && targetingOptions.flightGuide && flightGuide && flightGuide.hasTarget && flightGuide.inView && cameraActive && (
+            <div 
+              className="absolute pointer-events-none transition-all duration-300 z-20 flex flex-col items-center"
+              style={{
+                left: `${flightGuide.screenXPct}%`,
+                top: `${flightGuide.screenYPct}%`,
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              <div className="w-14 h-14 rounded-2xl border-2 border-amber-400/80 border-dashed animate-pulse flex items-center justify-center bg-amber-500/10 shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <Navigation className="w-4 h-4 text-amber-400" />
+              </div>
+              <div className="mt-1 px-2.5 py-0.5 rounded-lg bg-black/85 border border-amber-500/60 text-[9px] font-mono font-bold text-amber-300 whitespace-nowrap shadow-lg">
+                ✈️ {flightGuide.flight?.callsign || 'Airliner'} · {flightGuide.distanceMiles}mi · {flightGuide.flight?.altitudeFeet ? `${Math.round(flightGuide.flight.altitudeFeet)}ft` : ''}
+              </div>
+            </div>
+          )}
+
           <div 
             className="absolute transition-all duration-300 ease-out flex items-center justify-center pointer-events-none"
             style={{
@@ -998,6 +1184,28 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             {/* Center Outer Lock Ring */}
             <div className="relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border border-cyan-500/20 border-dashed animate-spin-slow"></div>
+
+              {/* Fighter Jet Acquisition Brackets (Option 2 - active in Assist or AI mode) */}
+              {assistanceLevel !== 'manual' && targetingOptions.jetLockOn && (
+                <div className="absolute inset-2 sm:inset-4 pointer-events-none">
+                  {/* Top-Left */}
+                  <div className={`absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2 transition-colors duration-200 ${
+                    targetLock ? 'border-rose-400' : 'border-cyan-400/80'
+                  }`} />
+                  {/* Top-Right */}
+                  <div className={`absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2 transition-colors duration-200 ${
+                    targetLock ? 'border-rose-400' : 'border-cyan-400/80'
+                  }`} />
+                  {/* Bottom-Left */}
+                  <div className={`absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2 transition-colors duration-200 ${
+                    targetLock ? 'border-rose-400' : 'border-cyan-400/80'
+                  }`} />
+                  {/* Bottom-Right */}
+                  <div className={`absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2 transition-colors duration-200 ${
+                    targetLock ? 'border-rose-400' : 'border-cyan-400/80'
+                  }`} />
+                </div>
+              )}
               
               <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full border flex items-center justify-center relative transition-colors ${
                 targetLock ? 'border-rose-500/80' : 'border-cyan-400/40'
@@ -1045,145 +1253,134 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           </div>
         </div>
 
-        {/* Bottom Tactical Deck Container (Prevents overlapping of deconfliction bar and buttons) */}
-        <div className="space-y-1.5 pointer-events-auto max-w-2xl mx-auto w-full">
-          {/* Target Telemetry Card when locked */}
-          {targetLock && (
-            <div className="bg-black/40 backdrop-blur-lg px-3 py-2 rounded-2xl border border-rose-500/50 text-xs shadow-xl flex items-center justify-between gap-2 animate-fade-in w-full font-mono">
-              <div className="space-y-0.5 min-w-0 flex-1">
-                <div className="flex items-center space-x-1.5">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-                  <span className="text-rose-400 font-bold tracking-wide truncate text-xs">
-                    {targetLock.name.split(' ')[0] || 'Target'}
-                  </span>
-                  <span className="text-[10px] text-cyan-300 bg-cyan-950/40 px-1.5 py-0.2 rounded border border-cyan-500/30 shrink-0">
-                    {targetLock.confidencePct}% Lock
-                  </span>
+        {/* Bottom Tactical Deck Container - Only visible when camera is active so standby screen is clean and never clipped */}
+        {cameraActive && (
+          <div className="space-y-1.5 pointer-events-auto max-w-2xl mx-auto w-full animate-fade-in">
+            {/* Target Telemetry Card when locked */}
+            {targetLock && (
+              <div className="bg-black/60 backdrop-blur-lg px-3.5 py-2.5 rounded-2xl border border-rose-500/60 shadow-xl flex items-center justify-between gap-2 animate-fade-in w-full font-mono">
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
+                    <span className={`text-rose-300 font-bold tracking-wide truncate ${isLargeText ? 'text-sm' : 'text-xs'}`}>
+                      {targetLock.name.split(' ')[0] || 'Target'}
+                    </span>
+                    <span className={`text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/40 font-bold shrink-0 ${isLargeText ? 'text-xs' : 'text-[10px]'}`}>
+                      {targetLock.confidencePct}% Lock
+                    </span>
+                  </div>
+                  <p className={`text-slate-300 truncate font-sans ${isLargeText ? 'text-xs font-semibold' : 'text-[11px]'}`}>
+                    {Math.round(targetLock.azimuthDeg)}° AZ · {Math.round(targetLock.elevationDeg)}° EL · {targetLock.estimatedSpeed || 'Mach 5'}
+                  </p>
                 </div>
-                <p className="text-[10px] text-slate-300 truncate">
-                  {Math.round(targetLock.azimuthDeg)}° AZ · {Math.round(targetLock.elevationDeg)}° EL · {targetLock.estimatedSpeed || 'Mach 5'}
-                </p>
-              </div>
 
-              <div className="flex items-center space-x-1.5 shrink-0">
+                <div className="flex items-center space-x-2 shrink-0">
+                  <button
+                    onClick={handleCapturePhoto}
+                    className="px-3.5 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-xs transition cursor-pointer shadow-md min-h-[38px]"
+                  >
+                    Capture
+                  </button>
+                  <button
+                    onClick={() => setTargetLock(null)}
+                    className="px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[38px] border border-white/10"
+                  >
+                    Release
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Just Captured Notice Badge */}
+            {justCapturedNotice && (
+              <div className="flex items-center justify-center">
+                <div className="px-4 py-2 rounded-full bg-emerald-500 text-slate-950 font-black text-xs shadow-lg animate-bounce flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-white"></span>
+                  <span>{justCapturedNotice}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Integrated Airspace & Deconfliction Ribbon */}
+            <div className={`flex items-center justify-between px-3.5 py-2 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 text-slate-200 shadow-sm ${
+              isLargeText ? 'text-xs sm:text-sm font-bold' : 'text-[11px] font-medium'
+            }`}>
+              <div className="flex items-center space-x-2 truncate">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="text-emerald-400 font-bold shrink-0">
+                  {flights.length > 0 ? `${flights.length} Planes · Clear` : 'Airspace Clear'}
+                </span>
+              </div>
+              <div className="text-cyan-300 truncate text-right font-bold shrink-0 ml-2">
+                {aiLockFeedback}
+              </div>
+            </div>
+
+            {/* Main Tactical Action Bar */}
+            <div className="flex items-center justify-between bg-black/50 backdrop-blur-xl px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border border-white/15 shadow-2xl mt-1">
+              {/* Standby / Pause Camera Toggle */}
+              <button
+                onClick={stopCamera}
+                className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[44px] flex items-center space-x-2"
+                title="Pause Camera to Save Battery"
+              >
+                <Camera className="w-4 h-4 text-slate-300" />
+                <span className={isLargeText ? 'text-xs font-bold' : 'text-[11px]'}>Pause</span>
+              </button>
+
+              {/* Shutter / Capture & Video Rec Triggers */}
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 <button
                   onClick={handleCapturePhoto}
-                  className="px-2.5 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md min-h-[34px]"
+                  className="w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_25px_rgba(6,182,212,0.6)] transition cursor-pointer border-3 border-white/90"
+                  title="Capture Target Photo"
                 >
-                  Capture
+                  <Circle className="w-7 h-7 fill-current" />
                 </button>
+
                 <button
-                  onClick={() => setTargetLock(null)}
-                  className="px-2 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[34px] border border-white/10"
+                  onClick={handleToggleRecordVideo}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer min-h-[44px] ${
+                    isRecordingVideo
+                      ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
+                      : 'bg-white/10 hover:bg-white/15 border border-white/10 text-rose-400'
+                  }`}
+                  title="Record Video Track"
                 >
-                  Release
+                  {isRecordingVideo ? <Square className="w-4 h-4 fill-current" /> : <Video className="w-4 h-4" />}
+                  <span className={isLargeText ? 'text-xs font-bold' : 'text-[11px]'}>{isRecordingVideo ? `${recordingSeconds}s` : 'Rec'}</span>
                 </button>
               </div>
-            </div>
-          )}
 
-          {/* Just Captured Notice Badge */}
-          {justCapturedNotice && (
-            <div className="flex items-center justify-center">
-              <div className="px-3 py-1.5 rounded-full bg-emerald-500/90 text-slate-950 font-bold text-xs shadow-lg animate-bounce flex items-center space-x-1.5">
-                <span className="w-2 h-2 rounded-full bg-white"></span>
-                <span>{justCapturedNotice}</span>
+              {/* Media Vault & Session Review Link */}
+              <div className="flex items-center space-x-1.5">
+                {sessionCaptures.length > 0 ? (
+                  <button
+                    onClick={() => {
+                      if (onCaptureForReview && sessionCaptures.length > 0) {
+                        onCaptureForReview(sessionCaptures[0]);
+                      }
+                    }}
+                    className="px-3 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-black transition flex items-center space-x-1.5 cursor-pointer min-h-[44px] shadow-lg animate-pulse"
+                    title="Review session captures and prepare report"
+                  >
+                    <span>Review ({sessionCaptures.length})</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                ) : onOpenVault ? (
+                  <button
+                    onClick={onOpenVault}
+                    className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[44px]"
+                    title="Open Captured Photos & Videos"
+                  >
+                    <span>Vault</span>
+                    <ChevronRight className="w-4 h-4 text-cyan-400" />
+                  </button>
+                ) : null}
               </div>
             </div>
-          )}
-
-          {/* Integrated Airspace & Deconfliction Ribbon (Transparent Frosted Glass) */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-300 shadow-sm">
-            <div className="flex items-center space-x-1.5 truncate">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              <span className="text-emerald-400 font-bold shrink-0">
-                {flights.length > 0 ? `${flights.length} Planes · Clear` : 'Sky Clear'}
-              </span>
-            </div>
-            <div className="text-cyan-400 truncate text-right font-medium shrink-0 ml-2">
-              {aiLockFeedback}
-            </div>
           </div>
-
-          {/* Main Tactical Action Bar (Transparent Frosted Glass - Maximum Viewport Visibility) */}
-          <div className="flex items-center justify-between bg-black/40 backdrop-blur-xl px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-white/15 shadow-2xl mt-1">
-            {/* Standby / Quick Camera Toggle */}
-            <div className="flex items-center space-x-1.5">
-              {cameraActive ? (
-                <button
-                  onClick={stopCamera}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[42px] flex items-center space-x-1.5"
-                  title="Pause Camera to Save Battery"
-                >
-                  <Camera className="w-3.5 h-3.5 text-slate-300" />
-                  <span className="text-[11px] sm:text-xs">Pause</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => startCamera(false)}
-                  className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold transition flex items-center space-x-1.5 shadow-md cursor-pointer min-h-[42px]"
-                  title="Start Camera Feed"
-                >
-                  <Camera className="w-3.5 h-3.5" />
-                  <span className="text-[11px] sm:text-xs">Camera</span>
-                </button>
-              )}
-            </div>
-
-            {/* Shutter / Capture & Video Rec Triggers */}
-            <div className="flex items-center space-x-2.5 sm:space-x-4">
-              {/* Primary Shutter Button */}
-              <button
-                onClick={handleCapturePhoto}
-                className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_22px_rgba(6,182,212,0.6)] transition cursor-pointer border-3 border-white/80"
-                title="Capture Target Photo"
-              >
-                <Circle className="w-6 h-6 fill-current" />
-              </button>
-
-              {/* Video Recording Trigger */}
-              <button
-                onClick={handleToggleRecordVideo}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer min-h-[42px] ${
-                  isRecordingVideo
-                    ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
-                    : 'bg-white/10 hover:bg-white/15 border border-white/10 text-rose-400'
-                }`}
-                title="Record Video Track"
-              >
-                {isRecordingVideo ? <Square className="w-3.5 h-3.5 fill-current" /> : <Video className="w-3.5 h-3.5" />}
-                <span className="text-[11px] sm:text-xs">{isRecordingVideo ? `${recordingSeconds}s` : 'Rec'}</span>
-              </button>
-            </div>
-
-            {/* Media Vault & Session Review Link */}
-            <div className="flex items-center space-x-1.5">
-              {sessionCaptures.length > 0 ? (
-                <button
-                  onClick={() => {
-                    if (onCaptureForReview && sessionCaptures.length > 0) {
-                      onCaptureForReview(sessionCaptures[0]);
-                    }
-                  }}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black transition flex items-center space-x-1.5 cursor-pointer min-h-[42px] shadow-lg animate-pulse"
-                  title="Review session captures and prepare report"
-                >
-                  <span className="text-[11px] sm:text-xs">Review ({sessionCaptures.length})</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              ) : onOpenVault ? (
-                <button
-                  onClick={onOpenVault}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[42px]"
-                  title="Open Captured Photos & Videos"
-                >
-                  <span className="text-[11px] sm:text-xs">Vault</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Battery & Power Optimization Drawer / Modal */}
@@ -1275,6 +1472,14 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           </div>
         </div>
       )}
+
+      {/* Targeting Assist Options Drawer */}
+      <TargetingOptionsDrawer
+        isOpen={isTargetingDrawerOpen}
+        onClose={() => setIsTargetingDrawerOpen(false)}
+        options={targetingOptions}
+        onOptionsChange={setTargetingOptions}
+      />
     </div>
   );
 };

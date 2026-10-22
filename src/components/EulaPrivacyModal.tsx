@@ -91,12 +91,21 @@ export const EulaPrivacyModal: React.FC<EulaPrivacyModalProps> = ({ isOpen, onCl
               Any incident reports, telemetry dossiers, or media files created in Check Sky Light remain under your sole discretion. Voluntary submissions to external research databases (e.g., MUFON CMS, SCU) are performed explicitly by you through manual export or standard submission workflows.
             </p>
           </div>
+          {/* Section 5 */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold text-rose-300 font-mono">
+              5. Zero-Tolerance Safety Policy & Domain Integrity
+            </h3>
+            <p className="text-slate-400 text-[11px]">
+              Check Sky Light enforces strict zero-tolerance policies prohibiting adult or pornographic media, sexually explicit content, and depiction of human or animal cruelty/harm. Violating content is immediately dropped in-flight without persisting to any server, database, or client storage. Accounts or devices attempting misuse are subjected to progressive quarantine lockouts.
+            </p>
+          </div>
         </div>
 
         {/* Footer */}
         <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
           <span className="text-[10px] font-mono text-slate-400">
-            Last Updated: October 2026 • v3.5
+            Last Updated: October 2026 • v3.7
           </span>
           <button
             onClick={onClose}

@@ -403,7 +403,7 @@ export default function App() {
                       borderColor: 'rgba(var(--csl-accent-rgb), 0.4)'
                     }}
                   >
-                    v3.6
+                    v3.7
                   </span>
                 </div>
               </button>
@@ -507,15 +507,15 @@ export default function App() {
         )}
 
         {/* Main Content Viewport */}
-        <main className={`flex-1 w-full mx-auto flex flex-col ${
+        <main className={`flex-1 w-full mx-auto flex flex-col min-h-0 ${
           isTargetFullView && activeTab === 'target'
             ? 'p-0 mb-0 max-w-none'
             : activeTab === 'target'
-              ? 'p-2 sm:p-3 pb-24 sm:pb-28 max-w-5xl flex-1'
+              ? 'p-1 sm:p-2 pb-18 sm:pb-20 max-w-5xl flex-1 flex flex-col min-h-0'
               : 'max-w-7xl p-3 sm:p-5 pb-28 sm:pb-32'
         }`}>
           {activeTab === 'target' && (
-            <div className="w-full">
+            <div className="w-full flex-1 flex flex-col min-h-0">
               <TargetSkyScanner
                 userLocation={userLocation}
                 flights={flights}

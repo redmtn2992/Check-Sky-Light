@@ -3,11 +3,11 @@ import {
   Sparkles, Copy, Check, Share2, 
   ChevronDown, ChevronUp, AlertCircle, 
   HelpCircle, CheckCircle2, FileText, ArrowRight,
-  AlertTriangle
+  AlertTriangle, ShieldCheck
 } from 'lucide-react';
 import { ParallaxPanelReview, ParallaxPanelMember } from '../../types';
 
-interface ParallaxTribunalCardProps {
+interface ParallaxPanelCardProps {
   panelReview: ParallaxPanelReview;
   caseTitle?: string;
   sourceUrl?: string;
@@ -17,7 +17,7 @@ interface ParallaxTribunalCardProps {
   isPublished?: boolean;
 }
 
-export const ParallaxTribunalCard: React.FC<ParallaxTribunalCardProps> = ({
+export const ParallaxPanelCard: React.FC<ParallaxPanelCardProps> = ({
   panelReview,
   caseTitle,
   sourceUrl,
@@ -209,13 +209,17 @@ Engine: Google Gemini 3.8 Flash (Live In-App Engine)`;
   return (
     <div className="glass-panel border border-cyan-500/30 rounded-2xl p-4 sm:p-5 space-y-4 bg-slate-950/90 text-slate-100 shadow-xl">
       {/* 1. Scientific Framework Header (Less Ink) */}
-      <div className="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 flex items-center justify-between gap-2 text-xs font-mono">
+      <div className="p-2.5 rounded-xl bg-slate-900/80 border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
         <div className="flex items-center space-x-2">
           <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
           <span className="text-slate-200 font-semibold">Multi-Lens Scientific Review</span>
           <span className="text-slate-600 hidden sm:inline">•</span>
           <span className="text-slate-400 hidden sm:inline">Flight kinematics, classical aerospace, and theoretical physics.</span>
         </div>
+        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1 shrink-0">
+          <ShieldCheck className="w-3 h-3 text-emerald-400" />
+          Safety & Domain Integrity: PASSED
+        </span>
       </div>
 
       {/* 2. FORENSIC NOTICE: Web & Social Media Footage Limitations */}

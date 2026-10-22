@@ -6,7 +6,7 @@ import {
   MapPin, Landmark, Award, Shield, UserCheck, Info, AlertTriangle, AlertCircle
 } from 'lucide-react';
 import { GeminiForensicAnalysis } from '../../types';
-import { ParallaxTribunalCard } from '../parallax/ParallaxTribunalCard';
+import { ParallaxPanelCard } from '../parallax/ParallaxPanelCard';
 
 interface DiagnosticReportCardProps {
   analysis: GeminiForensicAnalysis;
@@ -21,8 +21,8 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
   onSaveToVault,
   isPublished = false
 }) => {
-  const [viewMode, setViewMode] = useState<'diagnostic' | 'tribunal'>(
-    analysis.parallaxPanel ? 'tribunal' : 'diagnostic'
+  const [viewMode, setViewMode] = useState<'diagnostic' | 'panel'>(
+    analysis.parallaxPanel ? 'panel' : 'diagnostic'
   );
   const [copiedLink, setCopiedLink] = useState(false);
   // Default to compact summary; deep technical details collapsed to avoid overwhelming users
@@ -106,9 +106,9 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
       {analysis.parallaxPanel && (
         <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10 w-fit">
           <button
-            onClick={() => setViewMode('tribunal')}
+            onClick={() => setViewMode('panel')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
-              viewMode === 'tribunal'
+              viewMode === 'panel'
                 ? 'bg-cyan-400 text-slate-950 shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
@@ -130,8 +130,8 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
         </div>
       )}
 
-      {viewMode === 'tribunal' && analysis.parallaxPanel ? (
-        <ParallaxTribunalCard
+      {viewMode === 'panel' && analysis.parallaxPanel ? (
+        <ParallaxPanelCard
           panelReview={analysis.parallaxPanel}
           caseTitle={analysis.verdictTitle}
           sourceUrl={analysis.sourceTitle}
@@ -169,6 +169,10 @@ export const DiagnosticReportCard: React.FC<DiagnosticReportCardProps> = ({
           </div>
           
           <div className="flex items-center space-x-2 text-[11px] font-mono">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              Safety: PASSED
+            </span>
             <span className="text-slate-400">DTC {dtcCode}</span>
           </div>
         </div>

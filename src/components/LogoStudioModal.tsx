@@ -256,9 +256,9 @@ export const LogoStudioModal: React.FC<LogoStudioModalProps> = ({
                       </div>
 
                       <div className="flex items-center justify-between pt-1 border-t border-white/5 text-[9px]">
-                        <span className="text-slate-400">Diagnostic Tribunal:</span>
+                        <span className="text-slate-400">Parallax Panel:</span>
                         <span style={{ color: theme.accentHex }} className="font-bold">
-                          DTC P0312
+                          DTC P3012
                         </span>
                       </div>
                     </div>

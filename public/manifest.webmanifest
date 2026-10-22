@@ -1,7 +1,7 @@
 {
   "name": "Check Sky Light - UAP Anomaly Scanner",
   "short_name": "CheckSkyLight",
-  "description": "Check Sky Light v3.5 is an empirical civilian sky diagnostics and aerospace deconfliction platform. Features real-time IMU optical tracking, live ADS-B & satellite deconfliction, 4-Pillar forensic review, and Dual-Lens aerospace analysis.",
+  "description": "Check Sky Light v3.7 is an empirical civilian sky diagnostics and aerospace deconfliction platform. Features real-time IMU optical tracking, live ADS-B & satellite deconfliction, Multi-Lens consensus review, zero-tolerance safety guardrails, and Dual-Lens aerospace analysis.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

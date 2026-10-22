@@ -40,7 +40,7 @@ This document serves as the **central repository index and project oversight reg
 | **`KB-T5-03`** | **Bobrick & Martire Warp Geometries (2021)** | Tier V: Theoretical Physics | Classical and Quantum Gravity | Physical warp drive geometries, frame-dragging acceleration tensors, and boundary-layer stress constraints. | **ACTIVE** |
 | **`KB-REG-01`** | **FAA Title 14 CFR § 91.209** | Aviation Safety Regulations | `https://www.ecfr.gov/` | Aircraft lighting mandates (port red, starboard green, tail white, 1.2 Hz anti-collision strobes) for Lens A stress-testing. | **ACTIVE** |
 | **`KB-REG-02`** | **FAA Title 14 CFR Part 107** | Aviation Safety Regulations | `https://www.ecfr.gov/` | Commercial small unmanned aircraft systems (sUAS) operational limitations, altitude ceiling (400 ft AGL), speed caps. | **ACTIVE** |
-| **`KB-AI-01`** | **Google Gemini 3.8 Flash** | Core In-App Analytical Engine | `https://ai.google.dev/` | In-app multimodal reasoning model conducting 100% of the live Dual-Lens and Parallax Tribunal evaluations. | **ACTIVE** |
+| **`KB-AI-01`** | **Google Gemini 3.8 Flash** | Core In-App Analytical Engine | `https://ai.google.dev/` | In-app multimodal reasoning model conducting 100% of the live Dual-Lens and Parallax Panel evaluations. | **ACTIVE** |
 | **`KB-AI-02`** | **Anthropic Claude & OpenAI ChatGPT** | External Blinded Review Target | Third-Party Frontier Models | External reference platforms for independent verification using CSL's exported un-primed "Copy Case Facts" dossier. | **ACTIVE** |
 
 ---
@@ -136,7 +136,7 @@ This document serves as the **central repository index and project oversight reg
 ### Core Analytical AI Engine & External Review Targets
 
 * **`KB-AI-01` • Google Gemini 3.8 Flash**
-  * *Description*: The foundational multimodal reasoning model integrated into Check Sky Light. Executes in-app optical video analysis, mathematical triangulation, and the Dual-Lens Parallax Tribunal evaluation in real time.
+  * *Description*: The foundational multimodal reasoning model integrated into Check Sky Light. Executes in-app optical video analysis, mathematical triangulation, and the Dual-Lens Parallax Panel evaluation in real time.
 * **`KB-AI-02` • External Frontier Reasoning Models (Claude / ChatGPT)**
   * *Description*: External peer-review platforms. CSL’s **"Copy Case Facts"** function exports an unbiased, un-primed empirical dossier (stripping internal scores) so users can independently submit data to models like Anthropic Claude or OpenAI ChatGPT for objective, tripartite validation.
 

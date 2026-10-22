@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Camera, Video, Upload, Sparkles, Compass, 
   MapPin, CheckCircle2, AlertTriangle, ShieldCheck, 
-  HardDrive, RefreshCw, Eye, ArrowRight, Play, Info
+  HardDrive, RefreshCw, Eye, ArrowRight, Play, Info, ShieldAlert
 } from 'lucide-react';
 import { LocationCoords, GeminiForensicAnalysis } from '../../types';
 import { DiagnosticReportCard } from './DiagnosticReportCard';
+import { evaluateContentSafety, checkUserBlockStatus, recordSafetyStrike, UserBlockStatus } from '../../lib/safetyGuardrails';
 
 interface TierWitnessCaptureProps {
   userLocation: LocationCoords;
@@ -36,6 +37,11 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
   const [analysisResult, setAnalysisResult] = useState<GeminiForensicAnalysis | null>(null);
   const [isPublished, setIsPublished] = useState<boolean>(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [blockStatus, setBlockStatus] = useState<UserBlockStatus>(() => checkUserBlockStatus());
+
+  useEffect(() => {
+    setBlockStatus(checkUserBlockStatus());
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -77,6 +83,20 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
   };
 
   const handleRunWitnessAnalysis = async () => {
+    if (blockStatus.isBlocked) {
+      setAnalysisError(`[CLIENT QUARANTINED]: Analysis locked out for ${blockStatus.remainingMinutes || 60}m due to safety policy violations.`);
+      return;
+    }
+
+    // Pre-flight check
+    const safety = evaluateContentSafety(witnessNotes, previewUrl || undefined);
+    if (!safety.isSafe) {
+      const updated = recordSafetyStrike(safety.reason || 'Safety policy violation', safety.violationType === 'HUMAN_OR_ANIMAL_HARM');
+      setBlockStatus(updated);
+      setAnalysisError(`[SUBMISSION BLOCKED]: ${safety.reason}`);
+      return;
+    }
+
     setIsAnalyzing(true);
     setAnalysisError(null);
     setAnalysisProgress('Stabilizing optical frames & extracting sensor telemetry...');
@@ -114,7 +134,14 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error(`Analysis server returned status ${response.status}`);
+        const errJson = await response.json().catch(() => ({}));
+        if (errJson.error === 'CONTENT_POLICY_VIOLATION') {
+          const updated = recordSafetyStrike(errJson.reason || 'Content rejected', true);
+          setBlockStatus(updated);
+          setAnalysisError(`[SYSTEM QUARANTINE]: ${errJson.message || errJson.reason}`);
+          return;
+        }
+        throw new Error(errJson.message || `Analysis server returned status ${response.status}`);
       }
 
       const data: GeminiForensicAnalysis = await response.json();
@@ -355,17 +382,39 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
               />
             </div>
 
+            {/* Quarantine Banner */}
+            {blockStatus.isBlocked && (
+              <div className="p-3 rounded-2xl bg-rose-950/60 border border-rose-500/60 text-rose-200 text-xs font-sans flex items-start space-x-2.5">
+                <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-bold uppercase tracking-wide font-mono text-rose-300 text-xs">
+                    Device Quarantined ({blockStatus.remainingMinutes || 0}m Remaining)
+                  </div>
+                  <p className="text-slate-300 text-[11px] mt-0.5">
+                    {blockStatus.reason || 'Repeated safety policy violations. Adult content and harm are prohibited.'}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Run Analysis Trigger Button */}
             <button
               onClick={handleRunWitnessAnalysis}
-              disabled={isAnalyzing}
+              disabled={isAnalyzing || blockStatus.isBlocked}
               className={`w-full py-3.5 rounded-2xl font-bold font-mono text-sm transition flex items-center justify-center space-x-2 cursor-pointer shadow-lg ${
-                isAnalyzing
+                blockStatus.isBlocked
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-60'
+                  : isAnalyzing
                   ? 'bg-slate-800 text-slate-500 cursor-wait'
                   : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-[0_0_25px_rgba(6,182,212,0.4)]'
               }`}
             >
-              {isAnalyzing ? (
+              {blockStatus.isBlocked ? (
+                <>
+                  <ShieldAlert className="w-4 h-4 text-rose-400" />
+                  <span>Intake Quarantined</span>
+                </>
+              ) : isAnalyzing ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
                   <span>{analysisProgress || 'Running Forensic Engine...'}</span>
