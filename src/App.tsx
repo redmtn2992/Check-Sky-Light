@@ -643,6 +643,9 @@ export default function App() {
                     onClick={() => {
                       unlockAudioContext();
                       setActiveTab(id);
+                      if (id === 'radar') {
+                        fetchSectorAirspace();
+                      }
                     }}
                     className={`flex flex-col items-center space-y-1 transition cursor-pointer py-1 px-3 rounded-2xl min-h-[48px] justify-center ${
                       isActive ? 'font-bold' : 'text-slate-400 hover:text-slate-200'

@@ -212,6 +212,7 @@ export const SkyRadarMap: React.FC<SkyRadarMapProps> = ({
     const ringsGroup = ringsLayerRef.current;
     if (!map || !ringsGroup) return;
 
+    map.invalidateSize();
     map.panTo([userLocation.lat, userLocation.lng]);
     ringsGroup.clearLayers();
 

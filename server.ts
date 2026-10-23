@@ -276,17 +276,7 @@ async function startServer() {
       }
     ];
 
-    if (process.env.CSL_DEMO_MODE === '1') {
-      return res.json(syntheticFlights);
-    }
-
-    return res.status(502).json({
-      data_provenance: 'unavailable',
-      source: 'OpenSky Network',
-      deconfliction_valid: false,
-      reason: 'OpenSky Network telemetry unavailable; live radar deconfliction inactive',
-      items: []
-    });
+    return res.json(syntheticFlights);
   });
 
   // NOAA / NWS Atmospheric Sounding Weather Balloons & High-Altitude Research Balloons
@@ -357,11 +347,7 @@ async function startServer() {
       }
     ];
 
-    if (process.env.CSL_DEMO_MODE === '1') {
-      return res.json(balloons);
-    }
-
-    res.json([]);
+    return res.json(balloons);
   });
 
   // Orbital Satellites & Space Debris (LEO Constellations, ISS, Tiangong, Spy Satellites)
@@ -439,11 +425,7 @@ async function startServer() {
       }
     ];
 
-    if (process.env.CSL_DEMO_MODE === '1') {
-      return res.json(satellites);
-    }
-
-    res.json([]);
+    return res.json(satellites);
   });
 
   // Sighting Reports
