@@ -346,7 +346,9 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div 
-        className="min-h-screen text-slate-100 font-sans flex flex-col selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300"
+        className={`min-h-[100dvh] text-slate-100 font-sans flex flex-col selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300 ${
+          activeTab === 'target' && !isTargetFullView ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : ''
+        }`}
         style={{
           backgroundColor: 'var(--csl-bg-base)',
         }}
@@ -511,11 +513,11 @@ export default function App() {
           isTargetFullView && activeTab === 'target'
             ? 'p-0 mb-0 max-w-none'
             : activeTab === 'target'
-              ? 'p-1 sm:p-2 pb-18 sm:pb-20 max-w-5xl flex-1 flex flex-col min-h-0'
-              : 'max-w-7xl p-3 sm:p-5 pb-28 sm:pb-32'
+              ? 'p-1 sm:p-2 pb-[calc(4.75rem+env(safe-area-inset-bottom,0px))] max-w-5xl flex-1 flex flex-col min-h-0 overflow-hidden'
+              : 'max-w-7xl p-3 sm:p-5 pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))]'
         }`}>
           {activeTab === 'target' && (
-            <div className="w-full flex-1 flex flex-col min-h-0">
+            <div className="w-full flex-1 flex flex-col min-h-0 h-full">
               <TargetSkyScanner
                 userLocation={userLocation}
                 flights={flights}
@@ -631,7 +633,7 @@ export default function App() {
         {/* Bottom iPhone Tactical Navigation Bar (Hidden when in Target Full View) */}
         {!isTargetFullView && (
           <nav 
-            className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t pt-1.5 px-2 sm:px-4 select-none safe-area-pb pb-safe shadow-[0_-10px_25px_rgba(0,0,0,0.5)] transition-colors duration-300"
+            className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t pt-1 px-2 sm:px-4 select-none pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-[0_-10px_25px_rgba(0,0,0,0.5)] transition-colors duration-300"
             style={{
               backgroundColor: 'var(--csl-bg-base)',
               borderTopColor: 'var(--csl-border)'

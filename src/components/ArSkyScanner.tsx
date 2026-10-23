@@ -869,7 +869,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       className={
         isFullView
           ? "fixed inset-0 z-50 w-screen h-[100dvh] bg-black select-none flex flex-col overflow-hidden"
-          : "relative w-full flex-1 min-h-[400px] h-[calc(100dvh-7.5rem)] sm:h-[calc(100dvh-8.5rem)] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl select-none flex flex-col"
+          : "relative w-full h-full flex-1 min-h-0 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl select-none flex flex-col"
       }
     >
       {/* Video / Camera Feed (Full View Object Cover with smooth optical/digital crop zoom & day/night filters) */}
@@ -979,7 +979,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
       {/* Tactical HUD Overlay Container (with iOS Safe Area clearance in Full View) */}
       <div className={`absolute inset-0 z-10 pointer-events-none flex flex-col justify-between ${
-        isFullView ? 'p-2.5 sm:p-4 pt-safe-top pb-safe' : 'p-2.5 sm:p-4'
+        isFullView ? 'p-2.5 sm:p-4 pt-safe-top pb-safe' : 'p-2 sm:p-3 pb-2.5 sm:pb-3'
       }`}>
         {/* Top Control Section: Telemetry + Filter/Tools + Tactical Mode Island */}
         <div className="space-y-2">
@@ -1317,11 +1317,12 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             </div>
 
             {/* Main Tactical Action Bar */}
-            <div className="flex items-center justify-between bg-black/50 backdrop-blur-xl px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border border-white/15 shadow-2xl mt-1">
+            {/* Main Tactical Action Bar */}
+            <div className="flex items-center justify-between bg-black/60 backdrop-blur-xl px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-2xl border border-white/15 shadow-2xl mt-0.5">
               {/* Standby / Pause Camera Toggle */}
               <button
                 onClick={stopCamera}
-                className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[44px] flex items-center space-x-2"
+                className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition cursor-pointer min-h-[38px] flex items-center space-x-1.5"
                 title="Pause Camera to Save Battery"
               >
                 <Camera className="w-4 h-4 text-slate-300" />
@@ -1329,18 +1330,18 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
               </button>
 
               {/* Shutter / Capture & Video Rec Triggers */}
-              <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                 <button
                   onClick={handleCapturePhoto}
-                  className="w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_25px_rgba(6,182,212,0.6)] transition cursor-pointer border-3 border-white/90"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.6)] transition cursor-pointer border-2 sm:border-3 border-white/90"
                   title="Capture Target Photo"
                 >
-                  <Circle className="w-7 h-7 fill-current" />
+                  <Circle className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
                 </button>
 
                 <button
                   onClick={handleToggleRecordVideo}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer min-h-[44px] ${
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer min-h-[38px] ${
                     isRecordingVideo
                       ? 'bg-rose-600 hover:bg-rose-500 text-white animate-pulse'
                       : 'bg-white/10 hover:bg-white/15 border border-white/10 text-rose-400'
@@ -1361,20 +1362,20 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                         onCaptureForReview(sessionCaptures[0]);
                       }
                     }}
-                    className="px-3 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-black transition flex items-center space-x-1.5 cursor-pointer min-h-[44px] shadow-lg animate-pulse"
+                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-black transition flex items-center space-x-1 cursor-pointer min-h-[38px] shadow-lg animate-pulse"
                     title="Review session captures and prepare report"
                   >
                     <span>Review ({sessionCaptures.length})</span>
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 ) : onOpenVault ? (
                   <button
                     onClick={onOpenVault}
-                    className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[44px]"
+                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[38px]"
                     title="Open Captured Photos & Videos"
                   >
                     <span>Vault</span>
-                    <ChevronRight className="w-4 h-4 text-cyan-400" />
+                    <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
                   </button>
                 ) : null}
               </div>
