@@ -359,7 +359,7 @@ export default function App() {
         {/* iOS Dynamic Island & Tactical Status Bar (Mobile-first with safe-area padding) */}
         {!isTargetFullView && (
           <header 
-            className="sticky top-0 z-40 px-2 sm:px-4 pt-safe-top pb-2 select-none crisp-hud transition-colors duration-300 border-b"
+            className="sticky top-0 z-40 px-2.5 sm:px-4 pt-safe-top pb-2 select-none crisp-hud transition-colors duration-300 border-b"
             style={{
               backgroundColor: 'var(--csl-bg-base)',
               borderBottomColor: 'var(--csl-border)'
@@ -390,22 +390,12 @@ export default function App() {
                     style={{ borderColor: 'var(--csl-accent)' }} 
                   />
                 </div>
-                <div className="flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap">
+                <div className="flex items-center whitespace-nowrap">
                   <span 
                     className="text-[12px] sm:text-sm font-black tracking-tight uppercase transition-colors"
                     style={{ color: 'var(--csl-accent)' }}
                   >
                     CHECK SKY<span className="hidden min-[360px]:inline text-slate-200"> LIGHT</span>
-                  </span>
-                  <span 
-                    className="inline-flex items-center px-1 sm:px-1.5 py-0.2 rounded text-[8px] sm:text-[9px] font-mono font-bold border shrink-0 transition-colors"
-                    style={{
-                      backgroundColor: 'rgba(var(--csl-accent-rgb), 0.15)',
-                      color: 'var(--csl-accent)',
-                      borderColor: 'rgba(var(--csl-accent-rgb), 0.4)'
-                    }}
-                  >
-                    v3.7
                   </span>
                 </div>
               </button>
@@ -415,20 +405,20 @@ export default function App() {
                 {/* Sector Selector */}
                 <button
                   onClick={() => setIsLocationPickerOpen(true)}
-                  className="flex items-center space-x-1 px-2 sm:px-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 text-xs font-mono text-cyan-300 transition-colors cursor-pointer h-9 sm:h-10 shrink-0"
+                  className="flex items-center space-x-1 px-2 sm:px-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 text-xs font-mono text-cyan-300 transition-colors cursor-pointer h-8.5 sm:h-9.5 shrink-0"
                   title="Change sector / view UAP hotspots"
                 >
-                  <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span className="font-bold truncate max-w-[50px] min-[390px]:max-w-[65px] sm:max-w-[130px] text-[11px] sm:text-xs">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span className="font-bold truncate max-w-[48px] min-[390px]:max-w-[62px] sm:max-w-[130px] text-[11px] sm:text-xs">
                     {userLocation.city || 'Sector'}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-cyan-400/70 shrink-0" />
+                  <ChevronDown className="w-2.5 h-2.5 text-cyan-400/70 shrink-0" />
                 </button>
 
                 {/* Hardware Power Profile Toggle (Thermal Eco vs Tactical Performance) */}
                 <button
                   onClick={togglePowerProfile}
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl transition-colors cursor-pointer flex items-center justify-center relative shrink-0 ${
+                  className={`w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center relative shrink-0 ${
                     powerSettings.profile === 'eco'
                       ? 'text-teal-400 bg-teal-500/15 border border-teal-500/30 hover:bg-teal-500/25'
                       : 'text-amber-400 hover:text-amber-300 hover:bg-white/[0.06]'
@@ -441,12 +431,12 @@ export default function App() {
                   aria-label="Toggle Power Profile"
                 >
                   {powerSettings.profile === 'eco' ? (
-                    <Leaf className="w-5 h-5 text-teal-300" />
+                    <Leaf className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-teal-300" />
                   ) : (
-                    <Zap className="w-5 h-5 text-amber-400" />
+                    <Zap className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-amber-400" />
                   )}
                   <span
-                    className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ${
+                    className={`absolute top-1 right-1 w-2 h-2 rounded-full ${
                       powerSettings.profile === 'eco' ? 'bg-teal-400 animate-pulse' : 'bg-amber-400'
                     }`}
                   />
@@ -455,7 +445,7 @@ export default function App() {
                 {/* Acoustic & Sound Options (Stealth by Default for Clean Mic Encounter Capture) */}
                 <button
                   onClick={() => setIsSoundOptionsOpen(true)}
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl transition-colors cursor-pointer flex items-center justify-center relative shrink-0 ${
+                  className={`w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-xl transition-colors cursor-pointer flex items-center justify-center relative shrink-0 ${
                     !soundSettings.soundEnabled
                       ? 'text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.06]'
                       : 'text-amber-400 hover:text-amber-300 hover:bg-white/[0.06]'
@@ -468,12 +458,12 @@ export default function App() {
                   aria-label="Sound and Acoustic Options"
                 >
                   {!soundSettings.soundEnabled ? (
-                    <VolumeX className="w-5 h-5" />
+                    <VolumeX className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                   ) : (
-                    <Volume2 className="w-5 h-5" />
+                    <Volume2 className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                   )}
                   <span
-                    className={`absolute top-1.5 right-1.5 w-2 h-2 rounded-full ${
+                    className={`absolute top-1 right-1 w-2 h-2 rounded-full ${
                       !soundSettings.soundEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
                     }`}
                   />
@@ -482,12 +472,12 @@ export default function App() {
                 {/* Airspace Alerts */}
                 <button
                   onClick={() => setIsAlertsOpen(true)}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-slate-300 hover:text-amber-300 hover:bg-white/[0.06] transition-colors cursor-pointer flex items-center justify-center relative shrink-0"
+                  className="w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 rounded-xl text-slate-300 hover:text-amber-300 hover:bg-white/[0.06] transition-colors cursor-pointer flex items-center justify-center relative shrink-0"
                   title="Airspace Anomaly Alerts"
                 >
-                  <Bell className="w-5 h-5" />
+                  <Bell className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                   {unreadAlertsCount > 0 && (
-                    <span className="absolute -top-1 -right-1 px-1 py-0.5 min-w-[16px] h-4 rounded-full bg-rose-500 text-[9px] font-mono font-bold text-white flex items-center justify-center shadow-sm">
+                    <span className="absolute top-0 right-0 px-1 py-0.2 min-w-[15px] h-3.5 rounded-full bg-rose-500 text-[8px] font-mono font-bold text-white flex items-center justify-center shadow-sm">
                       {unreadAlertsCount}
                     </span>
                   )}
@@ -498,7 +488,7 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('analyze');
                   }}
-                  className="hidden md:flex w-10 h-10 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition-colors cursor-pointer items-center justify-center relative shrink-0"
+                  className="hidden md:flex w-9.5 h-9.5 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition-colors cursor-pointer items-center justify-center relative shrink-0"
                   title="Monitor Live UAP Community Incident Stream"
                 >
                   <Radio className="w-5 h-5 text-cyan-400" />
