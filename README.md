@@ -112,4 +112,4 @@ npm run build
 
 ## License
 
-MIT © Greg Tafoya. Check Sky Light Platform.
+MIT © Gregory Tafoya, MPH. Check Sky Light Platform.

@@ -1,6 +1,6 @@
 # Check Sky Light (CSL): Knowledge Base Restructuring Specification & Peer Review Dossier
 
-*A Joint Synthesis by Luna, Gemini, and Greg Tafoya for Claude Peer Review*  
+*A Joint Synthesis by Luna, Gemini, and Gregory Tafoya, MPH for Claude Peer Review*  
 *Document Code: CSL-KB-SPEC-v4.0 • Target Reviewer: Claude (Anthropic)*  
 *Date: October 2026 • Status: Pending Tripartite Review (Pre-Implementation)*
 
@@ -94,7 +94,7 @@ export interface SourceEntry {
     | 'deprecated' 
     | 'pending';
   last_checked_at: string;         // ISO timestamp
-  verified_by: string;             // e.g., "Luna", "Claude", "Gemini", "Greg Tafoya"
+  verified_by: string;             // e.g., "Luna", "Claude", "Gemini", "Gregory Tafoya, MPH"
   verified_fields: string[];       // Explicit array of checked attributes
   limitations: string[];           // Known caveats, data voids, or redactions
   approved_uses: string[];         // Where CSL may apply this source

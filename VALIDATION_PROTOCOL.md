@@ -2,7 +2,7 @@
 
 **Status:** Candidate rev 4. Incorporates the statistical and sensor-fusion review of rev 1 (ChatGPT, "Luna"). Also incorporates Gemini's engineering answers, which are the code author's self-reported status and are unverified until Section 6A is completed. Becomes v1.0 only when the Principal Investigator signs the freeze checklist (Section 11).  
 **Drafted:** October 2026, with AI-assisted design input (Claude, Anthropic). The AI reviewers have not seen the source code and have run no experiments.  
-**Principal Investigator:** Gregory Bryant Tafoya, MPH  
+**Principal Investigator:** Gregory Tafoya, MPH  
 **Convention:** **[PILOT]** = set from development-set data, then frozen. **[AUTHOR]** = a human decision this draft deliberately leaves open.  
 
 ---
@@ -180,7 +180,7 @@ Publish all primary-endpoint results including failures, all excluded events wit
 
 ## 14. Principal Investigator Freeze Sign-Off
 
-**Principal Investigator:** Gregory Bryant Tafoya, MPH  
+**Principal Investigator:** Gregory Tafoya, MPH  
 **Date:** October 5, 2026  
 **Document Status:** FROZEN VALIDATION SPECIFICATION v1.0  
 **Repository Identifier:** `CSL-VAL-PROTO-v1.0-CANDIDATE-REV4`

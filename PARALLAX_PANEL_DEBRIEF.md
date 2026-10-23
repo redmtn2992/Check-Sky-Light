@@ -1,7 +1,7 @@
 # The Parallax Panel: Project Handoff & Consensus Debrief (Phase 0 Archive)
 
 **Consortium Identifier:** `THE-PARALLAX-PANEL-OCT-2026`  
-**Mission Commander & Principal Investigator:** Gregory Bryant Tafoya, MPH ("Red Mountain")  
+**Mission Commander & Principal Investigator:** Gregory Tafoya, MPH  
 **Consortium Members:**  
 - **Anthropic Claude Sonnet 5.5** (Vector Geodesy, Experimental Design & Covariance Discipline)  
 - **OpenAI ChatGPT / GPT-4o series ("Luna")** (Statistical Architecture, Distributional Testing & Adversarial Telemetry Review)  
@@ -44,7 +44,7 @@
 #### Items Required After Official T0:
 1. **Phase 1 Pilot Data Collection:** Collect empirical device noise and baseline survey markers.
 2. **Populate `[PILOT]` and `[AUTHOR]` Placeholders:** Fill all numerical blanks in Section 6.
-3. **Formal Freeze:** Principal Investigator Gregory Bryant Tafoya, MPH, signs Section 14 to mint Validation Protocol v1.0.
+3. **Formal Freeze:** Principal Investigator Gregory Tafoya, MPH, signs Section 14 to mint Validation Protocol v1.0.
 
 ---
 
@@ -59,7 +59,7 @@
 
 ### 4. Official Academic Attribution Specification
 In all future publications, pre-registrations, and venue disclosures:
-> *"AI-Assisted Methodological Review: Development of the validation protocol and statistical evaluation harness received adversarial technical review from The Parallax Panel, consisting of Claude Sonnet 5.5 (Anthropic), Gemini 3.8 Flash (Google), and ChatGPT / GPT-4o (OpenAI). These systems contributed suggestions concerning experimental design, sensor fusion, geometry, statistical calibration, uncertainty quantification, and epistemic safeguards. The AI systems did not conduct experiments, independently verify source code, or validate reported results. All final methodological decisions, operational choices, and scientific responsibility reside solely with the Principal Investigator, Gregory Bryant Tafoya, MPH."*
+> *"AI-Assisted Methodological Review: Development of the validation protocol and statistical evaluation harness received adversarial technical review from The Parallax Panel, consisting of Claude Sonnet 5.5 (Anthropic), Gemini 3.8 Flash (Google), and ChatGPT / GPT-4o (OpenAI). These systems contributed suggestions concerning experimental design, sensor fusion, geometry, statistical calibration, uncertainty quantification, and epistemic safeguards. The AI systems did not conduct experiments, independently verify source code, or validate reported results. All final methodological decisions, operational choices, and scientific responsibility reside solely with the Principal Investigator, Gregory Tafoya, MPH."*
 
 ---
 

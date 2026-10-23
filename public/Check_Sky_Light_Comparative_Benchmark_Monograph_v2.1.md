@@ -1,7 +1,7 @@
 # Empirical Comparative Benchmark: Check Sky Light vs. 11 UAP & Aerospace Competitors
 ## A Multi-Sensor Telemetry, Epistemological Deconfliction, and Regulatory Compliance Audit
 
-**Gregory Bryant Tafoya, MPH**  
+**Gregory Tafoya, MPH**  
 *Principal Investigator / Architect*  
 *Cognitive Reasoning & Knowledge Core: Google Gemini Multimodal Reasoning Engine (v2.4 / Flash Engine)*  
 *Publication Version: 2.1 (October 2026)*  

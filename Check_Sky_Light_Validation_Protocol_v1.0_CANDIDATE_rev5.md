@@ -2,7 +2,7 @@
 
 **Status:** Candidate rev 5. Incorporates the statistical and sensor-fusion review of rev 1 (ChatGPT, "Luna") and the exact Jacobian variance verification from Phase 0 (T0). Becomes v1.0 only when the Principal Investigator signs the freeze checklist (Section 11).  
 **Drafted:** October 2026, with AI-assisted design input from "The Parallax Panel" (Claude Sonnet 5.5, Anthropic; Gemini 3.8 Flash, Google; ChatGPT / OpenAI, styled "Luna").  
-**Principal Investigator:** Gregory Bryant Tafoya, MPH  
+**Principal Investigator:** Gregory Tafoya, MPH  
 **Convention:** **[PILOT]** = set from development-set data, then frozen. **[AUTHOR]** = a human decision this draft deliberately leaves open.  
 
 ---
@@ -105,12 +105,12 @@ Adhere to all FAA/aviation regulations. Four data tiers: Tier 0 (Raw private), T
 ## 13. Reporting and Formal Acknowledgment
 Publish all results including failures and confusion tables.
 **Formal Acknowledgment Text:**
-> *"AI-Assisted Methodological Review: The experimental design and validation protocol received adversarial technical review from The Parallax Panel, consisting of Claude Sonnet 5.5 (Anthropic), Gemini 3.8 Flash (Google), and ChatGPT / OpenAI (styled 'Luna'). These systems contributed suggestions concerning geometric formulation, sensor fusion, statistical calibration, and epistemic safeguards. The AI systems did not conduct experiments, independently verify source code, or validate results. All methodological decisions and scientific responsibility reside solely with the Principal Investigator, Gregory Bryant Tafoya, MPH."*
+> *"AI-Assisted Methodological Review: The experimental design and validation protocol received adversarial technical review from The Parallax Panel, consisting of Claude Sonnet 5.5 (Anthropic), Gemini 3.8 Flash (Google), and ChatGPT / OpenAI (styled 'Luna'). These systems contributed suggestions concerning geometric formulation, sensor fusion, statistical calibration, and epistemic safeguards. The AI systems did not conduct experiments, independently verify source code, or validate results. All methodological decisions and scientific responsibility reside solely with the Principal Investigator, Gregory Tafoya, MPH."*
 
 ---
 
 ## 14. Principal Investigator Sign-Off
-**Principal Investigator:** Gregory Bryant Tafoya, MPH  
+**Principal Investigator:** Gregory Tafoya, MPH  
 **Date:** October 5, 2026  
 **Document Status:** FROZEN VALIDATION SPECIFICATION v1.0 (rev 5)  
 **Repository Identifier:** `CSL-VAL-PROTO-v1.0-CANDIDATE-REV5`

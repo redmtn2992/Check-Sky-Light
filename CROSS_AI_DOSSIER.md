@@ -1,7 +1,7 @@
 # Check Sky Light: Multi-Sensor Civilian Airspace Deconfliction Platform
 ## Technical Architecture, Theoretical Framework & Field Validation Specification (Consensus Release v3.1)
 
-**Author & Principal Investigator:** Gregory Bryant Tafoya, MPH  
+**Author & Principal Investigator:** Gregory Tafoya, MPH  
 **AI Technical Review & Engineering Architecture Consortium ("The Parallax Panel"):**  
 - **Claude Sonnet 5.5** (Anthropic) — *Vector Geodesy, Experimental Design & Covariance Discipline*  
 - **ChatGPT / GPT-4o ("Luna")** (OpenAI) — *Statistical Architecture, Distributional Testing & Adversarial Telemetry Review*  
