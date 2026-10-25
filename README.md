@@ -10,6 +10,8 @@
 
 ---
 
+> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH, Claude Sonnet, Gemini Flash, and Luna), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
+
 ## Overview
 
 **Check Sky Light** is an empirical civilian sky diagnostics and aerospace deconfliction platform. Taking inspiration from the universal automotive **"Check Engine" light**, Check Sky Light acts as an instrument panel warning light for the sky—monitoring anomalies with structured **Diagnostic Trouble Codes (DTCs)** and eliminating false alarms before evaluating non-conventional aerospace physics.
