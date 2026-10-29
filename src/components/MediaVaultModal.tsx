@@ -19,12 +19,16 @@ interface MediaVaultModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectForReport?: (media: VaultMediaRecord) => void;
+  onAnalyzeCapture?: (media: VaultMediaRecord) => void;
+  onDeleteCapture?: (id: string) => void;
 }
 
 export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
   isOpen,
   onClose,
-  onSelectForReport
+  onSelectForReport,
+  onAnalyzeCapture,
+  onDeleteCapture
 }) => {
   const [items, setItems] = useState<VaultMediaRecord[]>([]);
   const [summary, setSummary] = useState<StorageUsageSummary | null>(null);
@@ -32,6 +36,7 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
   const [activeTab, setActiveTab] = useState<'all' | 'photo' | 'burst' | 'video'>('all');
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmClearAll, setConfirmClearAll] = useState<boolean>(false);
+  const [itemToDelete, setItemToDelete] = useState<VaultMediaRecord | null>(null);
   const [burstFrameIdx, setBurstFrameIdx] = useState<number>(0);
 
   const loadVaultData = async () => {
@@ -41,8 +46,15 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
       setItems(records);
       const usage = await getStorageUsageSummary();
       setSummary(usage);
-      if (records.length > 0 && !selectedItem) {
-        setSelectedItem(records[0]);
+      if (records.length > 0) {
+        setSelectedItem((prev) => {
+          if (prev && records.some((r) => r.id === prev.id)) {
+            return records.find((r) => r.id === prev.id) || records[0];
+          }
+          return records[0];
+        });
+      } else {
+        setSelectedItem(null);
       }
     } catch (err) {
       console.error('Failed to load media vault:', err);
@@ -57,6 +69,23 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
     }
   }, [isOpen]);
 
+  const activeVideoUrl = React.useMemo(() => {
+    if (!selectedItem || selectedItem.mediaType !== 'video') return null;
+    if (selectedItem.dataUrl) return selectedItem.dataUrl;
+    if (selectedItem.blob) {
+      return URL.createObjectURL(selectedItem.blob);
+    }
+    return null;
+  }, [selectedItem?.id, selectedItem?.dataUrl, selectedItem?.blob]);
+
+  useEffect(() => {
+    return () => {
+      if (activeVideoUrl && activeVideoUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(activeVideoUrl);
+      }
+    };
+  }, [activeVideoUrl]);
+
   if (!isOpen) return null;
 
   const filteredItems = items.filter((item) => {
@@ -64,20 +93,37 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
     return item.mediaType === activeTab;
   });
 
-  const handleDeleteItem = async (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!window.confirm('Delete this encrypted optical capture from local vault?')) return;
-    await deleteVaultMedia(id);
-    if (selectedItem?.id === id) {
-      setSelectedItem(null);
+  const confirmDeleteItem = async () => {
+    if (!itemToDelete) return;
+    const id = itemToDelete.id;
+    try {
+      await deleteVaultMedia(id);
+      if (onDeleteCapture) {
+        onDeleteCapture(id);
+      }
+      setItemToDelete(null);
+      const remaining = items.filter((item) => item.id !== id);
+      setItems(remaining);
+      if (selectedItem?.id === id) {
+        const nextFiltered = remaining.filter((item) => {
+          if (activeTab === 'all') return true;
+          return item.mediaType === activeTab;
+        });
+        setSelectedItem(nextFiltered.length > 0 ? nextFiltered[0] : (remaining.length > 0 ? remaining[0] : null));
+        setBurstFrameIdx(0);
+      }
+      const usage = await getStorageUsageSummary();
+      setSummary(usage);
+    } catch (err) {
+      console.error('Failed to delete vault capture:', err);
     }
-    await loadVaultData();
   };
 
   const handleClearAll = async () => {
     await clearAllVaultMedia();
     setSelectedItem(null);
     setConfirmClearAll(false);
+    setItemToDelete(null);
     await loadVaultData();
   };
 
@@ -147,6 +193,31 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
                   Clear All Vault
                 </button>
               )}
+            </div>
+          </div>
+        )}
+
+        {itemToDelete && (
+          <div className="p-3 bg-rose-950/90 border-b border-rose-700 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-rose-100 z-10 shrink-0">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+              <span>
+                Delete <strong>{itemToDelete.title}</strong> permanently from vault?
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={confirmDeleteItem}
+                className="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold cursor-pointer"
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => setItemToDelete(null)}
+                className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         )}
@@ -240,7 +311,10 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
                         </div>
                       </div>
                       <button
-                        onClick={(e) => handleDeleteItem(item.id, e)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setItemToDelete(item);
+                        }}
                         className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition cursor-pointer"
                         title="Delete capture"
                       >
@@ -272,6 +346,14 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
+                      onClick={() => setItemToDelete(selectedItem)}
+                      className="px-3 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
+                      title="Delete this capture from vault"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Delete</span>
+                    </button>
+                    <button
                       onClick={() => exportIncidentBundle(selectedItem)}
                       className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
                       title="Download Incident Telemetry JSON + Media"
@@ -285,7 +367,8 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
                 <div className="rounded-2xl border border-slate-800 bg-black overflow-hidden flex flex-col items-center justify-center relative min-h-[260px] max-h-[380px]">
                   {selectedItem.mediaType === 'video' ? (
                     <video
-                      src={selectedItem.dataUrl || (selectedItem.blob ? URL.createObjectURL(selectedItem.blob) : undefined)}
+                      key={selectedItem.id}
+                      src={activeVideoUrl || undefined}
                       controls
                       playsInline
                       className="max-h-[360px] w-full object-contain"
@@ -372,32 +455,49 @@ export const MediaVaultModal: React.FC<MediaVaultModalProps> = ({
                   </div>
                 )}
 
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+                <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
                   <button
                     onClick={() => {
                       const mediaPayload = selectedItem.blob || selectedItem.dataUrl || selectedItem.burstFrames?.[0];
                       if (mediaPayload) {
-                        saveMediaToDeviceAlbum(mediaPayload, `CheckSkyLight_${selectedItem.id}.png`);
+                        const ext = selectedItem.mediaType === 'video' ? 'webm' : 'png';
+                        saveMediaToDeviceAlbum(mediaPayload, `CheckSkyLight_${selectedItem.id}.${ext}`);
                       }
                     }}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
                   >
                     <Download className="w-4 h-4 text-cyan-400" />
-                    <span>Save to iPhone Photos</span>
+                    <span>Save to Device</span>
                   </button>
 
-                  {onSelectForReport && (
-                    <button
-                      onClick={() => {
-                        onSelectForReport(selectedItem);
-                        onClose();
-                      }}
-                      className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-lg shadow-cyan-500/20"
-                    >
-                      <FileText className="w-4 h-4 text-slate-950" />
-                      <span>Attach to Sighting Report</span>
-                    </button>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    {onAnalyzeCapture && (
+                      <button
+                        onClick={() => {
+                          onAnalyzeCapture(selectedItem);
+                          onClose();
+                        }}
+                        className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-mono font-black transition flex items-center space-x-1.5 cursor-pointer shadow-lg shadow-amber-500/20"
+                        title="Open in AI Forensic Analyzer"
+                      >
+                        <Sparkles className="w-4 h-4 text-slate-950 fill-current" />
+                        <span>{selectedItem.mediaType === 'video' ? 'Analyze Video (AI)' : 'Analyze in Lab'}</span>
+                      </button>
+                    )}
+
+                    {onSelectForReport && (
+                      <button
+                        onClick={() => {
+                          onSelectForReport(selectedItem);
+                          onClose();
+                        }}
+                        className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-lg shadow-cyan-500/20"
+                      >
+                        <FileText className="w-4 h-4 text-slate-950" />
+                        <span>Attach to Report</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </>
             ) : (

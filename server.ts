@@ -75,7 +75,12 @@ async function startServer() {
     next();
   });
 
-  // --- API ROUTES ---
+  // --- API & SYSTEM ROUTES ---
+
+  // Privacy Policy Route
+  app.get('/privacy', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public', 'privacy.html'));
+  });
 
   // Health check
   app.get('/api/health', (req, res) => {

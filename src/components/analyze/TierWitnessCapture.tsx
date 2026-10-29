@@ -13,22 +13,30 @@ interface TierWitnessCaptureProps {
   onOpenVault?: () => void;
   onPublishSighting?: (analysis: GeminiForensicAnalysis) => void;
   prefilledMediaUrl?: string;
+  prefilledMediaType?: 'photo' | 'video';
+  prefilledNotes?: string;
+  prefilledAzimuth?: number;
+  prefilledElevation?: number;
 }
 
 export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
   userLocation,
   onOpenVault,
   onPublishSighting,
-  prefilledMediaUrl
+  prefilledMediaUrl,
+  prefilledMediaType,
+  prefilledNotes,
+  prefilledAzimuth,
+  prefilledElevation
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(prefilledMediaUrl || null);
-  const [mediaType, setMediaType] = useState<'photo' | 'video'>('video');
-  const [witnessNotes, setWitnessNotes] = useState<string>('');
+  const [mediaType, setMediaType] = useState<'photo' | 'video'>(prefilledMediaType || 'video');
+  const [witnessNotes, setWitnessNotes] = useState<string>(prefilledNotes || '');
   
   // Device sensor metadata
-  const [deviceAzimuth, setDeviceAzimuth] = useState<number>(218);
-  const [deviceElevation, setDeviceElevation] = useState<number>(42);
+  const [deviceAzimuth, setDeviceAzimuth] = useState<number>(prefilledAzimuth ?? 218);
+  const [deviceElevation, setDeviceElevation] = useState<number>(prefilledElevation ?? 42);
   const [isUsingLiveSensor, setIsUsingLiveSensor] = useState<boolean>(true);
 
   // Analysis State
@@ -42,6 +50,27 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
   useEffect(() => {
     setBlockStatus(checkUserBlockStatus());
   }, []);
+
+  useEffect(() => {
+    if (prefilledMediaUrl) {
+      setPreviewUrl(prefilledMediaUrl);
+      if (prefilledMediaType) {
+        setMediaType(prefilledMediaType);
+      }
+      if (prefilledNotes) {
+        setWitnessNotes(prefilledNotes);
+      }
+      if (prefilledAzimuth !== undefined) {
+        setDeviceAzimuth(prefilledAzimuth);
+      }
+      if (prefilledElevation !== undefined) {
+        setDeviceElevation(prefilledElevation);
+      }
+      setAnalysisResult(null);
+      setIsPublished(false);
+      setAnalysisError(null);
+    }
+  }, [prefilledMediaUrl, prefilledMediaType, prefilledNotes, prefilledAzimuth, prefilledElevation]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -233,6 +262,7 @@ export const TierWitnessCapture: React.FC<TierWitnessCaptureProps> = ({
                 <div className="relative w-full h-full max-h-[300px] rounded-xl overflow-hidden flex items-center justify-center bg-black">
                   {mediaType === 'video' ? (
                     <video 
+                      key={previewUrl}
                       src={previewUrl} 
                       controls 
                       className="max-h-[280px] w-auto rounded-lg object-contain"

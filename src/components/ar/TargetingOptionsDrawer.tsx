@@ -116,18 +116,14 @@ export const TargetingOptionsDrawer: React.FC<TargetingOptionsDrawerProps> = ({
           <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
             Technological Assistance Hierarchy
           </div>
-          <div className="grid grid-cols-3 gap-1.5 text-center">
+          <div className="grid grid-cols-2 gap-2 text-center">
             <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300">
               <span className="font-bold text-white text-xs block">1. Manual</span>
               <span className="text-[10px] text-slate-400 block mt-0.5">Pure camera (Default)</span>
             </div>
             <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-200">
               <span className="font-bold text-cyan-300 text-xs block">2. Assist</span>
-              <span className="text-[10px] text-cyan-400/80 block mt-0.5">On-device HUD</span>
-            </div>
-            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200">
-              <span className="font-bold text-amber-300 text-xs block">3. AI Scan</span>
-              <span className="text-[10px] text-amber-400/80 block mt-0.5">Cloud Gemini</span>
+              <span className="text-[10px] text-cyan-400/80 block mt-0.5">On-device HUD & Flight Guide</span>
             </div>
           </div>
         </div>

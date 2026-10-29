@@ -5,7 +5,7 @@ import {
   Circle, Maximize2, Minimize2, Zap, Radio, Sun, Moon, Video, Square, Download, 
   ExternalLink, FileText, ChevronRight, Cpu, Target, Scan, Lock, Mic,
   Battery, BatteryCharging, Fingerprint, Power, Info, Check, HelpCircle, X,
-  SlidersHorizontal
+  SlidersHorizontal, HardDrive
 } from 'lucide-react';
 import { LocationCoords, FlightTrack, CelestialBody } from '../types';
 import { 
@@ -44,7 +44,7 @@ import { calculateFlightGuide, FlightGuideResult } from '../lib/flightDirector';
 import { PreReportCapture } from './PreReportCheckModal';
 import { PermissionTarget } from './AppPermissionsModal';
 
-export type AssistanceLevel = 'manual' | 'assist' | 'ai';
+export type AssistanceLevel = 'manual' | 'assist';
 
 export interface ArSkyScannerProps {
   userLocation: LocationCoords;
@@ -52,13 +52,15 @@ export interface ArSkyScannerProps {
   celestialBodies: CelestialBody[];
   onTargetLocked?: (target: TargetLockData) => void;
   onCaptureForReport?: (mediaUrl: string, description: string, posterUrl?: string) => void;
-  onCaptureForReview?: (capture: PreReportCapture) => void;
+  onCaptureForReview?: (capture: PreReportCapture, allCaptures?: PreReportCapture[]) => void;
   onOpenVault?: () => void;
   onOpenTriangulation?: () => void;
   onOpenSoundOptions?: () => void;
   onRequirePermission?: (target: PermissionTarget, retryAction: () => void) => void;
   isFullView?: boolean;
   onToggleFullView?: (fullView: boolean) => void;
+  sessionCapturesList?: PreReportCapture[];
+  onSessionCapturesChange?: (captures: PreReportCapture[]) => void;
 }
 
 export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
@@ -73,7 +75,9 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   onOpenSoundOptions,
   onRequirePermission,
   isFullView: propIsFullView,
-  onToggleFullView
+  onToggleFullView,
+  sessionCapturesList,
+  onSessionCapturesChange
 }) => {
   const [cameraActive, setCameraActive] = useState<boolean>(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
@@ -88,7 +92,17 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
   const [isRecordingVideo, setIsRecordingVideo] = useState<boolean>(false);
   const [recordingSeconds, setRecordingSeconds] = useState<number>(0);
   const [capturedFlash, setCapturedFlash] = useState<boolean>(false);
-  const [sessionCaptures, setSessionCaptures] = useState<PreReportCapture[]>([]);
+  const [internalSessionCaptures, setInternalSessionCaptures] = useState<PreReportCapture[]>([]);
+  const sessionCaptures = sessionCapturesList !== undefined ? sessionCapturesList : internalSessionCaptures;
+
+  const addSessionCapture = (newCap: PreReportCapture) => {
+    if (onSessionCapturesChange) {
+      onSessionCapturesChange([newCap, ...sessionCaptures]);
+    } else {
+      setInternalSessionCaptures(prev => [newCap, ...prev]);
+    }
+  };
+
   const [justCapturedNotice, setJustCapturedNotice] = useState<string | null>(null);
   
   // Technological Assistance Hierarchy:
@@ -122,9 +136,6 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
       setGeminiAutoLockEnabled(false);
       setOpticalTrackingActive(true);
       setAiLockFeedback('Assist: HUD Active');
-    } else if (level === 'ai') {
-      setOpticalTrackingActive(true);
-      setAiLockFeedback('AI Ready');
     }
   };
 
@@ -682,7 +693,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
         targetLock
       };
 
-      setSessionCaptures(prev => [newCapture, ...prev]);
+      addSessionCapture(newCapture);
       setJustCapturedNotice('Photo captured');
       setTimeout(() => setJustCapturedNotice(null), 2500);
     }
@@ -832,7 +843,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
           };
 
           // Add to current session captures so user stays in camera viewfinder
-          setSessionCaptures(prev => [newCapture, ...prev]);
+          addSessionCapture(newCapture);
           setJustCapturedNotice(`Video saved (${capturedDuration}s)`);
           setTimeout(() => setJustCapturedNotice(null), 2500);
         };
@@ -1028,14 +1039,14 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
             </div>
           </div>
 
-          {/* Central Mobile Technological Assistance Hierarchy (Manual -> Assist -> AI Scan) */}
+          {/* Central Mobile Technological Assistance Hierarchy (Manual -> Assist) */}
           <div className="flex flex-col items-center justify-center pointer-events-auto">
             <div className="inline-flex items-center p-1 rounded-2xl bg-black/45 backdrop-blur-md border border-white/20 shadow-2xl space-x-1">
               {/* Level 1: Manual Mode (Default on startup) */}
               <button
                 id="target-mode-manual-btn"
                 onClick={() => handleSelectAssistanceLevel('manual')}
-                className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
                   isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
                 } ${
                   assistanceLevel === 'manual'
@@ -1053,7 +1064,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                 <button
                   id="target-mode-assist-btn"
                   onClick={() => handleSelectAssistanceLevel('assist')}
-                  className={`px-3 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
                     isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
                   } ${
                     assistanceLevel === 'assist'
@@ -1078,54 +1089,7 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                   </button>
                 )}
               </div>
-
-              {/* Level 3: AI Scan Mode (Gemini Multimodal Cloud Intelligence) */}
-              <button
-                id="target-mode-ai-scan-btn"
-                onClick={() => {
-                  if (assistanceLevel !== 'ai') {
-                    handleSelectAssistanceLevel('ai');
-                  }
-                  void runGeminiAutoLock(true);
-                }}
-                disabled={isAiScanning}
-                className={`px-3.5 py-1.5 rounded-xl font-bold flex items-center space-x-1.5 transition cursor-pointer ${
-                  isLargeText ? 'text-xs sm:text-sm min-h-[36px]' : 'text-[11px] min-h-[32px]'
-                } ${
-                  isAiScanning
-                    ? 'bg-amber-400 text-slate-950 border border-amber-200 shadow-[0_0_18px_rgba(251,191,36,0.7)] font-black'
-                    : assistanceLevel === 'ai'
-                    ? 'bg-amber-500/25 text-amber-300 border border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                    : 'text-white/60 hover:text-white border border-transparent'
-                }`}
-                title="Level 3: AI Scan - Gemini 3.8 Flash multimodal reasoning & aerospace deconfliction"
-              >
-                <Zap className={`w-3.5 h-3.5 ${isAiScanning ? 'text-slate-950' : 'text-amber-400'}`} />
-                <span>{isAiScanning ? 'Scanning...' : 'AI Scan'}</span>
-              </button>
             </div>
-
-            {/* AI Mode Sub-Bar: Continuous Auto-Sentinel Toggle */}
-            {assistanceLevel === 'ai' && (
-              <div className="mt-1 flex items-center justify-center space-x-2 text-[10px] font-mono animate-fade-in">
-                <button
-                  onClick={() => {
-                    const next = !geminiAutoLockEnabled;
-                    setGeminiAutoLockEnabled(next);
-                    triggerHapticFeedback([20]);
-                  }}
-                  className={`px-2.5 py-0.5 rounded-full border transition flex items-center space-x-1.5 ${
-                    geminiAutoLockEnabled
-                      ? 'bg-amber-500/30 text-amber-200 border-amber-400/70 shadow-sm'
-                      : 'bg-black/60 text-white/70 border-white/20 hover:text-white'
-                  }`}
-                  title="Toggle continuous background Gemini scanning"
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${geminiAutoLockEnabled ? 'bg-amber-400 animate-pulse' : 'bg-slate-400'}`} />
-                  <span>Sentinel Loop: {geminiAutoLockEnabled ? 'ACTIVE' : 'STANDBY'}</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -1355,11 +1319,11 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
 
               {/* Media Vault & Session Review Link */}
               <div className="flex items-center space-x-1.5">
-                {sessionCaptures.length > 0 ? (
+                {sessionCaptures.length > 0 && (
                   <button
                     onClick={() => {
                       if (onCaptureForReview && sessionCaptures.length > 0) {
-                        onCaptureForReview(sessionCaptures[0]);
+                        onCaptureForReview(sessionCaptures[0], sessionCaptures);
                       }
                     }}
                     className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-black transition flex items-center space-x-1 cursor-pointer min-h-[38px] shadow-lg animate-pulse"
@@ -1368,16 +1332,18 @@ export const ArSkyScanner: React.FC<ArSkyScannerProps> = ({
                     <span>Review ({sessionCaptures.length})</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
-                ) : onOpenVault ? (
+                )}
+
+                {onOpenVault && (
                   <button
                     onClick={onOpenVault}
-                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer min-h-[38px]"
-                    title="Open Captured Photos & Videos"
+                    className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer min-h-[38px]"
+                    title="Open Captured Photos & Videos in Vault"
                   >
-                    <span>Vault</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
+                    <HardDrive className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="hidden min-[360px]:inline">Vault</span>
                   </button>
-                ) : null}
+                )}
               </div>
             </div>
           </div>

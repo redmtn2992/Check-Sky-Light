@@ -3,7 +3,7 @@ import {
   Camera, Crosshair, Radar, ListFilter, Activity, Bell, 
   Compass, ShieldAlert, Sparkles, Plus, MapPin, 
   Settings, Share2, Info, ChevronRight, ChevronDown, Volume2, VolumeX, Landmark, ScanSearch,
-  FileText, Radio, Zap, Leaf
+  FileText, Zap, Leaf
 } from 'lucide-react';
 import { 
   LocationCoords, SightingReport, FlightTrack, CelestialBody, 
@@ -52,6 +52,7 @@ import { SoundOptionsModal } from './components/SoundOptionsModal';
 import { AppPermissionsModal, PermissionTarget } from './components/AppPermissionsModal';
 import { EulaPrivacyModal } from './components/EulaPrivacyModal';
 import { PreReportCheckModal, PreReportCapture } from './components/PreReportCheckModal';
+import { VaultMediaRecord } from './lib/storage/mediaVault';
 import { unlockAudioContext } from './components/ar/ArAudioSynthesizer';
 import { loadSoundSettings, subscribeSoundSettings, SoundSettings } from './lib/soundSettings';
 import { 
@@ -108,6 +109,8 @@ export default function App() {
   const [prefilledClassId, setPrefilledClassId] = useState<string | undefined>(undefined);
   const [prefilledTitle, setPrefilledTitle] = useState<string | undefined>(undefined);
   const [checkCapture, setCheckCapture] = useState<PreReportCapture | null>(null);
+  const [sessionCapturesList, setSessionCapturesList] = useState<PreReportCapture[]>([]);
+  const [preloadedVaultMedia, setPreloadedVaultMedia] = useState<VaultMediaRecord | null>(null);
   const [isPreReportCheckOpen, setIsPreReportCheckOpen] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState<boolean>(false);
@@ -482,17 +485,6 @@ export default function App() {
                     </span>
                   )}
                 </button>
-
-                {/* UAP Incident Feed Quick Monitor (Desktop / Tablet view; mobile accesses via Bottom Nav) */}
-                <button
-                  onClick={() => {
-                    setActiveTab('analyze');
-                  }}
-                  className="hidden md:flex w-9.5 h-9.5 rounded-xl text-slate-300 hover:text-cyan-300 hover:bg-white/[0.06] transition-colors cursor-pointer items-center justify-center relative shrink-0"
-                  title="Monitor Live UAP Community Incident Stream"
-                >
-                  <Radio className="w-5 h-5 text-cyan-400" />
-                </button>
               </div>
             </div>
           </header>
@@ -513,8 +505,18 @@ export default function App() {
                 flights={flights}
                 celestialBodies={celestialBodies}
                 onTargetLocked={(target) => setCurrentTargetLock(target)}
-                onCaptureForReview={(cap) => {
+                sessionCapturesList={sessionCapturesList}
+                onSessionCapturesChange={(caps) => setSessionCapturesList(caps)}
+                onCaptureForReview={(cap, allCaps) => {
                   setCheckCapture(cap);
+                  if (allCaps && allCaps.length > 0) {
+                    setSessionCapturesList(allCaps);
+                  } else {
+                    setSessionCapturesList((prev) => {
+                      const exists = prev.some(c => c.mediaUrl === cap.mediaUrl);
+                      return exists ? prev : [cap, ...prev];
+                    });
+                  }
                   setIsPreReportCheckOpen(true);
                 }}
                 onCaptureForReport={(mediaUrl, description) => {
@@ -590,6 +592,8 @@ export default function App() {
             <AnalyzeHub
               sightings={sightings}
               userLocation={userLocation}
+              preloadedVaultMedia={preloadedVaultMedia}
+              onClearPreloadedVaultMedia={() => setPreloadedVaultMedia(null)}
               onSelectSighting={(s) => setSelectedSighting(s)}
               onUpvote={handleUpvoteSighting}
               onOpenCreateReport={() => {
@@ -682,17 +686,57 @@ export default function App() {
         <PreReportCheckModal
           isOpen={isPreReportCheckOpen}
           capture={checkCapture}
+          capturesList={sessionCapturesList}
+          onSelectCapture={(cap) => setCheckCapture(cap)}
           onClose={() => {
             setIsPreReportCheckOpen(false);
             setCheckCapture(null);
           }}
-          onDiscard={() => {
-            setIsPreReportCheckOpen(false);
-            setCheckCapture(null);
+          onDiscard={(discarded) => {
+            const updated = sessionCapturesList.filter(c => c.mediaUrl !== discarded.mediaUrl);
+            setSessionCapturesList(updated);
+            if (updated.length > 0) {
+              setCheckCapture(updated[0]);
+            } else {
+              setIsPreReportCheckOpen(false);
+              setCheckCapture(null);
+            }
           }}
           onSaveToVaultOnly={() => {
             setIsPreReportCheckOpen(false);
             setCheckCapture(null);
+          }}
+          onOpenVault={() => {
+            setIsPreReportCheckOpen(false);
+            setIsVaultOpen(true);
+          }}
+          onOpenAnalyze={(cap) => {
+            setIsPreReportCheckOpen(false);
+            setCheckCapture(null);
+            const vaultRecord: VaultMediaRecord = {
+              id: `SESSION-${Date.now()}`,
+              timestamp: new Date().toISOString(),
+              mediaType: cap.mediaType,
+              title: `${cap.mediaType === 'video' ? 'Video' : 'Photo'} - AZ ${Math.round(cap.telemetry.azimuth)}°`,
+              dataUrl: cap.mediaUrl,
+              blob: cap.mediaBlob,
+              fileSizeBytes: cap.mediaBlob ? cap.mediaBlob.size : 0,
+              durationSeconds: cap.durationSeconds,
+              telemetry: {
+                azimuth: cap.telemetry.azimuth,
+                pitch: cap.telemetry.pitch,
+                roll: cap.telemetry.roll,
+                lat: cap.telemetry.lat,
+                lng: cap.telemetry.lng,
+                city: cap.telemetry.city,
+                region: cap.telemetry.region,
+                dayNightMode: (cap.telemetry.dayNightMode as any) || 'day_antiglare',
+                soundMode: cap.telemetry.soundMode
+              },
+              targetLock: cap.targetLock
+            };
+            setPreloadedVaultMedia(vaultRecord);
+            setActiveTab('analyze');
           }}
           onProceedToReport={(vetted) => {
             setIsPreReportCheckOpen(false);
@@ -756,6 +800,14 @@ export default function App() {
         <MediaVaultModal
           isOpen={isVaultOpen}
           onClose={() => setIsVaultOpen(false)}
+          onAnalyzeCapture={(media) => {
+            setPreloadedVaultMedia(media);
+            setIsVaultOpen(false);
+            setActiveTab('analyze');
+          }}
+          onDeleteCapture={(id) => {
+            setSessionCapturesList((prev) => prev.filter(c => !c.mediaUrl.includes(id)));
+          }}
           onSelectForReport={(media) => {
             const dataUrl = media.dataUrl || media.burstFrames?.[0] || (media.blob ? URL.createObjectURL(media.blob) : undefined);
             if (dataUrl) {

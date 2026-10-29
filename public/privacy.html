@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Check Sky Light</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    :root {
+      --bg: #020617;
+      --card-bg: #0f172a;
+      --border: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-glow: rgba(14, 165, 233, 0.2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 28px; }
+    .badge {
+      display: inline-block;
+      background: var(--accent-glow);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      border: 1px solid var(--accent);
+    }
+    h1 { font-size: 1.85rem; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
+    .meta { color: var(--text-muted); font-size: 0.9rem; }
+    h2 { font-size: 1.25rem; color: #38bdf8; margin-top: 28px; margin-bottom: 12px; border-bottom: 1px solid #1e293b; padding-bottom: 6px; }
+    p, ul { color: var(--text-muted); margin-bottom: 16px; font-size: 0.95rem; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    strong { color: #f1f5f9; }
+    .highlight-box {
+      background: #091225;
+      border-left: 4px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Official Legal Disclosure</div>
+      <h1>Privacy Policy for Check Sky Light (CSL)</h1>
+      <div class="meta">
+        <strong>Application:</strong> Check Sky Light (UAP Anomaly Scanner & Airspace Radar)<br>
+        <strong>Principal Investigator & Developer:</strong> Gregory Tafoya, MPH<br>
+        <strong>Effective Date:</strong> October 2026 | Version 1.0
+      </div>
+    </header>
+
+    <div class="highlight-box">
+      <strong>Core Privacy Commitment:</strong> Check Sky Light is an open scientific instrument developed for civilian sky observation, multi-sensor triangulation, and airspace deconfliction. We do <strong>not</strong> sell, rent, monetize, or broker personal user data. Sensor, optical, and location permissions are used strictly on-device to perform astronomical calculations, local radar deconfliction, and camera tracking.
+    </div>
+
+    <h2>1. Information We Collect and Access</h2>
+    <p>To operate as an augmented-reality optical tracker and airspace deconfliction tool, Check Sky Light requests explicit device permissions:</p>
+    <ul>
+      <li><strong>Camera Access (Visual Spectrum):</strong> Used in real-time to render the optical viewfinder, compute boresight elevation and azimuth crosshairs, and capture user-initiated video recordings or optical snapshots of aerial targets. Camera frames are processed locally in real-time. Background or covert recording is never performed.</li>
+      <li><strong>Precise Location Data (GPS Coordinates):</strong> Used to calculate local topocentric astronomical positions (azimuth and elevation of planets, stars, and satellites), query regional civilian flight traffic (ADS-B) within local airspace, and establish baseline geometry for dual-station parallax triangulation. Precise coordinates are never broadcast publicly or shared with commercial advertisers.</li>
+      <li><strong>Inertial & Motion Sensors (IMU, Gyroscope, Accelerometer, Magnetometer):</strong> Used to measure device pitch, roll, compass azimuth heading, and angular slew rates to align the augmented-reality crosshairs with celestial and airspace targets.</li>
+      <li><strong>Storage / Media:</strong> Used solely when you choose to save a recorded observation manifest, export telemetry reports, or download an analytical PDF.</li>
+    </ul>
+
+    <h2>2. How Data Is Used & Processed</h2>
+    <p>All sensor acquisitions serve verifiable scientific purposes:</p>
+    <ul>
+      <li><strong>Airspace Deconfliction:</strong> Your coarse geographic coordinates are used to query nearby civilian aircraft (via OpenSky / ADS-B Exchange) and satellite ephemerides (CelesTrak) to rule out commercial flights and satellite passes before flagging an object as anomalous.</li>
+      <li><strong>Multi-Sensor Parallax Triangulation:</strong> When participating in multi-station observation sessions, bearing lines of sight and timestamps are cross-correlated to calculate 3D Point of Closest Approach (POCA) coordinates and measurement residuals.</li>
+      <li><strong>Cryptographic Artifact Integrity:</strong> Session telemetry is hashed locally using SHA-256 to ensure data provenance and prevent alteration.</li>
+      <li><strong>AI Optical & Telemetry Analysis:</strong> When you voluntarily submit an image or telemetry log for analysis, the relevant frame is transmitted securely over HTTPS to our dedicated AI analysis service (Gemini API) to evaluate classical aerospace deconfliction and metric signatures.</li>
+    </ul>
+
+    <h2>3. Third-Party Services & Data Transmission</h2>
+    <p>Check Sky Light connects with external scientific data providers over secure TLS/HTTPS:</p>
+    <ul>
+      <li><strong>OpenSky Network & ADS-B Data Feeds:</strong> Coarse bounding-box queries for real-time aircraft deconfliction.</li>
+      <li><strong>CelesTrak / Space-Track:</strong> Orbital elements (TLEs) for satellite pass predictions.</li>
+      <li><strong>NOAA / National Weather Service:</strong> Local atmospheric pressure and sounding balloon telemetry.</li>
+      <li><strong>OpenStreetMap / Nominatim:</strong> Reverse geocoding of sector coordinates to city/region names.</li>
+    </ul>
+    <p>No commercial tracking, advertising, behavioral analytics, or marketing SDKs are included in Check Sky Light.</p>
+
+    <h2>4. Data Retention and User Control</h2>
+    <p>Observations and cached telemetry are stored in your device's local browser sandbox (IndexedDB and LocalStorage). You can clear all cached records, logs, and settings at any time by clearing your browser data or using the in-app "Reset Session" button.</p>
+
+    <h2>5. Children's Privacy (COPPA Compliance)</h2>
+    <p>Check Sky Light is designed as a scientific tool for the general public and does not knowingly collect, solicit, or retain personal information from children under the age of 13.</p>
+
+    <h2>6. Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy from time to time to reflect improvements to sensor capabilities or regulatory requirements. Any revisions will be posted at this URL with an updated effective date.</p>
+
+    <h2>7. Contact and Inquiries</h2>
+    <p>If you have questions, feedback, or data requests regarding this Privacy Policy or the Check Sky Light project, please contact:</p>
+    <p>
+      <strong>Gregory Tafoya, MPH</strong><br>
+      Principal Investigator, Check Sky Light Project<br>
+      Email: <a href="mailto:greg.tafoya@gmail.com">greg.tafoya@gmail.com</a><br>
+      Project Repository: <a href="https://github.com/redmtn2992/Check-Sky-Light" target="_blank" rel="noopener noreferrer">github.com/redmtn2992/Check-Sky-Light</a>
+    </p>
+
+    <div class="footer">
+      &copy; 2026 Check Sky Light (CSL). Developed by Gregory Tafoya, MPH. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

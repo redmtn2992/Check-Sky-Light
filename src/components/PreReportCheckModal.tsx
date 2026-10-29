@@ -56,7 +56,9 @@ interface PreReportCheckModalProps {
     title?: string;
   }) => void;
   onSaveToVaultOnly?: () => void;
-  onDiscard?: () => void;
+  onDiscard?: (capture: PreReportCapture) => void;
+  onOpenVault?: () => void;
+  onOpenAnalyze?: (capture: PreReportCapture) => void;
 }
 
 export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
@@ -67,7 +69,9 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
   onSelectCapture,
   onProceedToReport,
   onSaveToVaultOnly,
-  onDiscard
+  onDiscard,
+  onOpenVault,
+  onOpenAnalyze
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -249,13 +253,28 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
               </p>
             </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
-            title="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-1.5">
+            {onOpenVault && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onOpenVault();
+                }}
+                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[11px] font-mono border border-cyan-500/30 flex items-center space-x-1 cursor-pointer transition"
+                title="Browse all captures in local vault"
+              >
+                <HardDrive className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Vault</span>
+              </button>
+            )}
+            <button 
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -291,6 +310,7 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
             {capture.mediaType === 'video' ? (
               <div className="relative w-full h-full flex flex-col items-center justify-center">
                 <video
+                  key={capture.mediaUrl}
                   ref={videoRef}
                   src={capture.mediaUrl}
                   className="w-full max-h-[260px] object-contain cursor-pointer"
@@ -452,19 +472,36 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-3.5 sm:p-4 border-t border-white/10 bg-slate-900 flex items-center justify-between gap-2 shrink-0">
+        <div className="p-3.5 sm:p-4 border-t border-white/10 bg-slate-900 flex flex-wrap items-center justify-between gap-2 shrink-0">
           <button
             onClick={() => {
-              if (onDiscard) onDiscard();
-              onClose();
+              if (capture && onDiscard) {
+                onDiscard(capture);
+              } else {
+                onClose();
+              }
             }}
             className="px-3 py-2 rounded-xl text-rose-300 hover:bg-rose-500/10 text-xs font-medium transition flex items-center space-x-1 cursor-pointer"
+            title="Discard this capture from session"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Discard</span>
           </button>
 
           <div className="flex items-center space-x-2">
+            {onOpenAnalyze && (
+              <button
+                onClick={() => {
+                  if (capture) onOpenAnalyze(capture);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer"
+                title="Send capture to Gemini AI Forensic Sleuth Lab"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Analyze in Lab</span>
+              </button>
+            )}
+
             <button
               onClick={handleSaveToVault}
               className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-medium transition flex items-center space-x-1.5 cursor-pointer"

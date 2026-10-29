@@ -6,6 +6,7 @@ import {
   Layers, CheckCircle2, ChevronRight
 } from 'lucide-react';
 import { SightingReport, LocationCoords, GeminiForensicAnalysis } from '../types';
+import { VaultMediaRecord } from '../lib/storage/mediaVault';
 import { SightingFeed } from './SightingFeed';
 import { AudioSonicMonitor } from './AudioSonicMonitor';
 import { TierWitnessCapture } from './analyze/TierWitnessCapture';
@@ -26,6 +27,8 @@ interface AnalyzeHubProps {
   onNavigateToReport?: () => void;
   onNavigateToRadar?: () => void;
   onNavigateToTarget?: () => void;
+  preloadedVaultMedia?: VaultMediaRecord | null;
+  onClearPreloadedVaultMedia?: () => void;
 }
 
 export type AnalyzeTier = 'witness' | 'triangulate' | 'osint' | 'sonic' | 'feed';
@@ -42,9 +45,17 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
   onAddAnalyzedSighting,
   onNavigateToReport,
   onNavigateToRadar,
-  onNavigateToTarget
+  onNavigateToTarget,
+  preloadedVaultMedia,
+  onClearPreloadedVaultMedia
 }) => {
-  const [activeTier, setActiveTier] = useState<AnalyzeTier>('osint');
+  const [activeTier, setActiveTier] = useState<AnalyzeTier>(preloadedVaultMedia ? 'witness' : 'osint');
+
+  React.useEffect(() => {
+    if (preloadedVaultMedia) {
+      setActiveTier('witness');
+    }
+  }, [preloadedVaultMedia]);
 
   // Convert analysis result into a community verified sighting report
   const handlePublishAnalysis = (analysis: GeminiForensicAnalysis) => {
@@ -244,6 +255,18 @@ export const AnalyzeHub: React.FC<AnalyzeHubProps> = ({
           userLocation={userLocation}
           onOpenVault={onOpenVault}
           onPublishSighting={handlePublishAnalysis}
+          prefilledMediaUrl={
+            preloadedVaultMedia?.dataUrl ||
+            (preloadedVaultMedia?.blob ? URL.createObjectURL(preloadedVaultMedia.blob) : undefined) ||
+            preloadedVaultMedia?.burstFrames?.[0]
+          }
+          prefilledMediaType={preloadedVaultMedia?.mediaType === 'video' ? 'video' : 'photo'}
+          prefilledNotes={
+            preloadedVaultMedia?.notes || 
+            (preloadedVaultMedia ? `Imported from Vault: ${preloadedVaultMedia.title}` : undefined)
+          }
+          prefilledAzimuth={preloadedVaultMedia?.telemetry?.azimuth}
+          prefilledElevation={preloadedVaultMedia?.telemetry?.pitch}
         />
       )}
 
