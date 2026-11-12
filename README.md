@@ -10,7 +10,7 @@
 
 ---
 
-> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH & Multi-Model Scientific AI Review Panel), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
+> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya & Multi-Model Scientific AI Review Panel), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
 
 ## Overview
 
@@ -113,4 +113,4 @@ npm run build
 
 ## License
 
-MIT © Gregory Tafoya, MPH. Check Sky Light Platform.
+MIT © Gregory Tafoya. Check Sky Light Platform.
