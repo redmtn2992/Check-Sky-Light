@@ -10,13 +10,11 @@
 
 ---
 
-> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH, Claude Sonnet, Gemini Flash, and Luna), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
+> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH, Claude, Gemini, and ChatGPT (Luna)), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
 
 ## Overview
 
-**Check Sky Light** is an empirical civilian sky diagnostics and aerospace deconfliction platform. Taking inspiration from the universal automotive **"Check Engine" light**, Check Sky Light acts as an instrument panel warning light for the sky—monitoring anomalies with structured **Diagnostic Trouble Codes (DTCs)** and eliminating false alarms before evaluating non-conventional aerospace physics.
-
-The platform's paramount strength is its **unyielding empirical discipline**: systematically eliminating conventional air traffic, meteorological balloons, low-Earth-orbit satellites, astronomical mirages, camera lens artifacts, and synthetic AI/CGI hoaxes before admitting genuine anomalous signatures.
+Check Sky Light is a civilian UAP observation and aerospace diagnostics PWA modeled after the automotive Check Engine light, empowering everyday citizen scientists to investigate aerial anomalies using smartphone sensors and the AI (Gemini, ChatGPT (Luna), and Claude) that makes its multi-sensor analysis possible. Built around four modules—TARGET (optical AR HUD with live IMU gyro telemetry), RADAR (live ADS-B transponders, NOAA balloons, NORAD satellites, JPL ephemeris, and GPS-linked live weather), ANALYZE (Dual-Lens physics contrasting Classical Aerospace against Metric Manipulation, multi-AI consensus, CGI detection, DoW PURSUE knowledge alignment, and strict safety guardrails), and REPORT (PDF and MUFON field dossiers)—Check Sky Light filters conventional traffic, weather, and hoaxes before evaluating UAP residuals.
 
 ---
 
@@ -42,6 +40,7 @@ The platform's paramount strength is its **unyielding empirical discipline**: sy
 * **NOAA Weather Balloon Feeds**: Tracks radiosonde launches and meteorological balloon drift trajectories across sectors.
 * **NORAD Two-Line Element (TLE) Satellites**: Computes live orbital passes for Starlink constellations, ISS, Tiangong, and known orbital debris.
 * **JPL Planetary Ephemeris**: Calculates real-time celestial azimuth and elevation to deconflict Venus, Jupiter, and bright stars from reported anomalies.
+* **GPS-Linked Atmospheric Weather Telemetry**: Automatically resolves sector cloud cover, visibility, wind shear, barometric pressure, precipitation, and optical distortion risk directly inside the GPS selector to contextualize UAP reporting without cluttering the interface.
 
 ### 3. ANALYZE: Dual-Lens Intelligence & DTC Diagnostic Engine
 * **The Dual-Lens Analytical Framework**:
@@ -50,12 +49,12 @@ The platform's paramount strength is its **unyielding empirical discipline**: sy
 * **The Five Observables Baseline (ODNI / AARO)**: Instantaneous acceleration, hypersonic velocity without signatures, low observability, transmedium travel, and positive lift without aerodynamic surfaces.
 * **Synthetic Media & CGI Discrimination**: Identifies neural diffusion artifacts, motion-blur inconsistencies, and digital VFX to prevent synthetic fakes.
 * **Zero-Tolerance Safety Guardrails & Domain Integrity**: Automated pre-flight regex and multimodal semantic audits preventing pornographic, sexually explicit, or harm-related media, dropping violating payloads in-flight with zero storage.
-* **Parallax Panel Consensus (DTC P3012)**: Multi-model verification integrating Gemini, Claude, and Luna to prevent single-model hallucinations and enforce rigorous cross-examination.
+* **Parallax Panel Consensus (DTC P3012)**: Multi-model AI collaboration across **Gemini**, **ChatGPT (Luna)**, and **Claude** that makes Check Sky Light's multi-sensor UAP evaluation and cross-examination possible.
 
 ### 4. REPORT: Standardized Field Dossiers
 * **Vetted Field Records**: Generates cryptographically verifiable, timestamped investigation dossiers.
-* **Multi-Sensor Timeline**: Correlates optical evidence, radar squawk logs, gyro telemetry, and atmospheric weather conditions.
-* **Export & Archival**: Produces clean PDF and structured JSON reports ready for submission to civilian and institutional repositories (SCU, SUAPS, GEIPAN).
+* **Multi-Sensor Timeline**: Correlates optical evidence, radar squawk logs, gyro telemetry, and live GPS-linked atmospheric weather conditions.
+* **Export & Archival**: Produces clean PDF, MUFON CMS-ready text, and structured JSON reports ready for submission to civilian and institutional repositories (MUFON, SCU, SUAPS, GEIPAN).
 
 ---
 
@@ -76,7 +75,7 @@ Tapping the top-left Check Engine logo opens the **Themes** selector, allowing u
 
 Check Sky Light rejects unverified internet folklore and grounds its heuristics in five authoritative tiers:
 
-1. **Tier I (Government & Defense Declassification)**: AARO, NASA UAP Independent Study Team, CNES/GEIPAN, ODNI Preliminary & Annual Assessments.
+1. **Tier I (Government & Defense Declassification)**: AARO, DoW PURSUE Release 07 archives, NASA UAP Independent Study Team, CNES/GEIPAN, ODNI Preliminary & Annual Assessments.
 2. **Tier II (Institutional Scientific Bodies)**: Society for UAP Studies (Limina Journal), Scientific Coalition for UAP Studies (SCU), The Galileo Project (Harvard University), AIAA UAP Integration Committee.
 3. **Tier III (Autonomous Sky Observation Networks)**: Skywatcher.ai, Sky360 Network, UFODAP, Project Hessdalen.
 4. **Tier IV (Airspace & Ephemeris Telemetry)**: ADS-B Exchange, Space-Track / Celestrak (18th Space Defense Squadron), NOAA NEXRAD, NASA JPL Horizons.

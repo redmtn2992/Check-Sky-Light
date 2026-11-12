@@ -27,7 +27,7 @@ export default defineConfig(() => {
           id: '/',
           name: 'Check Sky Light',
           short_name: 'CheckSkyLight',
-          description: 'Field-grade AR sky optical tracker, real-time airspace ADS-B radar, and UAP anomaly evaluator.',
+          description: 'Citizen-science UAP & sky diagnostics PWA. Combines optical AR, ADS-B/NORAD radar, and GPS weather with Gemini, ChatGPT (Luna) & Claude Dual-Lens forensics & PDF dossiers.',
           theme_color: '#020617',
           background_color: '#020617',
           display: 'standalone',
