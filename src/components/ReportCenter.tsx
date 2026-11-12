@@ -34,7 +34,7 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
   onAddSighting,
   onOpenFeed
 }) => {
-  const [activeCenterMode, setActiveCenterMode] = useState<'dossiers' | 'panel'>('dossiers');
+  const [activeCenterMode, setActiveCenterMode] = useState<'panel' | 'dossiers'>('panel');
   const [dossierInspectorTab, setDossierInspectorTab] = useState<'specs' | 'panel'>('specs');
   const [vaultItems, setVaultItems] = useState<VaultMediaRecord[]>([]);
   const [reports, setReports] = useState<PreparedIncidentReport[]>([]);
@@ -527,19 +527,8 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
         </div>
       )}
 
-      {/* 2. Top Mode Switcher: Dossiers vs Multi-Lens Review */}
+      {/* 2. Top Mode Switcher: Multi-Lens Review vs Dossiers */}
       <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10 w-fit">
-        <button
-          onClick={() => setActiveCenterMode('dossiers')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
-            activeCenterMode === 'dossiers'
-              ? 'bg-cyan-400 text-slate-950 shadow-sm'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <FileText className="w-3.5 h-3.5" />
-          <span>Incident Dossiers & PDF ({reports.length})</span>
-        </button>
         <button
           onClick={() => setActiveCenterMode('panel')}
           className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
@@ -550,6 +539,17 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>Multi-Lens Review</span>
+        </button>
+        <button
+          onClick={() => setActiveCenterMode('dossiers')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+            activeCenterMode === 'dossiers'
+              ? 'bg-cyan-400 text-slate-950 shadow-sm'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <FileText className="w-3.5 h-3.5" />
+          <span>Incident Dossiers & PDF ({reports.length})</span>
         </button>
       </div>
 
