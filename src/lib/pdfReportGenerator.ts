@@ -223,18 +223,23 @@ export function generateIncidentPdf(report: PreparedIncidentReport): void {
   doc.setFontSize(7.5);
   doc.setTextColor(30, 41, 59);
 
+  const mufonWeatherLine = loc.weather
+    ? `${loc.weather.mufonWeatherSummary} (${loc.weather.temperatureF}F / ${loc.weather.pressureHpa} hPa)`
+    : 'Clear / High Ceiling / Visibility 10+ nm (Default Baseline)';
+
   const mufonFields = [
     `MUFON CMS Sighting Date/Time: ${report.timestamp.replace('T', ' ').substring(0, 16)} Local`,
     `MUFON Sighting City/State:    ${loc.city || 'Albuquerque'}, ${loc.region || 'New Mexico'}`,
     `MUFON Object Shape:           ${report.apparentShape}`,
     `MUFON Distance From Observer: ~2 to 8 Miles Estimated`,
     `MUFON Sighting Duration:      15-45 Seconds`,
-    `MUFON Weather Condition:      Clear / High Ceiling / Visibility 10+ nm`,
-    `MUFON Correlated Case Note:   ${report.mufonCaseCorrelation || 'Auto-correlated with regional high-strangeness database profiles'}`
+    `MUFON Weather Condition:      ${mufonWeatherLine}`,
+    `MUFON Correlated Case Note:   ${report.mufonCaseCorrelation || (loc.weather ? loc.weather.uapOpticalImpact : 'Auto-correlated with regional high-strangeness database profiles')}`
   ];
 
   mufonFields.forEach((field, i) => {
-    doc.text(field, margin + 2, y + i * 4);
+    const truncatedField = field.length > 98 ? field.substring(0, 95) + '...' : field;
+    doc.text(truncatedField, margin + 2, y + i * 4);
   });
 
   y += mufonFields.length * 4 + 4;
@@ -304,6 +309,7 @@ DATE OF EVENT:   ${new Date(report.timestamp).toLocaleDateString()}
 TIME OF EVENT:   ${new Date(report.timestamp).toLocaleTimeString()} Local (${report.utcTimestamp} UTC)
 LOCATION:        ${loc.city || 'Albuquerque'}, ${loc.region || 'New Mexico, USA'}
 GPS COORDINATES: ${loc.lat.toFixed(5)} N, ${loc.lng.toFixed(5)} W
+GPS WEATHER:     ${loc.weather ? `${loc.weather.condition}, ${loc.weather.temperatureF}°F (${loc.weather.temperatureC}°C), Wind ${loc.weather.windSpeedMph} mph ${loc.weather.windCardinal}, Clouds ${loc.weather.cloudCoverPct}%, Vis ${loc.weather.visibilityMiles} mi, ${loc.weather.pressureHpa} hPa — ${loc.weather.uapOpticalImpact}` : 'Weather telemetry not recorded'}
 OBJECT SHAPE:    ${report.apparentShape}
 ESTIMATED ALT:   ${report.estimatedAltitude}
 ANGULAR SPEED:   ${report.angularVelocityDegPerSec.toFixed(1)} deg/sec

@@ -4,7 +4,7 @@ import {
   Sparkles, HardDrive, Compass, Camera, Video, Volume2, VolumeX, 
   ArrowRight, X, MapPin, RefreshCw, Sliders, Shield, Info
 } from 'lucide-react';
-import { TargetLockData } from '../types';
+import { TargetLockData, LocationCoords } from '../types';
 import { saveMediaToVault } from '../lib/storage/mediaVault';
 
 export interface PreReportCapture {
@@ -45,6 +45,7 @@ interface PreReportCheckModalProps {
   onClose: () => void;
   capture: PreReportCapture | null;
   capturesList?: PreReportCapture[];
+  userLocation?: LocationCoords;
   onSelectCapture?: (capture: PreReportCapture) => void;
   onProceedToReport: (vetted: {
     mediaUrl: string;
@@ -66,6 +67,7 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
   onClose,
   capture,
   capturesList = [],
+  userLocation,
   onSelectCapture,
   onProceedToReport,
   onSaveToVaultOnly,
@@ -110,7 +112,10 @@ export const PreReportCheckModal: React.FC<PreReportCheckModalProps> = ({
           mediaType: capture.mediaType,
           thumbnailBase64,
           durationSeconds: capture.durationSeconds || duration || 0,
-          telemetry: capture.telemetry,
+          telemetry: {
+            ...capture.telemetry,
+            weather: userLocation?.weather
+          },
           targetLock: capture.targetLock
         })
       });

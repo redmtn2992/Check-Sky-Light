@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { 
   LocationCoords, SightingReport, FlightTrack, CelestialBody, 
-  SatelliteTrack, AlertNotification, TargetLockData, WeatherBalloonTrack 
+  SatelliteTrack, AlertNotification, TargetLockData, WeatherBalloonTrack, WeatherTelemetry 
 } from './types';
 import { 
   MOCK_SIGHTINGS, MOCK_FLIGHTS, MOCK_CELESTIAL_BODIES, 
@@ -242,6 +242,42 @@ export default function App() {
     };
   }, [userLocation]);
 
+  // Silently sync live atmospheric weather for active GPS sector so UAP reporting considers weather without cluttering UI
+  const fetchWeatherForLocation = async (lat: number, lng: number): Promise<WeatherTelemetry | undefined> => {
+    try {
+      const res = await fetch(`/api/weather?lat=${lat}&lng=${lng}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // non-blocking
+    }
+    return undefined;
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchedAtMs = userLocation.weather?.fetchedAt ? new Date(userLocation.weather.fetchedAt).getTime() : 0;
+    const isStale = !fetchedAtMs || Date.now() - fetchedAtMs > 15 * 60 * 1000;
+    if (isStale) {
+      fetchWeatherForLocation(userLocation.lat, userLocation.lng).then((weather) => {
+        if (!cancelled && weather) {
+          setUserLocation((prev) => {
+            if (Math.abs(prev.lat - userLocation.lat) > 0.01 || Math.abs(prev.lng - userLocation.lng) > 0.01) {
+              return prev;
+            }
+            const updated = { ...prev, weather };
+            saveLocationPreference(updated);
+            return updated;
+          });
+        }
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [userLocation.lat, userLocation.lng]);
+
   // Request HTML5 Geolocation with reverse geocode and gentle fallback
   const requestLiveGps = () => {
     unlockAudioContext();
@@ -256,18 +292,23 @@ export default function App() {
       let city = `Sector (${lat.toFixed(3)}°, ${lng.toFixed(3)}°)`;
       let region = 'Live GPS Sector';
 
-      try {
-        const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`);
-        if (res.ok) {
-          const data = await res.json();
+      const [geoRes, weatherData] = await Promise.allSettled([
+        fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`),
+        fetchWeatherForLocation(lat, lng)
+      ]);
+
+      if (geoRes.status === 'fulfilled' && geoRes.value.ok) {
+        try {
+          const data = await geoRes.value.json();
           if (data.city) city = data.city;
           if (data.region) region = data.region;
+        } catch {
+          // keep fallback
         }
-      } catch {
-        // keep fallback
       }
 
-      const newLoc: LocationCoords = { lat, lng, city, region };
+      const weather = weatherData.status === 'fulfilled' ? weatherData.value : undefined;
+      const newLoc: LocationCoords = { lat, lng, city, region, weather };
       setUserLocation(newLoc);
       saveLocationPreference(newLoc);
     };
@@ -297,11 +338,13 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         if (data.lat && data.lng) {
+          const weather = await fetchWeatherForLocation(data.lat, data.lng);
           const newLoc: LocationCoords = {
             lat: data.lat,
             lng: data.lng,
             city: data.city || 'GPS',
-            region: data.region || 'Sector Telemetry'
+            region: data.region || 'Sector Telemetry',
+            weather
           };
           setUserLocation(newLoc);
           saveLocationPreference(newLoc);
@@ -687,6 +730,7 @@ export default function App() {
           isOpen={isPreReportCheckOpen}
           capture={checkCapture}
           capturesList={sessionCapturesList}
+          userLocation={userLocation}
           onSelectCapture={(cap) => setCheckCapture(cap)}
           onClose={() => {
             setIsPreReportCheckOpen(false);

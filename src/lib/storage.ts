@@ -1,4 +1,4 @@
-import { SightingReport, ChatMessage, AlertNotification } from '../types';
+import { SightingReport, ChatMessage, AlertNotification, LocationCoords } from '../types';
 import { INITIAL_SIGHTINGS, INITIAL_CHAT_MESSAGES, INITIAL_ALERTS } from '../data/mockData';
 
 const SIGHTINGS_KEY = 'checkskylight_sightings_vault_v1';
@@ -211,7 +211,7 @@ export const DEFAULT_APP_LOCATION = {
 
 const LOCATION_PREF_KEY = 'checkskylight_user_location_pref_v2';
 
-export function loadLocationPreference(): { lat: number; lng: number; city?: string; region?: string } {
+export function loadLocationPreference(): LocationCoords {
   try {
     const raw = localStorage.getItem(LOCATION_PREF_KEY);
     if (raw) {
@@ -231,7 +231,7 @@ export function loadLocationPreference(): { lat: number; lng: number; city?: str
   return DEFAULT_APP_LOCATION;
 }
 
-export function saveLocationPreference(loc: { lat: number; lng: number; city?: string; region?: string }): void {
+export function saveLocationPreference(loc: LocationCoords): void {
   try {
     localStorage.setItem(LOCATION_PREF_KEY, JSON.stringify(loc));
   } catch {

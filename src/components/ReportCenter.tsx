@@ -88,7 +88,8 @@ export const ReportCenter: React.FC<ReportCenterProps> = ({
               lat: vm.telemetry?.lat || userLocation.lat,
               lng: vm.telemetry?.lng || userLocation.lng,
               city: vm.telemetry?.city || userLocation.city,
-              region: vm.telemetry?.region || userLocation.region
+              region: vm.telemetry?.region || userLocation.region,
+              weather: userLocation.weather
             },
             observerName: 'Civilian Field Observer',
             observerBadge: 'Check Sky Light Unit',

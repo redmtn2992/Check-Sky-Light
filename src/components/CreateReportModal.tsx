@@ -232,7 +232,8 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageBase64,
-          locationNotes: `Captured at ${locationName}`
+          locationNotes: `Captured at ${locationName}`,
+          weather: userLocation.weather
         })
       });
       if (!res.ok) {
@@ -295,11 +296,32 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
     setErrorMsg(null);
     try {
       let probScore = initialProbabilityScore ?? (aiAnalysisResult ? aiAnalysisResult.anomalyScore : 88);
+      let weatherTelemetryNote = userLocation.weather
+        ? `GPS Weather Considered: ${userLocation.weather.mufonWeatherSummary} (${userLocation.weather.temperatureF}°F, ${userLocation.weather.pressureHpa} hPa). ${userLocation.weather.uapOpticalImpact}`
+        : undefined;
       try {
-        const verifyRes = await fetch(`/api/verify-sky?lat=${userLocation.lat}&lng=${userLocation.lng}&notes=${encodeURIComponent(description)}`);
+        const params = new URLSearchParams({
+          lat: String(userLocation.lat),
+          lng: String(userLocation.lng),
+          notes: description
+        });
+        if (userLocation.weather) {
+          params.set('windMph', String(userLocation.weather.windSpeedMph));
+          params.set('cloudPct', String(userLocation.weather.cloudCoverPct));
+          params.set('visibilityMi', String(userLocation.weather.visibilityMiles));
+          params.set('weatherCond', userLocation.weather.condition);
+          params.set('tempF', String(userLocation.weather.temperatureF));
+          params.set('windDir', userLocation.weather.windCardinal);
+          params.set('humidityPct', String(userLocation.weather.humidityPct));
+          params.set('pressureHpa', String(userLocation.weather.pressureHpa));
+        }
+        const verifyRes = await fetch(`/api/verify-sky?${params.toString()}`);
         if (verifyRes.ok) {
           const verifyData = await verifyRes.json();
           probScore = verifyData.probabilityScore;
+          if (verifyData.weatherDeconflictionNote) {
+            weatherTelemetryNote = verifyData.weatherDeconflictionNote;
+          }
         }
       } catch {
         // Non-blocking fallback
@@ -318,7 +340,8 @@ export const CreateReportModal: React.FC<CreateReportModalProps> = ({
         mediaUrl: mediaUrl || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=800&auto=format&fit=crop',
         mediaType: isVideoMedia ? ('video' as const) : ('image' as const),
         mediaThumbnail: posterThumbnail || (isVideoMedia ? undefined : mediaUrl),
-        tags
+        tags,
+        matchedTelemetryNote: weatherTelemetryNote
       };
       let created: SightingReport;
       try {

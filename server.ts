@@ -5,7 +5,7 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import { MOCK_SIGHTINGS, MOCK_CHAT_MESSAGES, MOCK_ALERTS } from './src/data/mockData.ts';
-import type { FlightTrack, SightingReport, ChatMessage, WeatherBalloonTrack, SatelliteData } from './src/types.ts';
+import type { FlightTrack, SightingReport, ChatMessage, WeatherBalloonTrack, SatelliteData, WeatherTelemetry } from './src/types.ts';
 import { 
   buildAaroKnowledgeBasePrompt, 
   lookupKnownCase, 
@@ -35,6 +35,154 @@ function checkRequestSafety(text: string, url?: string) {
   return { violates: false };
 }
 
+function wmoWeatherCodeToText(code: number): string {
+  const map: Record<number, string> = {
+    0: 'Clear Sky',
+    1: 'Mainly Clear',
+    2: 'Partly Cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Rime Fog',
+    51: 'Light Drizzle',
+    53: 'Moderate Drizzle',
+    55: 'Dense Drizzle',
+    61: 'Light Rain',
+    63: 'Moderate Rain',
+    65: 'Heavy Rain',
+    71: 'Light Snow',
+    73: 'Moderate Snow',
+    75: 'Heavy Snow',
+    80: 'Rain Showers',
+    81: 'Moderate Showers',
+    82: 'Violent Showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm / Hail',
+    99: 'Severe Thunderstorm'
+  };
+  return map[code] || 'Variable Sky';
+}
+
+function degToCardinal(deg: number): string {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  const idx = Math.round(((deg % 360) / 22.5)) % 16;
+  return dirs[idx];
+}
+
+function evaluateUapWeatherImpact(w: {
+  condition: string;
+  windSpeedMph: number;
+  windGustsMph?: number;
+  cloudCoverPct: number;
+  visibilityMiles: number;
+  precipitationMm: number;
+  humidityPct: number;
+}) {
+  const factors: string[] = [];
+
+  if (w.windSpeedMph >= 20 || (w.windGustsMph ?? 0) >= 28) {
+    factors.push(`Strong winds (${Math.round(w.windSpeedMph)} mph) increase balloon/debris drift speed`);
+  } else if (w.windSpeedMph <= 6) {
+    factors.push(`Calm winds (${Math.round(w.windSpeedMph)} mph) minimize wind-driven false positives`);
+  }
+
+  if (w.cloudCoverPct >= 75) {
+    factors.push(`Heavy cloud cover (${Math.round(w.cloudCoverPct)}%) may obscure high-altitude targets`);
+  } else if (w.cloudCoverPct <= 20) {
+    factors.push(`Clear sky ceiling (${Math.round(w.cloudCoverPct)}% clouds)`);
+  }
+
+  if (w.visibilityMiles <= 4) {
+    factors.push(`Low visibility (${w.visibilityMiles.toFixed(1)} mi) adds optical haze/bloom`);
+  }
+
+  if (w.precipitationMm > 0) {
+    factors.push(`Active precipitation (${w.precipitationMm.toFixed(1)} mm) can cause lens scatter`);
+  }
+
+  if (w.humidityPct >= 85 && w.visibilityMiles <= 6) {
+    factors.push('High moisture may create thermal inversion / light refraction');
+  }
+
+  const uapOpticalImpact =
+    factors.length > 0
+      ? factors.join('; ') + '.'
+      : 'Nominal atmospheric transparency for optical tracking.';
+
+  const mufonWeatherSummary = `${w.condition} / Clouds ${Math.round(w.cloudCoverPct)}% / Wind ${Math.round(w.windSpeedMph)} mph / Vis ${w.visibilityMiles.toFixed(1)} mi`;
+
+  return { uapOpticalImpact, mufonWeatherSummary };
+}
+
+async function fetchLiveWeatherTelemetry(lat: number, lng: number): Promise<WeatherTelemetry> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,apparent_temperature,relative_humidity_2m,is_day,precipitation,weather_code,cloud_cover,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,visibility&temperature_unit=fahrenheit&wind_speed_unit=mph`;
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!response.ok) {
+      throw new Error(`Weather upstream status ${response.status}`);
+    }
+    const json = await response.json();
+    const cur = json.current || {};
+    const tempF = typeof cur.temperature_2m === 'number' ? Math.round(cur.temperature_2m * 10) / 10 : 62;
+    const tempC = Math.round(((tempF - 32) * (5 / 9)) * 10) / 10;
+    const feelsLikeF = typeof cur.apparent_temperature === 'number' ? Math.round(cur.apparent_temperature * 10) / 10 : tempF;
+    const weatherCode = typeof cur.weather_code === 'number' ? cur.weather_code : 0;
+    const condition = wmoWeatherCodeToText(weatherCode);
+    const windSpeedMph = typeof cur.wind_speed_10m === 'number' ? Math.round(cur.wind_speed_10m * 10) / 10 : 5;
+    const windGustsMph = typeof cur.wind_gusts_10m === 'number' ? Math.round(cur.wind_gusts_10m * 10) / 10 : windSpeedMph;
+    const windDirectionDeg = typeof cur.wind_direction_10m === 'number' ? Math.round(cur.wind_direction_10m) : 0;
+    const windCardinal = degToCardinal(windDirectionDeg);
+    const cloudCoverPct = typeof cur.cloud_cover === 'number' ? Math.round(cur.cloud_cover) : 0;
+    const visibilityMeters = typeof cur.visibility === 'number' ? cur.visibility : 16093;
+    const visibilityMiles = Math.round((visibilityMeters / 1609.34) * 10) / 10;
+    const humidityPct = typeof cur.relative_humidity_2m === 'number' ? Math.round(cur.relative_humidity_2m) : 35;
+    const pressureHpa = typeof cur.surface_pressure === 'number' ? Math.round(cur.surface_pressure * 10) / 10 : 1013.2;
+    const precipitationMm = typeof cur.precipitation === 'number' ? Math.round(cur.precipitation * 100) / 100 : 0;
+    const isDay = cur.is_day === 1;
+
+    const { uapOpticalImpact, mufonWeatherSummary } = evaluateUapWeatherImpact({
+      condition,
+      windSpeedMph,
+      windGustsMph,
+      cloudCoverPct,
+      visibilityMiles,
+      precipitationMm,
+      humidityPct
+    });
+
+    return {
+      temperatureF: tempF,
+      temperatureC: tempC,
+      feelsLikeF,
+      condition,
+      weatherCode,
+      windSpeedMph,
+      windGustsMph,
+      windDirectionDeg,
+      windCardinal,
+      cloudCoverPct,
+      visibilityMiles,
+      humidityPct,
+      pressureHpa,
+      precipitationMm,
+      isDay,
+      uapOpticalImpact,
+      mufonWeatherSummary,
+      source: 'Open-Meteo Live Atmospheric Feed',
+      fetchedAt: new Date().toISOString()
+    };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function formatWeatherContextForPrompt(weather?: WeatherTelemetry | null): string {
+  if (!weather) return 'No GPS weather telemetry attached.';
+  return `${weather.condition}, Temp ${weather.temperatureF}°F (${weather.temperatureC}°C), Wind ${weather.windSpeedMph} mph ${weather.windCardinal} (gusts ${weather.windGustsMph ?? weather.windSpeedMph} mph), Cloud Cover ${weather.cloudCoverPct}%, Visibility ${weather.visibilityMiles} mi, Humidity ${weather.humidityPct}%, Pressure ${weather.pressureHpa} hPa. UAP Optical Note: ${weather.uapOpticalImpact}`;
+}
+
 // In-memory data caches for server session
 let serverSightings: SightingReport[] = [...MOCK_SIGHTINGS];
 let serverChatMessages: ChatMessage[] = [...MOCK_CHAT_MESSAGES];
@@ -53,7 +201,8 @@ function getGeminiClient(): GoogleGenAI | null {
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  // Dev server and backend must run on port 3000 behind Nginx (which listens on 8080)
+  const PORT = (process.env.PORT && process.env.PORT !== '8080') ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -461,7 +610,8 @@ async function startServer() {
       mediaUrl: req.body.mediaUrl,
       mediaType: req.body.mediaType || 'image',
       mediaThumbnail: req.body.mediaThumbnail,
-      tags: req.body.tags || ['Optical Tracking', 'Uncorrelated ADS-B']
+      tags: req.body.tags || ['Optical Tracking', 'Uncorrelated ADS-B'],
+      matchedTelemetryNote: req.body.matchedTelemetryNote
     };
 
     serverSightings = [newReport, ...serverSightings];
@@ -653,15 +803,33 @@ async function startServer() {
     res.status(404).json({ error: 'City not found' });
   });
 
+  // Live Atmospheric Weather Telemetry tied to GPS Coordinates
+  app.get('/api/weather', async (req, res) => {
+    const lat = parseFloat(req.query.lat as string);
+    const lng = parseFloat(req.query.lng as string);
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({ error: 'Valid lat and lng query params required' });
+    }
+
+    try {
+      const weather = await fetchLiveWeatherTelemetry(lat, lng);
+      return res.json(weather);
+    } catch (err: any) {
+      console.warn('Weather telemetry fetch error:', err?.message || err);
+      return res.status(502).json(unavailable('Unable to retrieve live sector weather telemetry'));
+    }
+  });
+
   // Instant Optical Photo Anomaly Scan (Dual-Lens Gemini AI Analysis)
   app.post('/api/analyze-photo', async (req, res) => {
-    const { imageBase64, locationNotes } = req.body;
+    const { imageBase64, locationNotes, weather } = req.body;
 
     const safety = checkRequestSafety(locationNotes || '');
     if (safety.violates) {
       return res.status(400).json(safety.errorResponse);
     }
 
+    const weatherSummary = formatWeatherContextForPrompt(weather);
     const ai = getGeminiClient();
     if (ai && imageBase64 && imageBase64.includes(';base64,')) {
       try {
@@ -669,7 +837,7 @@ async function startServer() {
         const cleanBase64 = imageBase64.split(';base64,')[1];
 
         const prompt = `You are the chief aerospace and UAP optical analyst for Check Sky Light, operating under a rigorous Dual-Lens Analytical Framework:
-1. Classical Aerospace Baseline: Deconflict against conventional aircraft, drones, satellites, lens flares, camera sensor artifacts, or balloons.
+1. Classical Aerospace Baseline: Deconflict against conventional aircraft, drones, satellites, lens flares, camera sensor artifacts, balloons, and local atmospheric conditions (${weatherSummary}).
 2. Theoretical Metric Manipulation: Evaluate for unusual geometric symmetry, lack of aerodynamic control surfaces or thermal exhaust, and potential warp-metric kinematics.
 
 CRITICAL SAFETY & DOMAIN INTEGRITY CHECK:
@@ -761,17 +929,19 @@ Analyze this image and return a JSON object with this exact structure:
     const azimuth = typeof telemetry.azimuth === 'number' ? Math.round(telemetry.azimuth) : 0;
     const pitch = typeof telemetry.pitch === 'number' ? Math.round(telemetry.pitch) : 0;
     const city = telemetry.city || 'Local Sector';
+    const weatherSummary = formatWeatherContextForPrompt(telemetry.weather);
 
     const ai = getGeminiClient();
     if (ai) {
       try {
         const prompt = `You are the analyst for Check Sky Light. Perform a fast Pre-Report Check on a newly recorded ${mediaType} (${durationSeconds > 0 ? `${durationSeconds.toFixed(1)}s` : 'photo'}) at Azimuth ${azimuth}°, Elevation ${pitch}° in ${city}.
 Target lock: ${targetLock ? `${targetLock.name} (${targetLock.confidencePct}%)` : 'None'}.
+GPS Sector Weather: ${weatherSummary}
 
 SAFETY CHECK:
 If the visual frame depicts explicit sexual content, pornography, human harm, or animal cruelty, set "isViolatingSafety": true.
 
-IMPORTANT: Keep all responses brief, direct, and plain human English. Use "less ink" — no verbose jargon.
+IMPORTANT: Keep all responses brief, direct, and plain human English. Use "less ink" — no verbose jargon. Factor GPS sector weather (wind drift, cloud ceiling, visibility, precipitation) into the aerospaceCheck if relevant.
 
 ${SHARED_ANALYSIS_RULES}
 
@@ -852,6 +1022,7 @@ Provide a JSON response matching:
 
     const ai = getGeminiClient();
     const locationStr = location?.city ? `${location.city}, ${location.region || ''} (${location.lat.toFixed(4)}°N, ${location.lng.toFixed(4)}°W)` : 'Observer Sector 35.08°N, 106.65°W';
+    const weatherSummary = formatWeatherContextForPrompt(location?.weather);
 
     if (ai) {
       try {
@@ -860,6 +1031,7 @@ The user has captured telemetry and observation data using this app (integrated 
 
 OBSERVATION & TELEMETRY PROFILE:
 - Sector Location: ${locationStr}
+- GPS Sector Weather: ${weatherSummary}
 - Timestamp: ${timestamp}
 - Compass Azimuth: ${azimuth}°
 - Elevation / Pitch Angle: ${pitch}°
@@ -1111,6 +1283,7 @@ Return ONLY valid JSON matching this schema:
 
     const ai = getGeminiClient();
     const locationStr = location?.city ? `${location.city}, ${location.region || ''}` : 'Unknown Sector';
+    const weatherSummary = formatWeatherContextForPrompt(location?.weather);
 
     const combinedContextStr = `${sourceTitle} ${notes} ${req.body.mediaUrl || ''}`;
     const matchedAaro = matchAaroCase(combinedContextStr);
@@ -1150,6 +1323,7 @@ Operate strictly under our Dual-Lens Analytical Framework, ensuring objective em
 
 Observer Context Notes: "${notes || 'No witness notes provided'}"
 Observer Location: "${locationStr}"
+GPS Sector Weather Conditions: "${weatherSummary}"
 Media Modality: "${mediaType}"
 Source Evidence Title / Filename: "${sourceTitle}"
 ${aaroMatchPrompt}
@@ -2655,6 +2829,7 @@ Return ONLY a valid JSON object matching this schema:
 
     const targetTitle = title || (url ? `Web Investigation (${url.substring(0, 40)})` : 'Field Incident Dossier');
     const locationStr = typeof location === 'string' ? location : location?.city ? `${location.city}, ${location.region || ''}` : 'Regional Airspace';
+    const weatherSummary = typeof location === 'object' ? formatWeatherContextForPrompt(location?.weather) : 'No GPS weather telemetry attached.';
 
     const urlTimestampMatch = (url || '').match(/[?&#](?:t|start)=(\d+[smh\d]*)/i);
     const notesTimestampMatch = (notes || '').match(/(?:timestamp|time|marker|at|min|minute|sec|clip)[:\s]*([0-9]{1,2}:[0-9]{2})/i);
@@ -2701,6 +2876,7 @@ URL (if any): ${url || 'N/A'}
 TARGET TIMESTAMP / CLIP FOCUS: ${targetTimestamp ? `User targeted timestamp: ${targetTimestamp}` : 'No timestamp specified'}
 Observer Narrative & Notes: ${notes || 'Recorded via Check Sky Light empirical observation system.'}
 Sector Location: ${locationStr}
+GPS Sector Weather: ${weatherSummary}
 Telemetry: ${JSON.stringify(telemetry || {})}
 Reported Observables: ${JSON.stringify(fiveObservables || {})}
 Prior Score: ${anomalyScore ?? 'Unknown'}
@@ -2987,10 +3163,10 @@ Return ONLY a valid JSON object matching this schema:
     });
   });
 
-  // Verify Sky Telemetry
-  app.get('/api/verify-sky', (req, res) => {
-    const lat = parseFloat(req.query.lat as string) || 39.7392;
-    const lng = parseFloat(req.query.lng as string) || -104.9903;
+  // Verify Sky Telemetry (now evaluates live GPS atmospheric weather alongside notes & coordinates)
+  app.get('/api/verify-sky', async (req, res) => {
+    const lat = parseFloat(req.query.lat as string) || 35.0844;
+    const lng = parseFloat(req.query.lng as string) || -106.6504;
     const notes = (req.query.notes as string) || '';
 
     let anomalyScore = 84;
@@ -3001,9 +3177,62 @@ Return ONLY a valid JSON object matching this schema:
       anomalyScore += 4;
     }
 
+    let weather: WeatherTelemetry | null = null;
+    try {
+      const windParam = parseFloat(req.query.windMph as string);
+      const cloudParam = parseFloat(req.query.cloudPct as string);
+      const visParam = parseFloat(req.query.visibilityMi as string);
+      const condParam = (req.query.weatherCond as string) || '';
+
+      if (!isNaN(windParam) && !isNaN(cloudParam) && !isNaN(visParam) && condParam) {
+        weather = {
+          temperatureF: parseFloat(req.query.tempF as string) || 60,
+          temperatureC: 15.5,
+          condition: condParam,
+          weatherCode: 0,
+          windSpeedMph: windParam,
+          windDirectionDeg: 0,
+          windCardinal: (req.query.windDir as string) || 'N',
+          cloudCoverPct: cloudParam,
+          visibilityMiles: visParam,
+          humidityPct: parseFloat(req.query.humidityPct as string) || 40,
+          pressureHpa: parseFloat(req.query.pressureHpa as string) || 1013,
+          ...evaluateUapWeatherImpact({
+            condition: condParam,
+            windSpeedMph: windParam,
+            cloudCoverPct: cloudParam,
+            visibilityMiles: visParam,
+            precipitationMm: 0,
+            humidityPct: parseFloat(req.query.humidityPct as string) || 40
+          }),
+          source: 'GPS Sector Weather Telemetry',
+          fetchedAt: new Date().toISOString()
+        };
+      } else {
+        weather = await fetchLiveWeatherTelemetry(lat, lng);
+      }
+    } catch {
+      // Non-blocking if upstream weather times out
+    }
+
+    let weatherDeconflictionNote = 'GPS weather telemetry evaluated.';
+    if (weather) {
+      if (weather.windSpeedMph >= 20) {
+        anomalyScore -= 6;
+      } else if (weather.cloudCoverPct <= 25 && weather.visibilityMiles >= 8) {
+        anomalyScore += 2;
+      }
+      if (weather.visibilityMiles <= 3 || (weather.precipitationMm ?? 0) > 0.5) {
+        anomalyScore -= 5;
+      }
+      weatherDeconflictionNote = `GPS Weather Considered: ${weather.mufonWeatherSummary} (${weather.temperatureF}°F, ${weather.pressureHpa} hPa). ${weather.uapOpticalImpact}`;
+    }
+
     res.json({
-      probabilityScore: Math.min(98, anomalyScore),
+      probabilityScore: Math.max(15, Math.min(98, anomalyScore)),
       deconflicted: true,
+      weather,
+      weatherDeconflictionNote,
       verifiedAt: new Date().toISOString()
     });
   });

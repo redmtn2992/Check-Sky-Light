@@ -1,9 +1,32 @@
+export interface WeatherTelemetry {
+  temperatureF: number;
+  temperatureC: number;
+  feelsLikeF?: number;
+  condition: string;
+  weatherCode: number;
+  windSpeedMph: number;
+  windGustsMph?: number;
+  windDirectionDeg: number;
+  windCardinal: string;
+  cloudCoverPct: number;
+  visibilityMiles: number;
+  humidityPct: number;
+  pressureHpa: number;
+  precipitationMm?: number;
+  isDay?: boolean;
+  uapOpticalImpact: string;
+  mufonWeatherSummary: string;
+  source: string;
+  fetchedAt: string;
+}
+
 export interface LocationCoords {
   lat: number;
   lng: number;
   altitude?: number;
   city?: string;
   region?: string;
+  weather?: WeatherTelemetry;
 }
 
 export interface FlightTrack {
