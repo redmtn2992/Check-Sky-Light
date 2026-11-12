@@ -4,7 +4,7 @@ Master Project Specification, Scientific Framework, Knowledge Base, and Field Va
 Project identifier: check-sky-light-v3.1-parallax-consensus
 Document identifier: CSL-MASTER-PROJECT
 Document type: Integrated technical and scientific project specification
-Principal Investigator: Gregory Tafoya, MPH
+Principal Investigator: Gregory Tafoya
 Version: Master Draft 1.1 — Integrated PURSUE Release 07 Declassifications
 Prepared: October 2026 (Updated October 29, 2026)
 License: MIT for original software and open-architecture materials, subject to the licensing and redistribution terms of referenced third-party data
@@ -14,7 +14,7 @@ Field	Description
 Project	Check Sky Light (CSL)
 Primary objective	Characterize a civilian multi-sensor sky-observation and airspace-deconfliction instrument
 Scientific approach	Measurement validation, uncertainty propagation, conventional-object identification, dual-lens hypothesis testing, and residual analysis
-Principal Investigator	Gregory Tafoya, MPH
+Principal Investigator	Gregory Tafoya
 Primary implementation	Progressive Web Application (PWA); implementation details require source-code verification
 Reference deployment	https://ais-pre-ukflj6nzej45ykwobcj43x-497180163446.us-west2.run.app
 Knowledge base	CSL-KB-DB-v3.7 (Integrated US Department of War PURSUE Release 07)
@@ -23,8 +23,8 @@ Supersession policy	Approved master revisions supersede prior working copies; fr
 Governing principle	An unexplained residual is a measurement and classification problem, not evidence of an exotic origin
 Document Revision History & Tracked Activities
 Revision	Date	Author / Role	Summary of Changes & Ingested Materials
-v1.0	October 2026	Gregory Tafoya, MPH (PI)	Initial consolidated master project specification, scientific dual-lens analytical framework, mathematical vector geodesy, and field validation protocol.
-v1.1	October 29, 2026	Gregory Tafoya, MPH (PI) & Scientific AI Review Panel	Ingested U.S. Department of War (DoW) PURSUE Release 07 declassified records (28 PDF reports, 1,100+ pages; URL: https://www.war.gov/ufo/?releaseDate=Release+07&release=07). Added catalog resource entry KB-T1-05. Established Section 18.2.1 incorporating case dossiers (DOW-UAP-D176 / FBI-UAP-D043, DOW-UAP-D167, DOW-UAP-D174, DOW-UAP-D155). Updated Dual-Lens classification criteria for fluid boundary-layer and acoustic decoupling.
+v1.0	October 2026	Gregory Tafoya (PI)	Initial consolidated master project specification, scientific dual-lens analytical framework, mathematical vector geodesy, and field validation protocol.
+v1.1	October 29, 2026	Gregory Tafoya (PI) & Scientific AI Review Panel	Ingested U.S. Department of War (DoW) PURSUE Release 07 declassified records (28 PDF reports, 1,100+ pages; URL: https://www.war.gov/ufo/?releaseDate=Release+07&release=07). Added catalog resource entry KB-T1-05. Established Section 18.2.1 incorporating case dossiers (DOW-UAP-D176 / FBI-UAP-D043, DOW-UAP-D167, DOW-UAP-D174, DOW-UAP-D155). Updated Dual-Lens classification criteria for fluid boundary-layer and acoustic decoupling.
 Document Status and Precedence
 
 This document consolidates the project architecture, analytical framework, external source registry, and proposed field-validation protocol into a single human-readable reference.
@@ -1086,11 +1086,11 @@ Publications should disclose AI-assisted design or writing according to the targ
 14. Project Governance, Versioning, and Release Management
 14.1 Roles
 
-Principal Investigator: Gregory Tafoya, MPH, responsible for research priorities, ethics, protocol preregistration, final acceptance decisions, and publication approval.
+Principal Investigator: Gregory Tafoya, responsible for research priorities, ethics, protocol preregistration, final acceptance decisions, and publication approval.
 
 Implementation author: Responsible for code provenance, build reproducibility, implementation documentation, and correction of identified defects.
 
-Independent Technical Reviewer (Mandatory Human Sign-Off): A qualified external human geodesist, aerospace engineer, or mathematical statistician. The reviewer independently audits the vector geodesy derivations, directional Jacobian linearizations, anisotropic covariance propagation matrices, statistical gate implementations, and T0 simulations before the pilot. (The AI advisory panel—Gregory Tafoya, MPH [PI], Claude Sonnet 5.5 [Vector Geodesy & Covariance], Gemini 3.8 Flash [Production Build & Web Architecture], and Luna/ChatGPT-4o [Statistical Architecture]—functions strictly in a consultative, peer-dialogue capacity; AI consensus does not constitute independent validation).
+Independent Technical Reviewer (Mandatory Human Sign-Off): A qualified external human geodesist, aerospace engineer, or mathematical statistician. The reviewer independently audits the vector geodesy derivations, directional Jacobian linearizations, anisotropic covariance propagation matrices, statistical gate implementations, and T0 simulations before the pilot. (The AI advisory panel—Gregory Tafoya [PI], Claude Sonnet 5.5 [Vector Geodesy & Covariance], Gemini 3.8 Flash [Production Build & Web Architecture], and Luna/ChatGPT-4o [Statistical Architecture]—functions strictly in a consultative, peer-dialogue capacity; AI consensus does not constitute independent validation).
 
 Control operator: Maintains ground-truth information for blinded tests (T6) without access to pipeline execution.
 
