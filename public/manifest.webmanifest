@@ -1,7 +1,7 @@
 {
   "name": "Check Sky Light - UAP Anomaly Scanner",
   "short_name": "CheckSkyLight",
-  "description": "Citizen-science UAP & sky diagnostics PWA. Combines optical AR, ADS-B/NORAD radar, and GPS weather with Gemini, ChatGPT (Luna) & Claude Dual-Lens forensics & PDF dossiers.",
+  "description": "Citizen-science UAP & sky diagnostics PWA. Combines optical AR, ADS-B/NORAD radar, and GPS weather with multi-model AI Dual-Lens forensics & PDF dossiers.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

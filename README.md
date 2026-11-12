@@ -5,16 +5,16 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-3.7.0-amber.svg)](https://github.com/redmtn2992/Check-Sky-Light)
 [![Deconfliction Feeds](https://img.shields.io/badge/ADS--B%20%7C%20NOAA%20%7C%20NORAD-Active-cyan.svg)](https://github.com/redmtn2992/Check-Sky-Light)
-[![Parallax Panel](https://img.shields.io/badge/Panel-Gemini%20%C2%B7%20Claude%20%C2%B7%20Luna-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
+[![Parallax Panel](https://img.shields.io/badge/Panel-Multi--Model%20AI%20Consensus-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
 [![Domain Integrity](https://img.shields.io/badge/Domain%20Integrity-Zero%20Tolerance%20Active-emerald.svg)](https://github.com/redmtn2992/Check-Sky-Light)
 
 ---
 
-> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH, Claude, Gemini, and ChatGPT (Luna)), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
+> **Master Project Specification**: For the complete scientific framework, knowledge-base registry, and field validation protocol developed under The Parallax Panel (Gregory Tafoya, MPH & Multi-Model Scientific AI Review Panel), see [`CSL_MASTER_PROJECT.md`](./CSL_MASTER_PROJECT.md).
 
 ## Overview
 
-Check Sky Light is a civilian UAP observation and aerospace diagnostics PWA modeled after the automotive Check Engine light, empowering everyday citizen scientists to investigate aerial anomalies using smartphone sensors and the AI (Gemini, ChatGPT (Luna), and Claude) that makes its multi-sensor analysis possible. Built around four modules—TARGET (optical AR HUD with live IMU gyro telemetry), RADAR (live ADS-B transponders, NOAA balloons, NORAD satellites, JPL ephemeris, and GPS-linked live weather), ANALYZE (Dual-Lens physics contrasting Classical Aerospace against Metric Manipulation, multi-AI consensus, CGI detection, DoW PURSUE knowledge alignment, and strict safety guardrails), and REPORT (PDF and MUFON field dossiers)—Check Sky Light filters conventional traffic, weather, and hoaxes before evaluating UAP residuals.
+Check Sky Light is a civilian UAP observation and aerospace diagnostics PWA modeled after the automotive Check Engine light, empowering everyday citizen scientists to investigate aerial anomalies using smartphone sensors and the multi-model AI collaboration that makes its analysis possible. Built around four modules—TARGET (optical AR HUD with live IMU gyro telemetry), RADAR (live ADS-B transponders, NOAA balloons, NORAD satellites, JPL ephemeris, and GPS-linked live weather), ANALYZE (Dual-Lens physics contrasting Classical Aerospace against Metric Manipulation, multi-AI consensus, CGI detection, DoW PURSUE knowledge alignment, and strict safety guardrails), and REPORT (PDF and MUFON field dossiers)—Check Sky Light filters conventional traffic, weather, and hoaxes before evaluating UAP residuals.
 
 ---
 
@@ -49,7 +49,7 @@ Check Sky Light is a civilian UAP observation and aerospace diagnostics PWA mode
 * **The Five Observables Baseline (ODNI / AARO)**: Instantaneous acceleration, hypersonic velocity without signatures, low observability, transmedium travel, and positive lift without aerodynamic surfaces.
 * **Synthetic Media & CGI Discrimination**: Identifies neural diffusion artifacts, motion-blur inconsistencies, and digital VFX to prevent synthetic fakes.
 * **Zero-Tolerance Safety Guardrails & Domain Integrity**: Automated pre-flight regex and multimodal semantic audits preventing pornographic, sexually explicit, or harm-related media, dropping violating payloads in-flight with zero storage.
-* **Parallax Panel Consensus (DTC P3012)**: Multi-model AI collaboration across **Gemini**, **ChatGPT (Luna)**, and **Claude** that makes Check Sky Light's multi-sensor UAP evaluation and cross-examination possible.
+* **Parallax Panel Consensus (DTC P3012)**: Multi-model AI consensus collaboration that makes Check Sky Light's multi-sensor UAP evaluation and independent cross-examination possible.
 
 ### 4. REPORT: Standardized Field Dossiers
 * **Vetted Field Records**: Generates cryptographically verifiable, timestamped investigation dossiers.
